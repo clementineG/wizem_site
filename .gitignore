@@ -38,3 +38,6 @@
 
 # Composer PHAR
 /composer.phar
+
+# Fichiers IDE 
+.DS_Store
