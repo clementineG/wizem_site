@@ -21,6 +21,8 @@ class AppKernel extends Kernel
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new wizem\UserBundle\wizemUserBundle(),
+            new wizem\ApiBundle\wizemApiBundle(),
+            new wizem\EventBundle\wizemEventBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

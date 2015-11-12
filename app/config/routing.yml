@@ -1,3 +1,11 @@
+wizem_event:
+    resource: "@wizemEventBundle/Resources/config/routing.yml"
+    prefix:   /
+
+wizem_api:
+    resource: "@wizemApiBundle/Resources/config/routing.yml"
+    prefix:   /
+
 wizem_user:
     resource: "@wizemUserBundle/Resources/config/routing.yml"
     prefix:   /
