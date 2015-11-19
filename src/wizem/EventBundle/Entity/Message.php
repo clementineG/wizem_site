@@ -18,7 +18,6 @@ class Message
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $id;
 
@@ -48,8 +47,6 @@ class Message
     /**
      * @var \Discussion
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="Discussion")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="Discussion_id", referencedColumnName="id")
@@ -60,8 +57,6 @@ class Message
     /**
      * @var \User
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="wizem\UserBundle\Entity\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="User_id", referencedColumnName="id")

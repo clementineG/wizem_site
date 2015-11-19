@@ -1,4 +1,7 @@
 services:
-#    wizem_api.example:
-#        class: wizem\ApiBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+    wizem_api.event.handler:
+        class: wizem\ApiBundle\Handler\EventHandler
+        arguments: 
+            entityManager: "@doctrine.orm.entity_manager"
+            entityClass: "wizem\EventBundle\Entity\Event"
+            form.factory: "@form.factory"

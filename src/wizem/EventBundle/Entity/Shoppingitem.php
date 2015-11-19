@@ -18,7 +18,6 @@ class Shoppingitem
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $id;
 
@@ -55,8 +54,6 @@ class Shoppingitem
     /**
      * @var \Event
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="Event")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")

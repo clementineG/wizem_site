@@ -18,15 +18,12 @@ class Vote
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $id;
 
     /**
      * @var \User
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="wizem\UserBundle\Entity\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="User_id", referencedColumnName="id")
@@ -37,8 +34,6 @@ class Vote
     /**
      * @var \Date
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="Date")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="Date_id", referencedColumnName="id")
@@ -49,8 +44,6 @@ class Vote
     /**
      * @var \Place
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="Place")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="Place_id", referencedColumnName="id")
@@ -61,8 +54,6 @@ class Vote
     /**
      * @var \Event
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="Event")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")

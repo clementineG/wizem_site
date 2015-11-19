@@ -19,7 +19,6 @@ class User extends BaseUser
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     protected $id;
 
@@ -70,8 +69,6 @@ class User extends BaseUser
     /**
      * @var \Place
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Place")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="Place_id", referencedColumnName="id")
@@ -82,8 +79,6 @@ class User extends BaseUser
     /**
      * @var \Pro
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="Pro")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="Pro_id", referencedColumnName="id")

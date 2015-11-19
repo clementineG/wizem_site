@@ -18,7 +18,6 @@ class Event
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $id;
 
@@ -48,8 +47,6 @@ class Event
     /**
      * @var \Typeevent
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="Typeevent")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="TypeEvent_id", referencedColumnName="id")

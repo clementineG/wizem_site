@@ -17,7 +17,6 @@ class UserEvent
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $id;
 
@@ -38,8 +37,6 @@ class UserEvent
     /**
      * @var \Event
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Event")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")
@@ -50,8 +47,6 @@ class UserEvent
     /**
      * @var \User
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="User_id", referencedColumnName="id")

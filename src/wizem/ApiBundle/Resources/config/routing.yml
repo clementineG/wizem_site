@@ -1,3 +1,9 @@
 wizem_api_homepage:
-    path:     /hello/{name}
+    path:     /test
     defaults: { _controller: wizemApiBundle:Default:index }
+
+wizem_api_event:
+    type: rest
+    prefix: /api/v1
+    resource: wizem\ApiBundle\Controller\EventController
+    name_prefix:  api_1_ # naming collision
