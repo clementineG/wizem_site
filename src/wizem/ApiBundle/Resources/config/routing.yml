@@ -4,6 +4,6 @@ wizem_api_homepage:
 
 wizem_api_event:
     type: rest
-    prefix: /api/v1
+    prefix: /api
     resource: wizem\ApiBundle\Controller\EventController
-    name_prefix:  api_1_ # naming collision
+    name_prefix:  api_event_ # naming collision

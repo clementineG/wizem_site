@@ -3,16 +3,19 @@
 namespace wizem\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Controller\Annotations;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use wizem\ApiBundle\Exception\InvalidFormException;
+
 /**
- * Item controller.
+ * Event controller.
  *
  */
 class EventController extends FOSRestController
@@ -30,19 +33,19 @@ class EventController extends FOSRestController
      *   }
      * )
      *
-     * @Annotations\View(templateVar="item")
+     * @Rest\View(templateVar="event")
      *
-     * @param int     $id      the item id
+     * @param int     $id      the event id
      *
      * @return array
      *
-     * @throws NotFoundHttpException when item not exist
+     * @throws NotFoundHttpException when event not exist
      */
     public function getEventAction($id)
     {
-        $item = $this->getOr404($id);
+        $event = $this->getOr404($id);
 
-        return $item;
+        return $event;
     }
 
     /**
@@ -76,11 +79,11 @@ class EventController extends FOSRestController
      *   }
      * )
      *
-     * @Annotations\View(templateVar="event")
+     * @Rest\View(templateVar="event")
      *
      * @return array
      *
-     * @throws NotFoundHttpException when item not exist
+     * @throws NotFoundHttpException when event not exist
      */
     public function getEventsAction()
     {
@@ -89,6 +92,50 @@ class EventController extends FOSRestController
         }
 
         return $events;
+    }
+
+    /**
+     * Create an new Event from the submitted data.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   input = "wizem\EventBundle\Form\EventType",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors"
+     *   }
+     * )
+     *
+     * @Rest\View(
+     *  template = "EventBundle:Event:post.html.twig",
+     *  statusCode = Codes::HTTP_BAD_REQUEST,
+     *  templateVar = "form"
+     * )
+     *
+     * @param Request $request the request object
+     *
+     * @return FormTypeInterface|View
+     */
+    public function postEventAction(Request $request)
+    {
+        try {
+            // Create a new item through the item handler
+            $newEvent = $this->container->get('wizem_api.event.handler')->post(
+                $request->request->all()
+            );
+
+
+            $routeOptions = array(
+                'id' => $newEvent->getId(),
+                '_format' => $request->get('_format')
+            );
+
+            return $this->routeRedirectView('api_event_get_event', $routeOptions, Codes::HTTP_CREATED);
+
+        } catch (InvalidFormException $exception) {
+
+            return $exception->getForm();
+        }
     }
 
 }
