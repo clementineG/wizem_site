@@ -7,3 +7,9 @@ wizem_api_event:
     prefix: /api
     resource: wizem\ApiBundle\Controller\EventController
     name_prefix:  api_event_ # naming collision
+
+wizem_api_user:
+    type: rest
+    prefix: /api
+    resource: wizem\ApiBundle\Controller\UserController
+    name_prefix:  api_user_ # naming collision

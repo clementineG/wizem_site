@@ -6,3 +6,11 @@ services:
             entityClass: "wizem\EventBundle\Entity\Event"
             form.factory: "@form.factory"
             logger: "@api_logger"
+
+    wizem_api.user.handler:
+        class: wizem\ApiBundle\Handler\UserHandler
+        arguments: 
+            entityManager: "@doctrine.orm.entity_manager"
+            entityClass: "wizem\UserBundle\Entity\User"
+            form.factory: "@form.factory"
+            logger: "@api_logger"
