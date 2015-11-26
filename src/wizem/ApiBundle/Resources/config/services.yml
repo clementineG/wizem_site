@@ -5,3 +5,4 @@ services:
             entityManager: "@doctrine.orm.entity_manager"
             entityClass: "wizem\EventBundle\Entity\Event"
             form.factory: "@form.factory"
+            logger: "@api_logger"

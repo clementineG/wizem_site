@@ -118,6 +118,12 @@ class EventController extends FOSRestController
      */
     public function postEventAction(Request $request)
     {
+
+        // /* Log */
+        // $name = $request->attributes->get('_controller');
+        // $apiLogger = $this->container->get('api_logger');
+        // $apiLogger->info("API Log", array("Action" => $request->request->all()));
+
         try {
             // Create a new item through the item handler
             $newEvent = $this->container->get('wizem_api.event.handler')->post(
@@ -138,4 +144,31 @@ class EventController extends FOSRestController
         }
     }
 
+    /**
+     * Delete an event for a given id.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Delete an Event for a given id",
+     *   output = "EventBundle\Entity\Event",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when the event is not found"
+     *   }
+     * )
+     *
+     * @param int     $id      the event id
+     *
+     * @return array
+     *
+     * @throws NotFoundHttpException when event not exist
+     */
+    public function deleteEventAction($id)
+    {
+        $event = $this->getOr404($id);
+        
+        $response = $this->container->get('wizem_api.event.handler')->delete($event->getId());
+
+        return $response;
+    }
 }

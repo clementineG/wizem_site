@@ -16,13 +16,15 @@ class EventHandler
     private $entityClass;
     private $repository;
     private $formFactory;
+    private $logger;
 
-    public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory)
+    public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory, $logger)
     {
         $this->om = $om;
         $this->entityClass = $entityClass;
         $this->repository = $this->om->getRepository($this->entityClass);
         $this->formFactory = $formFactory;
+        $this->logger = $logger;
     }
 
     /**
@@ -44,6 +46,8 @@ class EventHandler
      */
     public function getAll()
     {
+        $this->logger->info("getAll");
+
         return $this->repository->findAll();
     }
 
@@ -88,5 +92,23 @@ class EventHandler
 
         throw new InvalidFormException('Invalid submitted data', $form);
     }
+
+    /**
+     * Delete an Event.
+     *
+     * @param mixed $id
+     *
+     * @return ItemInterface
+     */
+    public function delete($id)
+    {
+        $event = $this->repository->find($id);
+
+        $this->om->remove($event);
+        $this->om->flush();
+
+        return $id;
+    }
+
 
 }
