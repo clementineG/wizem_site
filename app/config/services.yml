@@ -4,6 +4,11 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    api_logger:
+            class: Symfony\Bridge\Monolog\Logger
+            arguments: [api]
+            calls:
+                - [pushHandler, [@api_handler]]
+    api_handler:
+            class: Monolog\Handler\RotatingFileHandler
+            arguments: [%kernel.logs_dir%/%kernel.environment%.api.log]

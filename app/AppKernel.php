@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new wizem\UserBundle\wizemUserBundle(),
             new wizem\ApiBundle\wizemApiBundle(),
             new wizem\EventBundle\wizemEventBundle(),
+            new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

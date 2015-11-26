@@ -15,7 +15,6 @@ class EventType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('id')
             ->add('description')
             ->add('typeevent')
         ;
@@ -27,7 +26,8 @@ class EventType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'wizem\EventBundle\Entity\Event'
+            'data_class' => 'wizem\EventBundle\Entity\Event',
+            'csrf_protection' => false,
         ));
     }
 

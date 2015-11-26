@@ -18,6 +18,7 @@ class Typeevent
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -43,8 +44,11 @@ class Typeevent
      * @ORM\Column(name="date_updated", type="datetime", nullable=true)
      */
     private $dateUpdated;
+    
 
-
+    public function __toString(){
+        return $this->name;
+    }
 
     /**
      * Get id
