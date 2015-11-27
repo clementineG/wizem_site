@@ -98,12 +98,15 @@ class EventController extends FOSRestController
      * Create an new Event from the submitted data.
      *
      * @ApiDoc(
-     *   resource = true,
-     *   input = "wizem\EventBundle\Form\EventType",
-     *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
-     *   }
+     *      resource = true,
+     *      input = "wizem\EventBundle\Form\EventType",
+     *      parameters={
+     *          {"name"="user", "dataType"="integer", "required"=true, "description"="user id"},
+     *      },     
+     *      statusCodes = {
+     *         200 = "Returned when successful",
+     *         400 = "Returned when the form has errors"
+     *      }
      * )
      *
      * @Rest\View(
@@ -126,7 +129,7 @@ class EventController extends FOSRestController
 
         try {
             // Create a new item through the item handler
-            $newEvent = $this->container->get('wizem_api.event.handler')->post(
+            $newEvent = $this->container->get('wizem_api.event.handler')->create(
                 $request->request->all()
             );
 

@@ -89,6 +89,45 @@ class UserController extends FOSRestController
     }
 
     /**
+     * Allow connexion for a user 
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   input = "wizem\UsersBundle\Form\UsersType",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors"
+     *   }
+     * )
+     *
+     * @param Request $request the request object
+     *
+     * @return FormTypeInterface|View
+     */
+    public function postUserLoginAction(Request $request)
+    {
+        try {
+            // Create a new item through the item handler
+            $newUser = $this->container->get('wizem_api.user.handler')->connect(
+                $request->request->all()
+            );
+
+
+
+            $routeOptions = array(
+                'id' => $newUser->getId(),
+                '_format' => $request->get('_format')
+            );
+
+            return $this->routeRedirectView('api_event_get_event', $routeOptions, Codes::HTTP_CREATED);
+
+        } catch (InvalidFormException $exception) {
+
+            return $exception->getForm();
+        }
+    }
+
+    /**
      * Create an new Users from the submitted data.
      *
      * @ApiDoc(
@@ -114,7 +153,7 @@ class UserController extends FOSRestController
 
         try {
             // Create a new item through the item handler
-            $newUser = $this->container->get('wizem_api.user.handler')->post(
+            $newUser = $this->container->get('wizem_api.user.handler')->create(
                 $request->request->all()
             );
 
@@ -124,11 +163,15 @@ class UserController extends FOSRestController
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('api_event_get_event', $routeOptions, Codes::HTTP_CREATED);
+            return $this->routeRedirectView('api_user_get_user', $routeOptions, Codes::HTTP_CREATED);
 
         } catch (InvalidFormException $exception) {
 
             return $exception->getForm();
+
+        } catch (InvalidUserException $exception) {
+
+            return $exception->getUser();
         }
     }
 

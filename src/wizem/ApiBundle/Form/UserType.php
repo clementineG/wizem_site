@@ -1,6 +1,6 @@
 <?php
 
-namespace wizem\UserBundle\Form;
+namespace wizem\ApiBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,6 +27,7 @@ class UserType extends AbstractType
     {   
         $resolver->setDefaults(array(
             'data_class' => 'wizem\UserBundle\Entity\User',
+            'csrf_protection' => false,
         ));
     }
 
@@ -35,6 +36,6 @@ class UserType extends AbstractType
      */
     public function getName()
     {
-        return 'wizem_userbundle_user';
+        return 'wizem_apibundle_user';
     }
 }

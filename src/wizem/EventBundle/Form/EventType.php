@@ -27,7 +27,6 @@ class EventType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'wizem\EventBundle\Entity\Event',
-            'csrf_protection' => false,
         ));
     }
 

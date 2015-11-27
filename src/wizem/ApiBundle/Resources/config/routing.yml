@@ -6,10 +6,10 @@ wizem_api_event:
     type: rest
     prefix: /api
     resource: wizem\ApiBundle\Controller\EventController
-    name_prefix:  api_event_ # naming collision
+    name_prefix:  api_event_ 
 
 wizem_api_user:
     type: rest
     prefix: /api
     resource: wizem\ApiBundle\Controller\UserController
-    name_prefix:  api_user_ # naming collision
+    name_prefix:  api_user_ 

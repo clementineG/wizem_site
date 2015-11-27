@@ -5,6 +5,7 @@ services:
             entityManager: "@doctrine.orm.entity_manager"
             entityClass: "wizem\EventBundle\Entity\Event"
             form.factory: "@form.factory"
+            service_container: "@service_container"
             logger: "@api_logger"
 
     wizem_api.user.handler:
@@ -13,4 +14,7 @@ services:
             entityManager: "@doctrine.orm.entity_manager"
             entityClass: "wizem\UserBundle\Entity\User"
             form.factory: "@form.factory"
+            service_container: "@service_container"
             logger: "@api_logger"
+            encoderFactory: "@security.encoder_factory"
+            securityContext: "@security.context"

@@ -1,12 +1,12 @@
 <?php
 
-namespace wizem\UserBundle\Form;
+namespace wizem\ApiBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class UserType extends AbstractType
+class EventType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,8 +15,8 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email')
-            ->add('password')
+            ->add('description')
+            ->add('typeevent')
         ;
     }
     
@@ -24,9 +24,10 @@ class UserType extends AbstractType
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {   
+    {
         $resolver->setDefaults(array(
-            'data_class' => 'wizem\UserBundle\Entity\User',
+            'data_class' => 'wizem\EventBundle\Entity\Event',
+            'csrf_protection' => false,
         ));
     }
 
@@ -35,6 +36,6 @@ class UserType extends AbstractType
      */
     public function getName()
     {
-        return 'wizem_userbundle_user';
+        return 'wizem_apibundle_event';
     }
 }

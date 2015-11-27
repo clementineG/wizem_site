@@ -4,11 +4,16 @@ namespace wizem\ApiBundle\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormFactoryInterface;
-
-use wizem\EventBundle\Form\EventType;
-use wizem\EventBundle\Entity\Event;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use wizem\ApiBundle\Exception\InvalidFormException;
+use wizem\ApiBundle\Form\EventType;
+
+use wizem\EventBundle\Entity\Event;
+
+use wizem\UserBundle\Entity\UserEvent;
+
 
 class EventHandler
 {
@@ -16,14 +21,21 @@ class EventHandler
     private $entityClass;
     private $repository;
     private $formFactory;
+    private $container;
     private $logger;
 
-    public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory, $logger)
+    public function __construct(
+        ObjectManager $om, 
+        $entityClass, 
+        FormFactoryInterface $formFactory, 
+        ContainerInterface $container, 
+        $logger)
     {
         $this->om = $om;
         $this->entityClass = $entityClass;
         $this->repository = $this->om->getRepository($this->entityClass);
         $this->formFactory = $formFactory;
+        $this->container = $container;
         $this->logger = $logger;
     }
 
@@ -31,8 +43,6 @@ class EventHandler
      * Get an Event.
      *
      * @param mixed $id
-     *
-     * @return EventInterface
      */
     public function get($id)
     {
@@ -58,12 +68,12 @@ class EventHandler
      *
      * @return EventInterface
      */
-    public function post(array $parameters)
+    public function create(array $parameters)
     {
         $event = new $this->entityClass();
 
         // Process form does all the magic, validate and hydrate the event object.
-        return $this->processForm($event, $parameters, 'POST');
+        return $this->createEventProcessForm($event, $parameters, 'POST');
     }
 
     /**
@@ -77,15 +87,34 @@ class EventHandler
      *
      * @throws \ApiBundle\Exception\InvalidFormException
      */
-    private function processForm(Event $event, array $parameters, $method = "PUT")
+    private function createEventProcessForm(Event $event, array $parameters, $method = "PUT")
     {
         $form = $this->formFactory->create(new EventType(), $event, array('method' => $method));
+
+        $userId = $parameters['user'];
+        unset($parameters['user']);
+
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
 
             $event = $form->getData();
             $this->om->persist($event);
-            $this->om->flush($event);
+            $this->om->flush();
+
+            if (!($user = $this->container->get('wizem_api.user.handler')->get($userId))) {
+                throw new NotFoundHttpException(sprintf('The user \'%s\' was not found.',$userId));
+            }
+
+            // Création de la table User_Event qui fait la liaison entre l'user et l'évenement 
+            $userEvent = new UserEvent(); 
+            $userEvent->setEvent($event);
+            $userEvent->setUser($user);
+            // Si on est dans la création d'un évenement, l'user participe forcement, et est l'hote
+            $userEvent->setState(1);
+            $userEvent->setHost(1);
+
+            $this->om->persist($userEvent);
+            $this->om->flush();
 
             return $event;
         }
