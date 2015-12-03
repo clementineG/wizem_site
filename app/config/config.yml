@@ -123,7 +123,7 @@ fos_rest:
         json: true
     format_listener:
         rules:
-          - { path: '^/', priorities: ['html','json', 'xml'], fallback_format: html, prefer_extension: true }
+          - { path: '^/', priorities: ['html','json', 'xml'], fallback_format: json, prefer_extension: true }
     routing_loader:
         default_format: ~
     exception:
@@ -131,3 +131,12 @@ fos_rest:
             'Symfony\Component\Routing\Exception\ResourceNotFoundException': 404
         messages:
             'Symfony\Component\Routing\Exception\ResourceNotFoundException': true
+
+# NELMIO CORS BUNDLE
+nelmio_cors:
+    paths:
+        '^/api':
+            allow_origin: ['*']
+            allow_headers: ['X-Custom-Auth']
+            allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
+            max_age: 3600

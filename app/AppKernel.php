@@ -24,6 +24,7 @@ class AppKernel extends Kernel
             new wizem\ApiBundle\wizemApiBundle(),
             new wizem\EventBundle\wizemEventBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new Nelmio\CorsBundle\NelmioCorsBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
