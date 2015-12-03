@@ -82,6 +82,9 @@ class UserHandler
             $userCheck = $um->findUserByEmail($username);
         }
         if($userCheck){
+            unset($parameters['password']);
+            $this->logger->error("User already exists : ", array($parameters));
+            $this->logger->info(" ===== New User from API ending ===== ");
             throw new InvalidUserException('User already exists', $user);
         }
 
@@ -103,8 +106,10 @@ class UserHandler
         $form = $this->formFactory->create(new UserType(), $user, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
+            
 
             $data = $form->getData();
+            $this->logger->info("Submit post form ok");
 
             $userManager = $this->container->get('fos_user.user_manager');
             $user = $userManager->createUser();
@@ -115,10 +120,12 @@ class UserHandler
             $user->setEnabled(true);
 
             $userManager->updateUser($user);
+            $this->logger->info("User created");
 
             return $user;
         }
 
+        $this->logger->info(" ===== New User from API ending ===== ");
         throw new InvalidFormException('Invalid submitted data', $form);
     }
 

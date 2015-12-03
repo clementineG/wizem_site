@@ -142,14 +142,19 @@ class UserController extends FOSRestController
      * @param Request $request the request object
      *
      * @return FormTypeInterface|View
+     *
+     * @throws InvalidFormException when form not valid
+     * @throws InvalidUserException when User not exist
+     *
      */
     public function postUserAction(Request $request)
     {
 
         // /* Log */
         // $name = $request->attributes->get('_controller');
-        // $apiLogger = $this->container->get('api_logger');
-        // $apiLogger->info("API Log", array("Action" => $request->request->all()));
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== New User from API begin ===== ");
+        $apiLogger->info("User ", array("user" => $request->request->all()));
 
         try {
             // Create a new item through the item handler
@@ -157,12 +162,12 @@ class UserController extends FOSRestController
                 $request->request->all()
             );
 
-
             $routeOptions = array(
                 'id' => $newUser->getId(),
                 '_format' => $request->get('_format')
             );
 
+            $apiLogger->info(" ===== New User from API ending ===== ");
             return $this->routeRedirectView('api_user_get_user', $routeOptions, Codes::HTTP_CREATED);
 
         } catch (InvalidFormException $exception) {
@@ -170,7 +175,7 @@ class UserController extends FOSRestController
             return $exception->getForm();
 
         } catch (InvalidUserException $exception) {
-
+            
             return $exception->getUser();
         }
     }
