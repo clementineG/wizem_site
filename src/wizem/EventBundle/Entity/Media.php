@@ -74,6 +74,14 @@ class Media
      */
     private $event;
 
+    /**
+     * @var \User
+     *
+     * @ORM\ManyToOne(targetEntity="wizem\UserBundle\Entity\User", inversedBy="media")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
+     */
+    private $user;
+
 
     /**
      * Set id
@@ -265,5 +273,29 @@ class Media
     public function getEvent()
     {
         return $this->event;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \wizem\UserBundle\Entity\User $user
+     *
+     * @return Media
+     */
+    public function setUser(\wizem\UserBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \wizem\UserBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

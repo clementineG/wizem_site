@@ -102,12 +102,18 @@ class User extends BaseUser
      */
     private $vote;
 
+    /**
+     * @ORM\OneToMany(targetEntity="wizem\EventBundle\Entity\Media", mappedBy="user", cascade={"persist"})
+     */
+    private $media;
+
     public function __construct()
     {
         parent::__construct();
         $this->message = new \Doctrine\Common\Collections\ArrayCollection();
         $this->message = new \Doctrine\Common\Collections\ArrayCollection();
         $this->userEvent = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->media = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -416,5 +422,39 @@ class User extends BaseUser
     public function getVote()
     {
         return $this->vote;
+    }
+
+    /**
+     * Add media
+     *
+     * @param \wizem\EventBundle\Entity\Media $media
+     *
+     * @return User
+     */
+    public function addMedia(\wizem\EventBundle\Entity\Media $media)
+    {
+        $this->media[] = $media;
+
+        return $this;
+    }
+
+    /**
+     * Remove media
+     *
+     * @param \wizem\EventBundle\Entity\Media $media
+     */
+    public function removeMedia(\wizem\EventBundle\Entity\Media $media)
+    {
+        $this->media->removeElement($media);
+    }
+
+    /**
+     * Get media
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMedia()
+    {
+        return $this->media;
     }
 }

@@ -74,6 +74,13 @@ class Media
      */
     private $event;
 
+    /**
+     * @var \User
+     *
+     * @ORM\ManyToOne(targetEntity="wizem\UserBundle\Entity\User", inversedBy="media")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
+     */
+    private $user;
 
 
     /**

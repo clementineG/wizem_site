@@ -103,6 +103,19 @@ class User extends BaseUser
     private $vote;
 
     /**
+     * @ORM\OneToMany(targetEntity="wizem\EventBundle\Entity\Media", mappedBy="user", cascade={"persist"})
+     */
+    private $media;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->message = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->message = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->userEvent = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
      * Set firstname
      *
      * @param string $firstname
@@ -374,5 +387,39 @@ class User extends BaseUser
     public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * Add vote
+     *
+     * @param \wizem\EventBundle\Entity\Vote $vote
+     *
+     * @return User
+     */
+    public function addVote(\wizem\EventBundle\Entity\Vote $vote)
+    {
+        $this->vote[] = $vote;
+
+        return $this;
+    }
+
+    /**
+     * Remove vote
+     *
+     * @param \wizem\EventBundle\Entity\Vote $vote
+     */
+    public function removeVote(\wizem\EventBundle\Entity\Vote $vote)
+    {
+        $this->vote->removeElement($vote);
+    }
+
+    /**
+     * Get vote
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVote()
+    {
+        return $this->vote;
     }
 }
