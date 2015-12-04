@@ -1,4 +1,5 @@
 services:
+    # HANDLER
     wizem_api.event.handler:
         class: wizem\ApiBundle\Handler\EventHandler
         arguments: 

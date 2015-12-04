@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UserEvent
  *
- * @ORM\Table(name="User_Event", indexes={@ORM\Index(name="fk_User_Event_Event1_idx", columns={"Event_id"}), @ORM\Index(name="fk_User_Event_User1_idx", columns={"User_id"})})
+ * @ORM\Table(name="User_Event", indexes={@ORM\Index(name="fk_User_Event_Event1_idx", columns={"Event_id"})})
  * @ORM\Entity
  */
 class UserEvent
@@ -17,7 +17,7 @@ class UserEvent
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -38,8 +38,6 @@ class UserEvent
     /**
      * @var \Event
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Event")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")
@@ -50,12 +48,8 @@ class UserEvent
     /**
      * @var \User
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="User_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="userEvent")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $user;
 

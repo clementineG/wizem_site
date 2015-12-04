@@ -95,24 +95,17 @@ class EventController extends FOSRestController
     }
 
     /**
-     * Create an new Event from the submitted data.
+     * Create an new empty Event from the submitted data, with only the type. Then use PUT method to upload the event.
      *
      * @ApiDoc(
      *      resource = true,
      *      input = "wizem\EventBundle\Form\EventType",
      *      parameters={
-     *          {"name"="user", "dataType"="integer", "required"=true, "description"="user id"},
      *      },     
      *      statusCodes = {
      *         200 = "Returned when successful",
      *         400 = "Returned when the form has errors"
      *      }
-     * )
-     *
-     * @Rest\View(
-     *  template = "EventBundle:Event:post.html.twig",
-     *  statusCode = Codes::HTTP_BAD_REQUEST,
-     *  templateVar = "form"
      * )
      *
      * @param Request $request the request object
@@ -122,10 +115,10 @@ class EventController extends FOSRestController
     public function postEventAction(Request $request)
     {
 
-        // /* Log */
-        // $name = $request->attributes->get('_controller');
-        // $apiLogger = $this->container->get('api_logger');
-        // $apiLogger->info("API Log", array("Action" => $request->request->all()));
+        /* Log */
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== New Event from API begin ===== ");
+        $apiLogger->info("Event ", array("event" => $request->request->all()));
 
         try {
             // Create a new item through the item handler
@@ -133,6 +126,46 @@ class EventController extends FOSRestController
                 $request->request->all()
             );
 
+            $routeOptions = array(
+                'id' => $newEvent->getId(),
+                '_format' => $request->get('_format')
+            );
+
+            $apiLogger->info(" ===== New Event from API ending ===== ");
+            return $this->routeRedirectView('api_event_get_event', $routeOptions, Codes::HTTP_CREATED);
+
+        } catch (InvalidFormException $exception) {
+
+            return $exception->getForm();
+        }
+    }
+
+    /**
+     * Update an Event for a given id.
+     *
+     * @ApiDoc(
+     *      resource = true,
+     *      input = "wizem\EventBundle\Form\EventType",
+     *      parameters={
+     *          {"name"="user", "dataType"="integer", "required"=true, "description"="user id"},
+     *      },
+     *      statusCodes = {
+     *         200 = "Returned when successful",
+     *         400 = "Returned when the form has errors"
+     *      }
+     * )
+     *
+     * @param Request $request the request object
+     *
+     * @return FormTypeInterface|View
+     */
+    public function putEventAction(Request $request)
+    {
+        try {
+            // Create a new item through the item handler
+            $newEvent = $this->container->get('wizem_api.event.handler')->update(
+                $request->request->all()
+            );
 
             $routeOptions = array(
                 'id' => $newEvent->getId(),

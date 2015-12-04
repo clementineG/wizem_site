@@ -87,6 +87,11 @@ class User extends BaseUser
      */
     private $pro;
 
+    /**
+     * @ORM\OneToMany(targetEntity="UserEvent", mappedBy="user", cascade={"persist"})
+     */
+    private $userEvent;
+
     public function __construct()
     {
         parent::__construct();
@@ -296,5 +301,39 @@ class User extends BaseUser
     public function getPlace()
     {
         return $this->place;
+    }
+
+    /**
+     * Add userEvent
+     *
+     * @param \wizem\UserBundle\Entity\UserEvent $userEvent
+     *
+     * @return User
+     */
+    public function addUserEvent(\wizem\UserBundle\Entity\UserEvent $userEvent)
+    {
+        $this->userEvent[] = $userEvent;
+
+        return $this;
+    }
+
+    /**
+     * Remove userEvent
+     *
+     * @param \wizem\UserBundle\Entity\UserEvent $userEvent
+     */
+    public function removeUserEvent(\wizem\UserBundle\Entity\UserEvent $userEvent)
+    {
+        $this->userEvent->removeElement($userEvent);
+    }
+
+    /**
+     * Get userEvent
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUserEvent()
+    {
+        return $this->userEvent;
     }
 }

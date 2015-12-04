@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UserEvent
  *
- * @ORM\Table(name="User_Event", indexes={@ORM\Index(name="fk_User_Event_Event1_idx", columns={"Event_id"}), @ORM\Index(name="fk_User_Event_User1_idx", columns={"User_id"})})
+ * @ORM\Table(name="User_Event", indexes={@ORM\Index(name="fk_User_Event_Event1_idx", columns={"Event_id"})})
  * @ORM\Entity
  */
 class UserEvent
@@ -48,10 +48,8 @@ class UserEvent
     /**
      * @var \User
      *
-     * @ORM\OneToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="User_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="userEvent")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $user;
 

@@ -95,6 +95,8 @@ class EventHandler
         unset($parameters['user']);
 
         $form->submit($parameters, 'PATCH' !== $method);
+        $this->logger->info("Processing form");
+        
         if ($form->isValid()) {
 
             $event = $form->getData();
@@ -114,6 +116,56 @@ class EventHandler
             $userEvent->setHost(1);
 
             $this->om->persist($userEvent);
+            $this->om->flush();
+            $this->logger->info("Creating associate UserEvent() : #{$userEvent->getId()} ");
+
+            return $event;
+        }
+
+        $this->logger->info("Invalid submitted data");
+        $this->logger->info(" ===== New Event from API ending ===== ");
+        throw new InvalidFormException('Invalid submitted data', $form);
+    }
+
+    /**
+     * Upadte a new Event.
+     *
+     * @param array $parameters
+     *
+     * @return EventInterface
+     */
+    public function update(array $parameters)
+    {
+        $event = $this->get($parameters['id']);
+        //$event = new $this->entityClass();
+
+        // Process form does all the magic, validate and hydrate the event object.
+        return $this->updateEventProcessForm($event, $parameters, 'PUT');
+    }
+
+    /**
+     * Processes the form.
+     *
+     * @param eventInterface $event
+     * @param array         $parameters
+     * @param String        $method
+     *
+     * @return EventInterface
+     *
+     * @throws \ApiBundle\Exception\InvalidFormException
+     */
+    private function updateEventProcessForm(Event $event, array $parameters, $method = "PUT")
+    {
+        $form = $this->formFactory->create(new EventType($this->container, $method), $event, array('method' => $method));
+
+
+        unset($parameters['id']);
+
+        $form->submit($parameters, 'PATCH' !== $method);
+        if ($form->isValid()) {
+
+            $event = $form->getData();
+            $this->om->persist($event);
             $this->om->flush();
 
             return $event;
