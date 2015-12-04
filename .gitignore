@@ -41,3 +41,6 @@
 
 # Fichiers IDE 
 .DS_Store
+
+# Fichiers idea
+.idea
