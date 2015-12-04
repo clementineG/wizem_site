@@ -18,7 +18,7 @@ class Media
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -69,12 +69,8 @@ class Media
     /**
      * @var \Event
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Event")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="media")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $event;
 

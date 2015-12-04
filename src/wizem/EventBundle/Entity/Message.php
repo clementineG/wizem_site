@@ -48,24 +48,18 @@ class Message
     /**
      * @var \Discussion
      *
-     * @ORM\OneToOne(targetEntity="Discussion")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Discussion_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="Discussion", inversedBy="message")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
      */
     private $discussion;
 
     /**
      * @var \User
      *
-     * @ORM\OneToOne(targetEntity="wizem\UserBundle\Entity\User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="User_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="wizem\UserBundle\Entity\User", inversedBy="message")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
      */
     private $user;
-
-
 
     /**
      * Set id

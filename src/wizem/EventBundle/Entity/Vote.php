@@ -25,40 +25,32 @@ class Vote
     /**
      * @var \User
      *
-     * @ORM\OneToOne(targetEntity="wizem\UserBundle\Entity\User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="User_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="wizem\UserBundle\Entity\User", inversedBy="vote")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $user;
 
     /**
      * @var \Date
      *
-     * @ORM\OneToOne(targetEntity="Date")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Date_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="Date", inversedBy="vote")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $date;
 
     /**
      * @var \Place
      *
-     * @ORM\OneToOne(targetEntity="Place")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Place_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="Place", inversedBy="vote")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $place;
 
     /**
      * @var \Event
      *
-     * @ORM\OneToOne(targetEntity="Event")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="vote")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $event;
 

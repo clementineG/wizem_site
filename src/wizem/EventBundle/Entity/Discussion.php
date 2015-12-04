@@ -55,7 +55,18 @@ class Discussion
      */
     private $event;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Message", mappedBy="discussion", cascade={"persist"})
+     */
+    private $message;
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->message = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Set id
@@ -175,5 +186,39 @@ class Discussion
     public function getEvent()
     {
         return $this->event;
+    }
+
+    /**
+     * Add message
+     *
+     * @param \wizem\EventBundle\Entity\Message $message
+     *
+     * @return Discussion
+     */
+    public function addMessage(\wizem\EventBundle\Entity\Message $message)
+    {
+        $this->message[] = $message;
+
+        return $this;
+    }
+
+    /**
+     * Remove message
+     *
+     * @param \wizem\EventBundle\Entity\Message $message
+     */
+    public function removeMessage(\wizem\EventBundle\Entity\Message $message)
+    {
+        $this->message->removeElement($message);
+    }
+
+    /**
+     * Get message
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMessage()
+    {
+        return $this->message;
     }
 }

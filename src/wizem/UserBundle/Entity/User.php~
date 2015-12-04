@@ -88,14 +88,19 @@ class User extends BaseUser
     private $pro;
 
     /**
+     * @ORM\OneToMany(targetEntity="wizem\EventBundle\Entity\Message", mappedBy="user", cascade={"persist"})
+     */
+    private $message;
+
+    /**
      * @ORM\OneToMany(targetEntity="UserEvent", mappedBy="user", cascade={"persist"})
      */
     private $userEvent;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    /**
+     * @ORM\OneToMany(targetEntity="wizem\EventBundle\Entity\Vote", mappedBy="user", cascade={"persist"})
+     */
+    private $vote;
 
     /**
      * Set firstname
@@ -301,5 +306,73 @@ class User extends BaseUser
     public function getPlace()
     {
         return $this->place;
+    }
+
+    /**
+     * Add userEvent
+     *
+     * @param \wizem\UserBundle\Entity\UserEvent $userEvent
+     *
+     * @return User
+     */
+    public function addUserEvent(\wizem\UserBundle\Entity\UserEvent $userEvent)
+    {
+        $this->userEvent[] = $userEvent;
+
+        return $this;
+    }
+
+    /**
+     * Remove userEvent
+     *
+     * @param \wizem\UserBundle\Entity\UserEvent $userEvent
+     */
+    public function removeUserEvent(\wizem\UserBundle\Entity\UserEvent $userEvent)
+    {
+        $this->userEvent->removeElement($userEvent);
+    }
+
+    /**
+     * Get userEvent
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUserEvent()
+    {
+        return $this->userEvent;
+    }
+
+    /**
+     * Add message
+     *
+     * @param \wizem\EventBundle\Entity\Message $message
+     *
+     * @return User
+     */
+    public function addMessage(\wizem\EventBundle\Entity\Message $message)
+    {
+        $this->message[] = $message;
+
+        return $this;
+    }
+
+    /**
+     * Remove message
+     *
+     * @param \wizem\EventBundle\Entity\Message $message
+     */
+    public function removeMessage(\wizem\EventBundle\Entity\Message $message)
+    {
+        $this->message->removeElement($message);
+    }
+
+    /**
+     * Get message
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMessage()
+    {
+        return $this->message;
     }
 }

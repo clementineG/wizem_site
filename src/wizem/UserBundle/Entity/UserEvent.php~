@@ -38,10 +38,8 @@ class UserEvent
     /**
      * @var \Event
      *
-     * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Event")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="wizem\EventBundle\Entity\Event", inversedBy="userEvent")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
      */
     private $event;
 
@@ -49,7 +47,7 @@ class UserEvent
      * @var \User
      *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="userEvent")
-     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
      */
     private $user;
 

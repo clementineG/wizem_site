@@ -48,14 +48,23 @@ class Date
     /**
      * @var \Event
      *
-     * @ORM\OneToOne(targetEntity="Event")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="date")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $event;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Vote", mappedBy="date", cascade={"persist","remove"})
+     */
+    private $vote;
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->vote = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Set id
@@ -175,5 +184,39 @@ class Date
     public function getEvent()
     {
         return $this->event;
+    }
+
+    /**
+     * Add vote
+     *
+     * @param \wizem\EventBundle\Entity\Vote $vote
+     *
+     * @return Date
+     */
+    public function addVote(\wizem\EventBundle\Entity\Vote $vote)
+    {
+        $this->vote[] = $vote;
+
+        return $this;
+    }
+
+    /**
+     * Remove vote
+     *
+     * @param \wizem\EventBundle\Entity\Vote $vote
+     */
+    public function removeVote(\wizem\EventBundle\Entity\Vote $vote)
+    {
+        $this->vote->removeElement($vote);
+    }
+
+    /**
+     * Get vote
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVote()
+    {
+        return $this->vote;
     }
 }

@@ -18,55 +18,39 @@ class Vote
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var \User
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="wizem\UserBundle\Entity\User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="User_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="wizem\UserBundle\Entity\User", inversedBy="vote")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $user;
 
     /**
      * @var \Date
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Date")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Date_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="Date", inversedBy="vote")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $date;
 
     /**
      * @var \Place
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Place")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Place_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="Place", inversedBy="vote")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $place;
 
     /**
      * @var \Event
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Event")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="vote")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $event;
 
@@ -206,5 +190,53 @@ class Vote
     public function getEvent()
     {
         return $this->event;
+    }
+
+    /**
+     * Set dateCreated
+     *
+     * @param \DateTime $dateCreated
+     *
+     * @return Vote
+     */
+    public function setDateCreated($dateCreated)
+    {
+        $this->dateCreated = $dateCreated;
+
+        return $this;
+    }
+
+    /**
+     * Get dateCreated
+     *
+     * @return \DateTime
+     */
+    public function getDateCreated()
+    {
+        return $this->dateCreated;
+    }
+
+    /**
+     * Set dateUpdated
+     *
+     * @param \DateTime $dateUpdated
+     *
+     * @return Vote
+     */
+    public function setDateUpdated($dateUpdated)
+    {
+        $this->dateUpdated = $dateUpdated;
+
+        return $this;
+    }
+
+    /**
+     * Get dateUpdated
+     *
+     * @return \DateTime
+     */
+    public function getDateUpdated()
+    {
+        return $this->dateUpdated;
     }
 }

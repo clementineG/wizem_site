@@ -88,15 +88,28 @@ class User extends BaseUser
     private $pro;
 
     /**
+     * @ORM\OneToMany(targetEntity="wizem\EventBundle\Entity\Message", mappedBy="user", cascade={"persist"})
+     */
+    private $message;
+
+    /**
      * @ORM\OneToMany(targetEntity="UserEvent", mappedBy="user", cascade={"persist"})
      */
     private $userEvent;
 
+    /**
+     * @ORM\OneToMany(targetEntity="wizem\EventBundle\Entity\Vote", mappedBy="user", cascade={"persist"})
+     */
+    private $vote;
+
     public function __construct()
     {
         parent::__construct();
+        $this->message = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->message = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->userEvent = new \Doctrine\Common\Collections\ArrayCollection();
     }
-
+    
     /**
      * Set firstname
      *
@@ -335,5 +348,73 @@ class User extends BaseUser
     public function getUserEvent()
     {
         return $this->userEvent;
+    }
+
+    /**
+     * Add message
+     *
+     * @param \wizem\EventBundle\Entity\Message $message
+     *
+     * @return User
+     */
+    public function addMessage(\wizem\EventBundle\Entity\Message $message)
+    {
+        $this->message[] = $message;
+
+        return $this;
+    }
+
+    /**
+     * Remove message
+     *
+     * @param \wizem\EventBundle\Entity\Message $message
+     */
+    public function removeMessage(\wizem\EventBundle\Entity\Message $message)
+    {
+        $this->message->removeElement($message);
+    }
+
+    /**
+     * Get message
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * Add vote
+     *
+     * @param \wizem\EventBundle\Entity\Vote $vote
+     *
+     * @return User
+     */
+    public function addVote(\wizem\EventBundle\Entity\Vote $vote)
+    {
+        $this->vote[] = $vote;
+
+        return $this;
+    }
+
+    /**
+     * Remove vote
+     *
+     * @param \wizem\EventBundle\Entity\Vote $vote
+     */
+    public function removeVote(\wizem\EventBundle\Entity\Vote $vote)
+    {
+        $this->vote->removeElement($vote);
+    }
+
+    /**
+     * Get vote
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVote()
+    {
+        return $this->vote;
     }
 }

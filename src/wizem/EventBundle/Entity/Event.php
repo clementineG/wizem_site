@@ -55,8 +55,49 @@ class Event
      */
     private $typeevent;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Date", mappedBy="event", cascade={"persist", "remove"})
+     */
+    private $date;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Place", mappedBy="event", cascade={"persist", "remove"})
+     */
+    private $place;
 
+    /**
+     * @ORM\OneToMany(targetEntity="wizem\UserBundle\Entity\UserEvent", mappedBy="event", cascade={"persist", "remove"})
+     */
+    private $userEvent;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Media", mappedBy="event", cascade={"persist"})
+     */
+    private $media;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Media", mappedBy="event", cascade={"persist", "remove"})
+     */
+    private $shoppingItem;
+
+    /**
+     * @ORM\OneToMany(targetEntity="wizem\EventBundle\Entity\Vote", mappedBy="event", cascade={"persist"})
+     */
+    private $vote;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->date = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->place = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->userEvent = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->media = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->shoppingItem = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->vote = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
     /**
      * Set id
      *
@@ -175,5 +216,209 @@ class Event
     public function getTypeevent()
     {
         return $this->typeevent;
+    }
+
+    /**
+     * Add date
+     *
+     * @param \wizem\EventBundle\Entity\Date $date
+     *
+     * @return Event
+     */
+    public function addDate(\wizem\EventBundle\Entity\Date $date)
+    {
+        $this->date[] = $date;
+
+        return $this;
+    }
+
+    /**
+     * Remove date
+     *
+     * @param \wizem\EventBundle\Entity\Date $date
+     */
+    public function removeDate(\wizem\EventBundle\Entity\Date $date)
+    {
+        $this->date->removeElement($date);
+    }
+
+    /**
+     * Get date
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * Add place
+     *
+     * @param \wizem\EventBundle\Entity\Place $place
+     *
+     * @return Event
+     */
+    public function addPlace(\wizem\EventBundle\Entity\Place $place)
+    {
+        $this->place[] = $place;
+
+        return $this;
+    }
+
+    /**
+     * Remove place
+     *
+     * @param \wizem\EventBundle\Entity\Place $place
+     */
+    public function removePlace(\wizem\EventBundle\Entity\Place $place)
+    {
+        $this->place->removeElement($place);
+    }
+
+    /**
+     * Get place
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPlace()
+    {
+        return $this->place;
+    }
+
+    /**
+     * Add userEvent
+     *
+     * @param \wizem\EventBundle\Entity\UserEvent $userEvent
+     *
+     * @return Event
+     */
+    public function addUserEvent(\wizem\EventBundle\Entity\UserEvent $userEvent)
+    {
+        $this->userEvent[] = $userEvent;
+
+        return $this;
+    }
+
+    /**
+     * Remove userEvent
+     *
+     * @param \wizem\EventBundle\Entity\UserEvent $userEvent
+     */
+    public function removeUserEvent(\wizem\EventBundle\Entity\UserEvent $userEvent)
+    {
+        $this->userEvent->removeElement($userEvent);
+    }
+
+    /**
+     * Get userEvent
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUserEvent()
+    {
+        return $this->userEvent;
+    }
+
+    /**
+     * Add media
+     *
+     * @param \wizem\EventBundle\Entity\Media $media
+     *
+     * @return Event
+     */
+    public function addMedia(\wizem\EventBundle\Entity\Media $media)
+    {
+        $this->media[] = $media;
+
+        return $this;
+    }
+
+    /**
+     * Remove media
+     *
+     * @param \wizem\EventBundle\Entity\Media $media
+     */
+    public function removeMedia(\wizem\EventBundle\Entity\Media $media)
+    {
+        $this->media->removeElement($media);
+    }
+
+    /**
+     * Get media
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMedia()
+    {
+        return $this->media;
+    }
+
+    /**
+     * Add shoppingItem
+     *
+     * @param \wizem\EventBundle\Entity\Media $shoppingItem
+     *
+     * @return Event
+     */
+    public function addShoppingItem(\wizem\EventBundle\Entity\Media $shoppingItem)
+    {
+        $this->shoppingItem[] = $shoppingItem;
+
+        return $this;
+    }
+
+    /**
+     * Remove shoppingItem
+     *
+     * @param \wizem\EventBundle\Entity\Media $shoppingItem
+     */
+    public function removeShoppingItem(\wizem\EventBundle\Entity\Media $shoppingItem)
+    {
+        $this->shoppingItem->removeElement($shoppingItem);
+    }
+
+    /**
+     * Get shoppingItem
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getShoppingItem()
+    {
+        return $this->shoppingItem;
+    }
+
+    /**
+     * Add vote
+     *
+     * @param \wizem\EventBundle\Entity\Vote $vote
+     *
+     * @return Event
+     */
+    public function addVote(\wizem\EventBundle\Entity\Vote $vote)
+    {
+        $this->vote[] = $vote;
+
+        return $this;
+    }
+
+    /**
+     * Remove vote
+     *
+     * @param \wizem\EventBundle\Entity\Vote $vote
+     */
+    public function removeVote(\wizem\EventBundle\Entity\Vote $vote)
+    {
+        $this->vote->removeElement($vote);
+    }
+
+    /**
+     * Get vote
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVote()
+    {
+        return $this->vote;
     }
 }

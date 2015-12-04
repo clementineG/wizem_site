@@ -55,13 +55,10 @@ class Shoppingitem
     /**
      * @var \Event
      *
-     * @ORM\OneToOne(targetEntity="Event")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="shoppingItem")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
      */
     private $event;
-
 
 
     /**

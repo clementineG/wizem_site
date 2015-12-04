@@ -69,13 +69,10 @@ class Media
     /**
      * @var \Event
      *
-     * @ORM\OneToOne(targetEntity="Event")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="media")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $event;
-
 
 
     /**
