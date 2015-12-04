@@ -105,6 +105,7 @@ class UserHandler
     {
         $form = $this->formFactory->create(new UserType(), $user, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
+        $this->logger->info("Processing form");
         if ($form->isValid()) {
             
 
@@ -125,6 +126,7 @@ class UserHandler
             return $user;
         }
 
+        $this->logger->info("Invalid submitted data");
         $this->logger->info(" ===== New User from API ending ===== ");
         throw new InvalidFormException('Invalid submitted data', $form);
     }
@@ -171,7 +173,7 @@ class UserHandler
 
         $this->loginUser($user);
 
-        return array('success'=>true, 'user'=>$user);
+        return $user;
     }
 
     /**

@@ -112,14 +112,14 @@ class UserController extends FOSRestController
                 $request->request->all()
             );
 
-
-
             $routeOptions = array(
                 'id' => $newUser->getId(),
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('api_event_get_event', $routeOptions, Codes::HTTP_CREATED);
+            return $newUser;
+
+            //return $this->routeRedirectView('api_user_get_user', $routeOptions, Codes::HTTP_ACCEPTED);
 
         } catch (InvalidFormException $exception) {
 
@@ -149,12 +149,10 @@ class UserController extends FOSRestController
      */
     public function postUserAction(Request $request)
     {
-
-        // /* Log */
-        // $name = $request->attributes->get('_controller');
+        /* Log */
         $apiLogger = $this->container->get('api_logger');
         $apiLogger->info(" ===== New User from API begin ===== ");
-        $apiLogger->info("User ", array("user" => $request->request->all()));
+        $apiLogger->info("User ", array("user" => $request->request->all()['email']));
 
         try {
             // Create a new item through the item handler
@@ -174,7 +172,7 @@ class UserController extends FOSRestController
 
             return $exception->getForm();
 
-        } catch (InvalidUserException $exception) {
+        } catch (Exception $exception) {
             
             return $exception->getUser();
         }
