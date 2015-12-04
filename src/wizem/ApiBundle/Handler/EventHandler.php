@@ -52,7 +52,7 @@ class EventHandler
     /**
      * Get an event.
      *
-     * @return EventInterface
+     * @return Events
      */
     public function getAll()
     {
@@ -66,7 +66,7 @@ class EventHandler
      *
      * @param array $parameters
      *
-     * @return EventInterface
+     * @return Event
      */
     public function create(array $parameters)
     {
@@ -79,13 +79,14 @@ class EventHandler
     /**
      * Processes the form.
      *
-     * @param eventInterface $event
+     * @param Event         $event
      * @param array         $parameters
      * @param String        $method
      *
-     * @return EventInterface
+     * @return Event
      *
-     * @throws \ApiBundle\Exception\InvalidFormException
+     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @throws wizem\ApiBundle\Exception\NotFoundHttpException
      */
     private function createEventProcessForm(Event $event, array $parameters, $method = "PUT")
     {
@@ -128,15 +129,15 @@ class EventHandler
     }
 
     /**
-     * Upadte a new Event.
+     * Upadte a Event.
      *
      * @param array $parameters
      *
-     * @return EventInterface
+     * @return Event
      */
-    public function update(array $parameters)
+    public function update(array $parameters, $id)
     {
-        $event = $this->get($parameters['id']);
+        $event = $this->get($id);
         //$event = new $this->entityClass();
 
         // Process form does all the magic, validate and hydrate the event object.
@@ -146,20 +147,17 @@ class EventHandler
     /**
      * Processes the form.
      *
-     * @param eventInterface $event
+     * @param Event         $event
      * @param array         $parameters
      * @param String        $method
      *
-     * @return EventInterface
+     * @return Event
      *
-     * @throws \ApiBundle\Exception\InvalidFormException
+     * @throws wizem\ApiBundle\Exception\InvalidFormException
      */
     private function updateEventProcessForm(Event $event, array $parameters, $method = "PUT")
     {
         $form = $this->formFactory->create(new EventType($this->container, $method), $event, array('method' => $method));
-
-
-        unset($parameters['id']);
 
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
@@ -179,7 +177,7 @@ class EventHandler
      *
      * @param mixed $id
      *
-     * @return ItemInterface
+     * @return mixed $id
      */
     public function delete($id)
     {

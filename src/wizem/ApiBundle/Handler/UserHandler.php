@@ -76,6 +76,7 @@ class UserHandler
 
         $um = $this->container->get('fos_user.user_manager');
 
+        // Check if user already exists in database
         $username = $parameters['email'];
         $userCheck = $um->findUserByUsername($username);
         if(!$userCheck){
@@ -88,26 +89,24 @@ class UserHandler
             throw new InvalidUserException('User already exists', $user);
         }
 
-        // Process form does all the magic, validate and hydrate the User object.
-        return $this->processForm($user, $parameters, 'POST');
+        return $this->createUserProcessForm($user, $parameters, 'POST');
     }
 
     /**
      * Processes the form.
      *
-     * @param userInterface $user
-     * @param array         $parameters
-     * @param String        $method
+     * @param User      $user
+     * @param array     $parameters
+     * @param String    $method
      *
-     * @throws \ApiBundle\Exception\InvalidFormException
+     * @throws wizem\ApiBundle\Exception\InvalidFormException
      */
-    private function processForm(User $user, array $parameters, $method = "PUT")
+    private function createUserProcessForm(User $user, array $parameters, $method = "PUT")
     {
         $form = $this->formFactory->create(new UserType(), $user, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
         $this->logger->info("Processing form");
         if ($form->isValid()) {
-            
 
             $data = $form->getData();
             $this->logger->info("Submit post form ok");
@@ -136,7 +135,7 @@ class UserHandler
      *
      * @param mixed $id
      *
-     * @return ItemInterface
+     * @return mixed $id
      */
     public function delete($id)
     {
@@ -149,9 +148,14 @@ class UserHandler
     }
 
     /**
-     * Create a new User.
+     * Connect an user
      *
      * @param array $parameters
+     *
+     * @return User $user
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws Symfony\Component\Security\Core\Exception\AccessDeniedException
      */
     public function connect(array $parameters)
     {

@@ -12,6 +12,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use wizem\ApiBundle\Exception\InvalidUserException;
 use wizem\ApiBundle\Exception\InvalidFormException;
 
 /**
@@ -51,6 +52,8 @@ class UserController extends FOSRestController
      *
      * @param mixed $id
      *
+     * @return User $user
+     *
      * @throws NotFoundHttpException
      */
     protected function getOr404($id)
@@ -77,7 +80,7 @@ class UserController extends FOSRestController
      *
      * @return array
      *
-     * @throws NotFoundHttpException when User not exist
+     * @throws NotFoundHttpException when no user
      */
     public function getUsersAction()
     {
@@ -93,7 +96,6 @@ class UserController extends FOSRestController
      *
      * @ApiDoc(
      *   resource = true,
-     *   input = "wizem\UsersBundle\Form\UsersType",
      *   statusCodes = {
      *     200 = "Returned when successful",
      *     400 = "Returned when the form has errors"
@@ -102,22 +104,24 @@ class UserController extends FOSRestController
      *
      * @param Request $request the request object
      *
-     * @return FormTypeInterface|View
+     * @return User $user
+     *
+     * @throws InvalidFormException when form not valid
      */
     public function postUserLoginAction(Request $request)
     {
         try {
             // Create a new item through the item handler
-            $newUser = $this->container->get('wizem_api.user.handler')->connect(
+            $user = $this->container->get('wizem_api.user.handler')->connect(
                 $request->request->all()
             );
 
             $routeOptions = array(
-                'id' => $newUser->getId(),
+                'id' => $user->getId(),
                 '_format' => $request->get('_format')
             );
 
-            return $newUser;
+            return $user;
 
             //return $this->routeRedirectView('api_user_get_user', $routeOptions, Codes::HTTP_ACCEPTED);
 
@@ -128,7 +132,7 @@ class UserController extends FOSRestController
     }
 
     /**
-     * Create an new Users from the submitted data.
+     * Create a new User from the submitted data.
      *
      * @ApiDoc(
      *   resource = true,
@@ -149,13 +153,21 @@ class UserController extends FOSRestController
      */
     public function postUserAction(Request $request)
     {
+        $email = $request->request->all()['email'];
+
         /* Log */
         $apiLogger = $this->container->get('api_logger');
         $apiLogger->info(" ===== New User from API begin ===== ");
-        $apiLogger->info("User ", array("user" => $request->request->all()['email']));
+        $apiLogger->info("User ", array("user" => $email));
+
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            $apiLogger->error("Email not allowed");
+            $apiLogger->info(" ===== New User from API ending ===== ");
+            throw new InvalidUserException('Email not allowed');
+        }
 
         try {
-            // Create a new item through the item handler
+            // Create a new user through the user handler
             $newUser = $this->container->get('wizem_api.user.handler')->create(
                 $request->request->all()
             );
@@ -183,7 +195,6 @@ class UserController extends FOSRestController
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Delete an User for a given id",
      *   output = "EventBundle\Entity\User",
      *   statusCodes = {
      *     200 = "Returned when successful",

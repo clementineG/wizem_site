@@ -33,11 +33,9 @@ class EventController extends FOSRestController
      *   }
      * )
      *
-     * @Rest\View(templateVar="event")
-     *
      * @param int     $id      the event id
      *
-     * @return array
+     * @return Event
      *
      * @throws NotFoundHttpException when event not exist
      */
@@ -53,7 +51,7 @@ class EventController extends FOSRestController
      *
      * @param mixed $id
      *
-     * @return EventInterface
+     * @return Event
      *
      * @throws NotFoundHttpException
      */
@@ -71,15 +69,12 @@ class EventController extends FOSRestController
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Gets all Events",
      *   output = "EventBundle\Entity\Event",
      *   statusCodes = {
      *     200 = "Returned when successful",
      *     404 = "Returned when no event"
      *   }
      * )
-     *
-     * @Rest\View(templateVar="event")
      *
      * @return array
      *
@@ -110,7 +105,7 @@ class EventController extends FOSRestController
      *
      * @param Request $request the request object
      *
-     * @return FormTypeInterface|View
+     * @throws wizem\ApiBundle\Exception\InvalidFormException
      */
     public function postEventAction(Request $request)
     {
@@ -121,7 +116,7 @@ class EventController extends FOSRestController
         $apiLogger->info("Event ", array("event" => $request->request->all()));
 
         try {
-            // Create a new item through the item handler
+            // Create a new event through the event handler
             $newEvent = $this->container->get('wizem_api.event.handler')->create(
                 $request->request->all()
             );
@@ -144,27 +139,27 @@ class EventController extends FOSRestController
      * Update an Event for a given id.
      *
      * @ApiDoc(
-     *      resource = true,
-     *      input = "wizem\EventBundle\Form\EventType",
      *      parameters={
-     *          {"name"="user", "dataType"="integer", "required"=true, "description"="user id"},
+     *          {"name"="description", "dataType"="text", "required"=false, "description"="Description of the event"},
      *      },
      *      statusCodes = {
-     *         200 = "Returned when successful",
+     *         201 = "Returned when successful",
      *         400 = "Returned when the form has errors"
      *      }
      * )
      *
+     * @param mixed $id
      * @param Request $request the request object
      *
-     * @return FormTypeInterface|View
+     * @throws wizem\ApiBundle\Exception\InvalidFormException
      */
-    public function putEventAction(Request $request)
-    {
+    public function putEventAction($id, Request $request)
+    {   
         try {
             // Create a new item through the item handler
             $newEvent = $this->container->get('wizem_api.event.handler')->update(
-                $request->request->all()
+                $request->request->all(),
+                $id
             );
 
             $routeOptions = array(
