@@ -23,6 +23,13 @@ class Media
     private $id;
 
     /**
+     * @var text
+     *
+     * @ORM\Column(name="note", type="text", nullable=true)
+     */
+    private $note;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="type", type="string", length=45, nullable=false)
@@ -297,5 +304,29 @@ class Media
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set note
+     *
+     * @param string $note
+     *
+     * @return Media
+     */
+    public function setNote($note)
+    {
+        $this->note = $note;
+
+        return $this;
+    }
+
+    /**
+     * Get note
+     *
+     * @return string
+     */
+    public function getNote()
+    {
+        return $this->note;
     }
 }

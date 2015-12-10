@@ -52,6 +52,13 @@ class User extends BaseUser
     private $birthDate;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="notifacation", type="boolean", nullable=false, options={"default" = false})
+     */
+    private $notification;
+
+    /**
      * @var \DateTime
      *
      * @Gedmo\Timestampable(on="create")
@@ -107,13 +114,15 @@ class User extends BaseUser
      */
     private $media;
 
-    public function __construct()
-    {
-        parent::__construct();
-        $this->message = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->message = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->userEvent = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+    /**
+     * @ORM\OneToMany(targetEntity="Friendship", mappedBy="user", cascade={"persist"})
+     */
+    private $friendshipUser;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Friendship", mappedBy="friend", cascade={"persist"})
+     */
+    private $friendshipFriend;
     
     /**
      * Set firstname
@@ -421,5 +430,63 @@ class User extends BaseUser
     public function getVote()
     {
         return $this->vote;
+    }
+
+    /**
+     * Add media
+     *
+     * @param \wizem\EventBundle\Entity\Media $media
+     *
+     * @return User
+     */
+    public function addMedia(\wizem\EventBundle\Entity\Media $media)
+    {
+        $this->media[] = $media;
+
+        return $this;
+    }
+
+    /**
+     * Remove media
+     *
+     * @param \wizem\EventBundle\Entity\Media $media
+     */
+    public function removeMedia(\wizem\EventBundle\Entity\Media $media)
+    {
+        $this->media->removeElement($media);
+    }
+
+    /**
+     * Get media
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMedia()
+    {
+        return $this->media;
+    }
+
+    /**
+     * Set notification
+     *
+     * @param boolean $notification
+     *
+     * @return User
+     */
+    public function setNotification($notification)
+    {
+        $this->notification = $notification;
+
+        return $this;
+    }
+
+    /**
+     * Get notification
+     *
+     * @return boolean
+     */
+    public function getNotification()
+    {
+        return $this->notification;
     }
 }

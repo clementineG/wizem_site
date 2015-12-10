@@ -1,0 +1,82 @@
+<?php
+
+namespace wizem\UserBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Friendship
+ *
+ * @ORM\Table()
+ * @ORM\Entity(repositoryClass="wizem\UserBundle\Entity\FriendshipRepository")
+ */
+class Friendship
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="state", type="boolean")
+     */
+    private $state;
+
+    /**
+     * @var \User
+     *
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
+     */
+    private $user;
+
+    /**
+     * @var \User
+     *
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
+     */
+    private $friend;
+
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set state
+     *
+     * @param boolean $state
+     *
+     * @return Friendship
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+
+    /**
+     * Get state
+     *
+     * @return boolean
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+}
+

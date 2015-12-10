@@ -137,6 +137,11 @@ class UserController extends FOSRestController
      * @ApiDoc(
      *   resource = true,
      *   input = "wizem\UsersBundle\Form\UsersType",
+     *   parameters={
+     *      {"name"="username", "dataType"="string", "required"=true, "description"="username of the user"},
+     *      {"name"="email", "dataType"="email", "required"=true, "description"="email of the user"},
+     *      {"name"="password", "dataType"="string", "required"=true, "description"="password of the user"},
+     *   },
      *   statusCodes = {
      *     200 = "Returned when successful",
      *     400 = "Returned when the form has errors"

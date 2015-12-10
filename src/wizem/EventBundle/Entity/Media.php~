@@ -23,6 +23,13 @@ class Media
     private $id;
 
     /**
+     * @var text
+     *
+     * @ORM\Column(name="note", type="text", nullable=true)
+     */
+    private $note;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="type", type="string", length=45, nullable=false)
@@ -273,5 +280,29 @@ class Media
     public function getEvent()
     {
         return $this->event;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \wizem\UserBundle\Entity\User $user
+     *
+     * @return Media
+     */
+    public function setUser(\wizem\UserBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \wizem\UserBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

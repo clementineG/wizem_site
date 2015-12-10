@@ -23,6 +23,13 @@ class Place
     private $id;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="final", type="boolean", nullable=false, options={"default" = false})
+     */
+    private $final;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="address", type="string", length=45, nullable=true)
@@ -280,5 +287,29 @@ class Place
     public function getVote()
     {
         return $this->vote;
+    }
+
+    /**
+     * Set final
+     *
+     * @param boolean $final
+     *
+     * @return Place
+     */
+    public function setFinal($final)
+    {
+        $this->final = $final;
+
+        return $this;
+    }
+
+    /**
+     * Get final
+     *
+     * @return boolean
+     */
+    public function getFinal()
+    {
+        return $this->final;
     }
 }

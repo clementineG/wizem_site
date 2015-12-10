@@ -52,6 +52,13 @@ class User extends BaseUser
     private $birthDate;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="notifacation", type="boolean", nullable=false, options={"default" = false})
+     */
+    private $notification;
+
+    /**
      * @var \DateTime
      *
      * @Gedmo\Timestampable(on="create")
@@ -107,6 +114,16 @@ class User extends BaseUser
      */
     private $media;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Friendship", mappedBy="user", cascade={"persist"})
+     */
+    private $friendshipUser;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Friendship", mappedBy="friend", cascade={"persist"})
+     */
+    private $friendshipFriend;
+
     public function __construct()
     {
         parent::__construct();
@@ -114,6 +131,8 @@ class User extends BaseUser
         $this->message = new \Doctrine\Common\Collections\ArrayCollection();
         $this->userEvent = new \Doctrine\Common\Collections\ArrayCollection();
         $this->media = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->friendshipUser = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->friendshipFriend = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -456,5 +475,97 @@ class User extends BaseUser
     public function getMedia()
     {
         return $this->media;
+    }
+
+    /**
+     * Set notification
+     *
+     * @param boolean $notification
+     *
+     * @return User
+     */
+    public function setNotification($notification)
+    {
+        $this->notification = $notification;
+
+        return $this;
+    }
+
+    /**
+     * Get notification
+     *
+     * @return boolean
+     */
+    public function getNotification()
+    {
+        return $this->notification;
+    }
+
+    /**
+     * Add friendshipUser
+     *
+     * @param \wizem\UserBundle\Entity\Friendship $friendshipUser
+     *
+     * @return User
+     */
+    public function addFriendshipUser(\wizem\UserBundle\Entity\Friendship $friendshipUser)
+    {
+        $this->friendshipUser[] = $friendshipUser;
+
+        return $this;
+    }
+
+    /**
+     * Remove friendshipUser
+     *
+     * @param \wizem\UserBundle\Entity\Friendship $friendshipUser
+     */
+    public function removeFriendshipUser(\wizem\UserBundle\Entity\Friendship $friendshipUser)
+    {
+        $this->friendshipUser->removeElement($friendshipUser);
+    }
+
+    /**
+     * Get friendshipUser
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFriendshipUser()
+    {
+        return $this->friendshipUser;
+    }
+
+    /**
+     * Add friendshipFriend
+     *
+     * @param \wizem\UserBundle\Entity\Friendship $friendshipFriend
+     *
+     * @return User
+     */
+    public function addFriendshipFriend(\wizem\UserBundle\Entity\Friendship $friendshipFriend)
+    {
+        $this->friendshipFriend[] = $friendshipFriend;
+
+        return $this;
+    }
+
+    /**
+     * Remove friendshipFriend
+     *
+     * @param \wizem\UserBundle\Entity\Friendship $friendshipFriend
+     */
+    public function removeFriendshipFriend(\wizem\UserBundle\Entity\Friendship $friendshipFriend)
+    {
+        $this->friendshipFriend->removeElement($friendshipFriend);
+    }
+
+    /**
+     * Get friendshipFriend
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFriendshipFriend()
+    {
+        return $this->friendshipFriend;
     }
 }

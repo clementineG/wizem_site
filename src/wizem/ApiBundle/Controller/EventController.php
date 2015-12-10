@@ -99,9 +99,10 @@ class EventController extends FOSRestController
      *
      * @ApiDoc(
      *      resource = true,
-     *      input = "wizem\EventBundle\Form\EventType",
      *      parameters={
-     *      },     
+     *          {"name"="userId", "dataType"="integer", "required"=true, "description"="Id of the user who create the event"},
+     *          {"name"="typeevent", "dataType"="integer", "required"=true, "description"="Id of the type event"},
+     *      },
      *      statusCodes = {
      *         200 = "Returned when successful",
      *         400 = "Returned when the form has errors"
@@ -146,6 +147,9 @@ class EventController extends FOSRestController
      * @ApiDoc(
      *      parameters={
      *          {"name"="description", "dataType"="text", "required"=false, "description"="Description of the event"},
+     *          {"name"="place", "dataType"="array", "required"=true, "description"="array of one or max 3 places : { 'address' : $adress }"},
+     *          {"name"="date", "dataType"="array", "required"=true, "description"="array of one or max 3 dates : { 'date' : $date } "},
+     *          {"name"="shoppingitem", "dataType"="array", "required"=false, "description"="array of items : { 'name' : $date, 'quantity' : $quantity } "},
      *      },
      *      statusCodes = {
      *         201 = "Returned when successful",

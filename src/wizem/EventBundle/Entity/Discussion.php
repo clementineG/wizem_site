@@ -8,7 +8,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * Discussion
  *
- * @ORM\Table(name="Discussion", indexes={@ORM\Index(name="fk_Discussion_Event1_idx", columns={"Event_id", "Event_TypeEvent_id"}), @ORM\Index(name="IDX_8FE4FADF88818ADD", columns={"Event_id"})})
+ * @ORM\Table(name="Discussion", indexes={@ORM\Index(name="IDX_8FE4FADF88818ADD", columns={"Event_id"})})
  * @ORM\Entity
  */
 class Discussion
@@ -37,13 +37,6 @@ class Discussion
      * @ORM\Column(name="date_updated", type="datetime", nullable=true)
      */
     private $dateUpdated;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="Event_TypeEvent_id", type="integer", nullable=false)
-     */
-    private $eventTypeeventId;
 
     /**
      * @var \Event
@@ -138,30 +131,6 @@ class Discussion
     public function getDateUpdated()
     {
         return $this->dateUpdated;
-    }
-
-    /**
-     * Set eventTypeeventId
-     *
-     * @param integer $eventTypeeventId
-     *
-     * @return Discussion
-     */
-    public function setEventTypeeventId($eventTypeeventId)
-    {
-        $this->eventTypeeventId = $eventTypeeventId;
-
-        return $this;
-    }
-
-    /**
-     * Get eventTypeeventId
-     *
-     * @return integer
-     */
-    public function getEventTypeeventId()
-    {
-        return $this->eventTypeeventId;
     }
 
     /**

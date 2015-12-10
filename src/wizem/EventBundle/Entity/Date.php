@@ -23,6 +23,13 @@ class Date
     private $id;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="final", type="boolean", nullable=false, options={"default" = false})
+     */
+    private $final;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime", nullable=true)
@@ -218,5 +225,29 @@ class Date
     public function getVote()
     {
         return $this->vote;
+    }
+
+    /**
+     * Set final
+     *
+     * @param boolean $final
+     *
+     * @return Date
+     */
+    public function setFinal($final)
+    {
+        $this->final = $final;
+
+        return $this;
+    }
+
+    /**
+     * Get final
+     *
+     * @return boolean
+     */
+    public function getFinal()
+    {
+        return $this->final;
     }
 }
