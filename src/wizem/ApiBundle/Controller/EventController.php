@@ -68,7 +68,7 @@ class EventController extends FOSRestController
      */
     public function getEventAction($id)
     {
-        $event = $this->getOr404($id);
+        $event = $this->getEventOr404($id);
 
         return $event;
     }
@@ -82,13 +82,36 @@ class EventController extends FOSRestController
      *
      * @throws NotFoundHttpException
      */
-    protected function getOr404($id)
+    protected function getEventOr404($id)
     {
         if (!($event = $this->container->get('wizem_api.event.handler')->get($id))) {
-            throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.',$id));
+            $apiLogger = $this->container->get('api_logger');
+            $apiLogger->info("The event #{$id} was not found");
+            throw new NotFoundHttpException(sprintf('The event \'%s\' was not found.',$id));
         }
 
         return $event;
+    }
+
+    /**
+     * Fetch an User or throw an 404 Exception.
+     *
+     * @param mixed $id
+     *
+     * @return User
+     *
+     * @throws NotFoundHttpException
+     */
+    protected function getUserOr404($userId)
+    {
+        $id = $userId;
+        if (!($user = $this->container->get('wizem_api.user.handler')->get($id))) {
+            $apiLogger = $this->container->get('api_logger');
+            $apiLogger->info("The user #{$id} was not found");
+            throw new NotFoundHttpException(sprintf('The user \'%s\' was not found.',$id));
+        }
+
+        return $user;
     }
 
     /**
@@ -170,6 +193,7 @@ class EventController extends FOSRestController
      *
      * @ApiDoc(
      *      parameters={
+     *          {"name"="userId", "dataType"="integer", "required"=true, "description"="Id of the user who want to update this event"},
      *          {"name"="description", "dataType"="text", "required"=false, "description"="Description of the event"},
      *          {"name"="place", "dataType"="array", "required"=true, "description"="array of one or max 3 places : { 'address' : $adress }"},
      *          {"name"="date", "dataType"="array", "required"=true, "description"="array of one or max 3 dates : { 'date' : $date } "},
@@ -186,13 +210,18 @@ class EventController extends FOSRestController
      *
      * @throws wizem\ApiBundle\Exception\InvalidFormException
      */
-    public function putEventAction($id, Request $request)
+    public function putEventAction(Request $request, $id)
     {   
+        $event = $this->getEventOr404($id);
+        $userId = $request->request->all()['userId']; 
+        $user = $this->getUserOr404($userId);
+
         try {
             // Create a new item through the item handler
             $newEvent = $this->container->get('wizem_api.event.handler')->update(
                 $request->request->all(),
-                $id
+                $event,
+                $user
             );
 
             $routeOptions = array(
@@ -200,7 +229,7 @@ class EventController extends FOSRestController
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('api_event_get_event', $routeOptions, Codes::HTTP_CREATED);
+            return $event;
 
         } catch (InvalidFormException $exception) {
 
@@ -214,7 +243,7 @@ class EventController extends FOSRestController
      * @ApiDoc(
      *      resource = true,
      *      parameters={
-     *          {"name"="eventId", "dataType"="integer", "required"=true, "description"="Id of the event"},
+     *          {"name"="userId", "dataType"="integer", "required"=true, "description"="Id of the user who want to update this event"},
      *          {"name"="users", "dataType"="string", "required"=true, "description"="array of all users invited : 'users' : { '1' : 1, '2' :  2} "},
      *      },
      *      statusCodes = {
@@ -230,33 +259,31 @@ class EventController extends FOSRestController
     public function postEventUserAction($id, Request $request)
     {
 
+        $userId = $request->request->all()['userId']; 
+        
         /* Log */
-        // $apiLogger = $this->container->get('api_logger');
-        // $apiLogger->info(" ===== New Event from API begin ===== ");
-        // $apiLogger->info("Event ", array("event" => $request->request->all()));
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Add friends to event from API begin ===== ");
+        $apiLogger->info("Infos : ", array("eventId" => $id,"params" => $request->request->all()));
 
+        $event = $this->getEventOr404($id);
+        $user = $this->getUserOr404($userId);
 
-        return $request->request->all();
+        try {
+            // Create a new event through the event handler
+            $newEvent = $this->container->get('wizem_api.event.handler')->addFriends(
+                $request->request->all(),
+                $event,
+                $user
+            );
 
+            $apiLogger->info(" ===== Add friends to event from API ending ===== ");
+            return $newEvent;
 
-        // try {
-        //     // Create a new event through the event handler
-        //     $newEvent = $this->container->get('wizem_api.event.handler')->create(
-        //         $request->request->all()
-        //     );
+        } catch (InvalidFormException $exception) {
 
-        //     $routeOptions = array(
-        //         'id' => $newEvent->getId(),
-        //         '_format' => $request->get('_format')
-        //     );
-
-        //     $apiLogger->info(" ===== New Event from API ending ===== ");
-        //     return $this->routeRedirectView('api_event_get_event', $routeOptions, Codes::HTTP_CREATED);
-
-        // } catch (InvalidFormException $exception) {
-
-        //     return $exception->getForm();
-        // }
+            return $exception->getForm();
+        }
     }
 
     /**
@@ -280,7 +307,7 @@ class EventController extends FOSRestController
      */
     public function deleteEventAction($id)
     {
-        $event = $this->getOr404($id);
+        $event = $this->getEventOr404($id);
         
         $response = $this->container->get('wizem_api.event.handler')->delete($event->getId());
 

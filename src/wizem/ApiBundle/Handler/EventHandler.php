@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use wizem\ApiBundle\Exception\InvalidFormException;
 use wizem\ApiBundle\Form\EventType;
@@ -163,10 +164,9 @@ class EventHandler
      *
      * @return Event
      */
-    public function update(array $parameters, $id)
+    public function update(array $parameters, $event, $user)
     {
-        $event = $this->get($id);
-        //$event = new $this->entityClass();
+        $this->checkIfUserHostEvent($event, $user);
 
         // Process form does all the magic, validate and hydrate the event object.
         return $this->updateEventProcessForm($event, $parameters, 'PUT');
@@ -187,6 +187,7 @@ class EventHandler
     {
         $form = $this->formFactory->create(new EventType($this->container, $method), $event, array('method' => $method));
 
+        unset($parameters['userId']);
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
 
@@ -198,6 +199,36 @@ class EventHandler
         }
 
         throw new InvalidFormException('Invalid submitted data', $form);
+    }
+
+    /**
+     * Add friends for an event.
+     *
+     * @param array $parameters
+     *
+     * @return Event
+     */
+    public function addFriends(array $parameters, $event, $user)
+    {
+        $this->checkIfUserHostEvent($event, $user);
+
+        foreach ($parameters['users'] as $friendId) {
+
+            $friend = $this->container->get('wizem_api.user.handler')->get($friendId);
+
+            // TODO : vérif si le friend est bien ami avec user et s'il n'est pas déjà dans l'évent  
+
+            // Création de la table User_Event qui fait la liaison entre l'user et l'évenement 
+            $userEvent = new UserEvent(); 
+            $userEvent->setEvent($event);
+            $userEvent->setUser($friend);
+            $userEvent->setHost(0);
+
+            $this->om->persist($userEvent);
+            $this->om->flush();
+        }
+        
+        return $event;
     }
 
     /**
@@ -215,6 +246,26 @@ class EventHandler
         $this->om->flush();
 
         return $id;
+    }
+
+    /**
+     * Processes the form.
+     *
+     * @param Event         $event
+     * @param array         $parameters
+     * @param String        $method
+     *
+     * @return Event
+     *
+     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     */
+    private function checkIfUserHostEvent($event, $user)
+    {
+        $userEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findOneBy(array("event" => $event->getId(), "user" => $user->getId()));
+
+        if(!$userEvent){
+            throw new AccessDeniedException('User is not allowed to access this event');
+        }
     }
 
 
