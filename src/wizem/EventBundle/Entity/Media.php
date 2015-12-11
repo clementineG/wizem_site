@@ -23,6 +23,13 @@ class Media
     private $id;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="public", type="boolean", nullable=true, options={"default" = false})
+     */
+    private $public;
+
+    /**
      * @var text
      *
      * @ORM\Column(name="note", type="text", nullable=true)
@@ -328,5 +335,29 @@ class Media
     public function getNote()
     {
         return $this->note;
+    }
+
+    /**
+     * Set public
+     *
+     * @param boolean $public
+     *
+     * @return Media
+     */
+    public function setPublic($public)
+    {
+        $this->public = $public;
+
+        return $this;
+    }
+
+    /**
+     * Get public
+     *
+     * @return boolean
+     */
+    public function getPublic()
+    {
+        return $this->public;
     }
 }
