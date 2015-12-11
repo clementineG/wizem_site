@@ -62,6 +62,16 @@ class EventHandler
     }
 
     /**
+     * Get all types of  event.
+     *
+     * @return EventType
+     */
+    public function getAllTypes()
+    {
+        return $this->om->getRepository("wizemEventBundle:Typeevent")->findAll();
+    }
+
+    /**
      * Create a new Event.
      *
      * @param array $parameters

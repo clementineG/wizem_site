@@ -40,10 +40,11 @@ class EventController extends FOSRestController
      */
     public function getEventsTypesAction()
     {
-        //$event = $this->getOr404($id);
+        if (!($eventTypes = $this->container->get('wizem_api.event.handler')->getAllTypes())) {
+            throw new NotFoundHttpException("No TypeEvent found.");
+        }
 
-        return "All types";
-        //return $event;
+        return $eventTypes;
     }
 
     /**
