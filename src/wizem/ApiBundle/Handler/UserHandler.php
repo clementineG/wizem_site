@@ -77,16 +77,25 @@ class UserHandler
         $um = $this->container->get('fos_user.user_manager');
 
         // Check if user already exists in database
-        $username = $parameters['email'];
+        $username = $parameters['username'];
+        $email = $parameters['email'];
+
+        // Check if username already exists
         $userCheck = $um->findUserByUsername($username);
-        if(!$userCheck){
-            $userCheck = $um->findUserByEmail($username);
-        }
         if($userCheck){
             unset($parameters['password']);
-            $this->logger->error("User already exists : ", array($parameters));
+            $this->logger->error("User username already exists : ", array($parameters));
             $this->logger->info(" ===== New User from API ending ===== ");
-            throw new InvalidUserException('User already exists', $user);
+            throw new InvalidUserException('User username already exists', $user);
+        }
+
+        // Check if email already exists
+        $userCheck = $um->findUserByEmail($email);
+        if($userCheck){
+            unset($parameters['password']);
+            $this->logger->error("User email already exists : ", array($parameters));
+            $this->logger->info(" ===== New User from API ending ===== ");
+            throw new InvalidUserException('User email already exists', $user);
         }
 
         return $this->createUserProcessForm($user, $parameters, 'POST');
@@ -115,7 +124,7 @@ class UserHandler
             $user = $userManager->createUser();
 
             $user->setEmail($data->getEmail());
-            $user->setUsername($data->getEmail());
+            $user->setUsername($data->getUsername());
             $user->setPlainPassword($data->getPassword());
             $user->setEnabled(true);
 

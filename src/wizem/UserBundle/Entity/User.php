@@ -54,7 +54,7 @@ class User extends BaseUser
     /**
      * @var boolean
      *
-     * @ORM\Column(name="notifacation", type="boolean", nullable=false, options={"default" = false})
+     * @ORM\Column(name="notification", type="boolean", nullable=true, options={"default" = false})
      */
     private $notification;
 
@@ -133,6 +133,7 @@ class User extends BaseUser
         $this->media = new \Doctrine\Common\Collections\ArrayCollection();
         $this->friendshipUser = new \Doctrine\Common\Collections\ArrayCollection();
         $this->friendshipFriend = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->notification = 0;
     }
     
     /**
