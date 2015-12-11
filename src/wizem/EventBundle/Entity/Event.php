@@ -287,40 +287,6 @@ class Event
     }
 
     /**
-     * Add userEvent
-     *
-     * @param \wizem\EventBundle\Entity\UserEvent $userEvent
-     *
-     * @return Event
-     */
-    public function addUserEvent(\wizem\EventBundle\Entity\UserEvent $userEvent)
-    {
-        $this->userEvent[] = $userEvent;
-
-        return $this;
-    }
-
-    /**
-     * Remove userEvent
-     *
-     * @param \wizem\EventBundle\Entity\UserEvent $userEvent
-     */
-    public function removeUserEvent(\wizem\EventBundle\Entity\UserEvent $userEvent)
-    {
-        $this->userEvent->removeElement($userEvent);
-    }
-
-    /**
-     * Get userEvent
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getUserEvent()
-    {
-        return $this->userEvent;
-    }
-
-    /**
      * Add media
      *
      * @param \wizem\EventBundle\Entity\Media $media
@@ -420,5 +386,39 @@ class Event
     public function getVote()
     {
         return $this->vote;
+    }
+
+    /**
+     * Add userEvent
+     *
+     * @param \wizem\UserBundle\Entity\UserEvent $userEvent
+     *
+     * @return Event
+     */
+    public function addUserEvent(\wizem\UserBundle\Entity\UserEvent $userEvent)
+    {
+        $this->userEvent[] = $userEvent;
+
+        return $this;
+    }
+
+    /**
+     * Remove userEvent
+     *
+     * @param \wizem\UserBundle\Entity\UserEvent $userEvent
+     */
+    public function removeUserEvent(\wizem\UserBundle\Entity\UserEvent $userEvent)
+    {
+        $this->userEvent->removeElement($userEvent);
+    }
+
+    /**
+     * Get userEvent
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUserEvent()
+    {
+        return $this->userEvent;
     }
 }

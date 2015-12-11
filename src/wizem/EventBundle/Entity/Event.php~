@@ -23,9 +23,9 @@ class Event
     private $id;
 
     /**
-     * @var string
+     * @var text
      *
-     * @ORM\Column(name="description", type="text", length=255, nullable=true)
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
 
@@ -85,6 +85,19 @@ class Event
      */
     private $vote;
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->date = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->place = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->userEvent = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->media = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->shoppingItem = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->vote = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
     /**
      * Set id
      *
@@ -274,40 +287,6 @@ class Event
     }
 
     /**
-     * Add userEvent
-     *
-     * @param \wizem\EventBundle\Entity\UserEvent $userEvent
-     *
-     * @return Event
-     */
-    public function addUserEvent(\wizem\EventBundle\Entity\UserEvent $userEvent)
-    {
-        $this->userEvent[] = $userEvent;
-
-        return $this;
-    }
-
-    /**
-     * Remove userEvent
-     *
-     * @param \wizem\EventBundle\Entity\UserEvent $userEvent
-     */
-    public function removeUserEvent(\wizem\EventBundle\Entity\UserEvent $userEvent)
-    {
-        $this->userEvent->removeElement($userEvent);
-    }
-
-    /**
-     * Get userEvent
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getUserEvent()
-    {
-        return $this->userEvent;
-    }
-
-    /**
      * Add media
      *
      * @param \wizem\EventBundle\Entity\Media $media
@@ -373,5 +352,39 @@ class Event
     public function getShoppingItem()
     {
         return $this->shoppingItem;
+    }
+
+    /**
+     * Add vote
+     *
+     * @param \wizem\EventBundle\Entity\Vote $vote
+     *
+     * @return Event
+     */
+    public function addVote(\wizem\EventBundle\Entity\Vote $vote)
+    {
+        $this->vote[] = $vote;
+
+        return $this;
+    }
+
+    /**
+     * Remove vote
+     *
+     * @param \wizem\EventBundle\Entity\Vote $vote
+     */
+    public function removeVote(\wizem\EventBundle\Entity\Vote $vote)
+    {
+        $this->vote->removeElement($vote);
+    }
+
+    /**
+     * Get vote
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVote()
+    {
+        return $this->vote;
     }
 }

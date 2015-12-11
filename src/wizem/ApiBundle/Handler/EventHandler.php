@@ -72,6 +72,24 @@ class EventHandler
     }
 
     /**
+     * Get all events for a user.
+     *
+     * @return EventType
+     */
+    public function getAllUserEvents($id)
+    {
+        $userEvents = $this->om->getRepository("wizemUserBundle:UserEvent")->findByUser($id);
+        
+        $tabEvents = array();
+
+        foreach ($userEvents as $userEvent) {
+            $tabEvents[] = $userEvent->getEvent();
+        }
+
+        return $tabEvents;
+    }
+
+    /**
      * Create a new Event.
      *
      * @param array $parameters

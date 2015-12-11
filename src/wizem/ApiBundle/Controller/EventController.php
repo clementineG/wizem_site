@@ -111,11 +111,8 @@ class EventController extends FOSRestController
      */
     public function getUserEventsAction($id)
     {
-        //return "e";
-        return $id;
-
-        if (!($events = $this->container->get('wizem_api.event.handler')->getAll())) {
-            throw new NotFoundHttpException(sprintf('No event'));
+        if (!($events = $this->container->get('wizem_api.event.handler')->getAllUserEvents($id))) {
+            throw new NotFoundHttpException(sprintf('No event for the user \'%s\'.', $id));
         }
 
         return $events;
