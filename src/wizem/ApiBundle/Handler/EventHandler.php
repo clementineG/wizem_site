@@ -212,11 +212,14 @@ class EventHandler
     {
         $this->checkIfUserHostEvent($event, $user);
 
+        $this->logger->info("Begin adding friends to event #{$event->getId()}, hosted by user #{$user->getId()}");
+
         foreach ($parameters['users'] as $friendId) {
 
             $friend = $this->container->get('wizem_api.user.handler')->get($friendId);
 
             // TODO : vérif si le friend est bien ami avec user et s'il n'est pas déjà dans l'évent  
+            // Si le friend passe ici c'est qu'il n'est pas dans l'event et qu'il est bien amis avec l'host
 
             // Création de la table User_Event qui fait la liaison entre l'user et l'évenement 
             $userEvent = new UserEvent(); 
@@ -226,6 +229,7 @@ class EventHandler
 
             $this->om->persist($userEvent);
             $this->om->flush();
+            $this->logger->info("Adding friend #{$userEvent->getUser()->getId()} in UserEvent #{$userEvent->getId()} OK");
         }
         
         return $event;
@@ -249,7 +253,7 @@ class EventHandler
     }
 
     /**
-     * Processes the form.
+     * Check if user is the host of the event.
      *
      * @param Event         $event
      * @param array         $parameters
@@ -259,7 +263,7 @@ class EventHandler
      *
      * @throws wizem\ApiBundle\Exception\InvalidFormException
      */
-    private function checkIfUserHostEvent($event, $user)
+    public function checkIfUserHostEvent($event, $user)
     {
         $userEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findOneBy(array("event" => $event->getId(), "user" => $user->getId()));
 

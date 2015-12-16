@@ -12,6 +12,8 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\SecurityContext;
 
 use wizem\UserBundle\Entity\User;
+use wizem\UserBundle\Entity\Friendship;
+use wizem\EventBundle\Entity\Event;
 
 use wizem\ApiBundle\Form\UserType;
 use wizem\ApiBundle\Exception\InvalidFormException;
@@ -57,12 +59,33 @@ class UserHandler
     }
 
     /**
-     * Get an User.
+     * Get all User.
      *
      */
     public function getAll()
     {
         return $this->repository->findAll();
+    }
+
+    /**
+     * Get all friends of a User.
+     *
+     */
+    public function getAllFriends($user)
+    {
+        $friendship = $this->om->getRepository("wizemUserBundle:Friendship")->getFriends($user->getId());
+
+        $friends = array();
+        foreach ($friendship as $friend) {
+            if($friend ->getFriend()->getId() != $user->getId())
+                $friends[] = $friend ->getFriend()->getId();
+            if($friend ->getUser()->getId() != $user->getId())
+                $friends[] = $friend ->getUser()->getId();
+        }
+
+        // Suppression des doublons
+        $friends = (array_unique($friends));
+        return ($friends);
     }
 
     /**
@@ -140,6 +163,31 @@ class UserHandler
     }
 
     /**
+     * Check all users for an event.
+     *
+     * @param User      $user
+     * @param Event     $event
+     *
+     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     */
+    public function getAllUsersEvent(User $user, Event $event)
+    {
+        $this->container->get('wizem_api.event.handler')->checkIfUserHostEvent($event, $user);
+        
+        $friends = $this->getAllFriends($user);
+
+        $friendsToInvite = array();
+        foreach($friends as $friend) {
+            $userEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findOneBy(array("event" => $event->getId(), "user" => $friend));
+            if(!$userEvent){
+                $friendsToInvite[] = $friend;
+            }
+        }
+        
+        return $friendsToInvite;
+    }
+
+    /**
      * Delete an User.
      *
      * @param mixed $id
@@ -154,6 +202,48 @@ class UserHandler
         $this->om->flush();
 
         return $id;
+    }
+
+    /**
+     * Add a friend for this user
+     *
+     * @param mixed $id
+     *
+     * @return mixed $id
+     */
+    public function addFriend($user, $request)
+    {
+        $username = $request['username'];
+
+        if($username != ""){
+            
+            $um = $this->container->get('fos_user.user_manager');
+            $friend = $um->findUserByUsername($username);
+            if(!$friend){
+                throw new NotFoundHttpException("User not found");
+            }
+            
+            // Test if user and friend are already friends
+            $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $user->getId(), "friend" => $friend->getId()));
+            if($testFriendship){
+                throw new AccessDeniedException('You are already friends');
+            }
+            $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId()));
+            if($testFriendship){
+                throw new AccessDeniedException('You are already friends');
+            }
+
+            $friendship = new Friendship(); 
+            $friendship->setUser($user);
+            $friendship->setFriend($friend);
+
+            $this->om->persist($friendship);
+            $this->om->flush();
+                
+            return $friend;
+        }
+        
+        throw new InvalidFormException('Invalid username');
     }
 
     /**

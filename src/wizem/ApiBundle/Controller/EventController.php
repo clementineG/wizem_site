@@ -271,14 +271,14 @@ class EventController extends FOSRestController
 
         try {
             // Create a new event through the event handler
-            $newEvent = $this->container->get('wizem_api.event.handler')->addFriends(
+            $event = $this->container->get('wizem_api.event.handler')->addFriends(
                 $request->request->all(),
                 $event,
                 $user
             );
 
             $apiLogger->info(" ===== Add friends to event from API ending ===== ");
-            return $newEvent;
+            return $event;
 
         } catch (InvalidFormException $exception) {
 

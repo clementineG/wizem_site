@@ -42,7 +42,7 @@ class UserController extends FOSRestController
      */
     public function getUserAction($id)
     {
-        $user = $this->getOr404($id);
+        $user = $this->getUserOr404($id);
 
         return $user;
     }
@@ -56,13 +56,34 @@ class UserController extends FOSRestController
      *
      * @throws NotFoundHttpException
      */
-    protected function getOr404($id)
+    protected function getUserOr404($id)
     {
         if (!($user = $this->container->get('wizem_api.user.handler')->get($id))) {
             throw new NotFoundHttpException(sprintf('The user \'%s\' was not found.',$id));
         }
 
         return $user;
+    }
+
+    /**
+     * Fetch an Event or throw an 404 Exception.
+     *
+     * @param mixed $id
+     *
+     * @return User
+     *
+     * @throws NotFoundHttpException
+     */
+    protected function getEventOr404($eventId)
+    {
+        $id = $eventId;
+        if (!($event = $this->container->get('wizem_api.event.handler')->get($id))) {
+            $apiLogger = $this->container->get('api_logger');
+            $apiLogger->info("The event #{$id} was not found");
+            throw new NotFoundHttpException(sprintf('The event \'%s\' was not found.',$id));
+        }
+
+        return $event;
     }
 
     /**
@@ -256,7 +277,7 @@ class UserController extends FOSRestController
      */
     public function deleteUserAction($id)
     {
-        $user = $this->getOr404($id);
+        $user = $this->getUserOr404($id);
         
         $response = $this->container->get('wizem_api.user.handler')->delete($user->getId());
 
@@ -280,11 +301,40 @@ class UserController extends FOSRestController
      */
     public function getUsersFriendsAction($id)
     {
-        // if (!($users = $this->container->get('wizem_api.user.handler')->getAll())) {
-        //     throw new NotFoundHttpException(sprintf('No user'));
-        // }
+        $user = $this->getUserOr404($id);
 
-        return $id;
+        if (!($users = $this->container->get('wizem_api.user.handler')->getAllFriends($user))) {
+            throw new NotFoundHttpException(sprintf('No friend for this user'));
+        }
+
+        return $users;
+    }
+
+    /**
+     * Get all friends for an user who can be invited for an event
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when no User"
+     *   }
+     * )
+     *
+     * @return array
+     *
+     * @throws NotFoundHttpException when no user
+     */
+    public function getUsersEventFriendsAction($userId, $eventId)
+    {
+        $user = $this->getUserOr404($userId);
+        $event = $this->getEventOr404($eventId);
+
+        if (!($users = $this->container->get('wizem_api.user.handler')->getAllUsersEvent($user, $event) )) {
+            throw new NotFoundHttpException(sprintf('No user for this event'));
+        }
+
+        return $users;
     }
 
     /**
@@ -318,30 +368,27 @@ class UserController extends FOSRestController
         // $apiLogger->info(" ===== New User from API begin ===== ");
         // $apiLogger->info("User ", array("user" => $email));
 
-        return $request->request->all();
+        $user = $this->getUserOr404($id);
 
-        // try {
-        //     // Create a new user through the user handler
-        //     $newUser = $this->container->get('wizem_api.user.handler')->create(
-        //         $request->request->all()
-        //     );
+        try {
+            $friend = $this->container->get('wizem_api.user.handler')->addFriend(
+                $user,
+                $request->request->all()
+            );
 
-        //     $routeOptions = array(
-        //         'id' => $newUser->getId(),
-        //         '_format' => $request->get('_format')
-        //     );
 
-        //     $apiLogger->info(" ===== New User from API ending ===== ");
-        //     return $this->routeRedirectView('api_user_get_user', $routeOptions, Codes::HTTP_CREATED);
+            return $friend;
+            //$apiLogger->info(" ===== New User from API ending ===== ");
+            //return $this->routeRedirectView('api_user_get_user', $routeOptions, Codes::HTTP_CREATED);
 
-        // } catch (InvalidFormException $exception) {
+        } catch (InvalidFormException $exception) {
 
-        //     return $exception->getForm();
+            return $exception->getForm();
 
-        // } catch (Exception $exception) {
+        } catch (Exception $exception) {
             
-        //     return $exception->getUser();
-        // }
+            return $exception->getUser();
+        }
     }
 
     /**
@@ -364,7 +411,7 @@ class UserController extends FOSRestController
      */
     public function deleteUsersFriendsAction($id,$friendId)
     {
-        // $user = $this->getOr404($id);
+        // $user = $this->getUserOr404($id);
         
         // $response = $this->container->get('wizem_api.user.handler')->delete($user->getId());
 
