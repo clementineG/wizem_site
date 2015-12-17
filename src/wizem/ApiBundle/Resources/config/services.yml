@@ -18,4 +18,3 @@ services:
             service_container: "@service_container"
             logger: "@api_logger"
             encoderFactory: "@security.encoder_factory"
-            securityContext: "@security.context"

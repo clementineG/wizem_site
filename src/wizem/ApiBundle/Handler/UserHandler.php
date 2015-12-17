@@ -9,7 +9,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\SecurityContext;
 
 use wizem\UserBundle\Entity\User;
 use wizem\UserBundle\Entity\Friendship;
@@ -28,15 +27,13 @@ class UserHandler
     private $container;
     private $logger;
     private $encoderFactory;
-    private $securityContext;
 
     public function __construct(
         ObjectManager $om, $entityClass, 
         FormFactoryInterface $formFactory, 
         ContainerInterface $container, 
         $logger, 
-        EncoderFactoryInterface $encoderFactory,
-        SecurityContext $securityContext)
+        EncoderFactoryInterface $encoderFactory)
     {
         $this->om = $om;
         $this->entityClass = $entityClass;
@@ -45,7 +42,6 @@ class UserHandler
         $this->container = $container;
         $this->logger = $logger;
         $this->encoderFactory = $encoderFactory;
-        $this->securityContext = $securityContext;
     }
 
     /**
@@ -215,7 +211,7 @@ class UserHandler
     {
         $username = $request['username'];
 
-        $this->logger->error("User trying to add '{$username}'");
+        $this->logger->info("User trying to add '{$username}'");
 
         if($username != ""){
             
@@ -223,7 +219,7 @@ class UserHandler
             $friend = $um->findUserByUsername($username);
             if(!$friend){
                 $this->logger->error("Friend not found");
-                throw new NotFoundHttpException("User not found");
+                throw new NotFoundHttpException("Friend not found");
             }
             
             // Test if user and friend are already friends
@@ -245,7 +241,7 @@ class UserHandler
             $this->om->persist($friendship);
             $this->om->flush();
                 
-            $this->logger->error("Friend added");
+            $this->logger->info("Friend added");
 
             return $friend;
         }
@@ -289,7 +285,7 @@ class UserHandler
      */
     public function connect(array $parameters)
     {
-        $username = $parameters['email'];
+        $username = $parameters['username'];
         $password = $parameters['password'];
 
         $um = $this->container->get('fos_user.user_manager');
@@ -327,13 +323,13 @@ class UserHandler
     /**
     *   Log the user 
     */
-    protected function loginUser(User $user)
-    {
-        $security = $this->securityContext;
-        $providerKey = $this->container->getParameter('fos_user.firewall_name');
-        $roles = $user->getRoles();
-        $token = new UsernamePasswordToken($user, null, $providerKey, $roles);
-        $security->setToken($token);
-    }
+    // protected function loginUser(User $user)
+    // {
+    //     $security = $this->securityContext;
+    //     $providerKey = $this->container->getParameter('fos_user.firewall_name');
+    //     $roles = $user->getRoles();
+    //     $token = new UsernamePasswordToken($user, null, $providerKey, $roles);
+    //     $security->setToken($token);
+    // }
 
 }

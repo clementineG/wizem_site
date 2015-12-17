@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
@@ -118,6 +119,10 @@ class UserController extends FOSRestController
      *
      * @ApiDoc(
      *   resource = true,
+     *   parameters={
+     *      {"name"="username", "dataType"="integer", "required"=true, "description"="username of the user"},
+     *      {"name"="password", "dataType"="string", "required"=true, "description"="password of the user"},
+     *   },
      *   statusCodes = {
      *     200 = "Returned when successful",
      *     400 = "Returned when the form has errors"
@@ -205,7 +210,7 @@ class UserController extends FOSRestController
             );
 
             $apiLogger->info(" ===== New User from API ending ===== ");
-            return $this->routeRedirectView('api_user_get_user', $routeOptions, Codes::HTTP_CREATED);
+            return $user;
 
         } catch (InvalidFormException $exception) {
 
@@ -357,13 +362,14 @@ class UserController extends FOSRestController
      *   }
      * )
      *
+     * @param int $id id of the user
      * @param Request $request the request object
      *
-     * @return FormTypeInterface|View
+     * @return $friend
      *
      * @throws InvalidFormException when form not valid
-     * @throws InvalidUserException when User not exist
      * @throws NotFoundHttpException when User or friend not exist
+     * @throws AccessDeniedException when access denied
      *
      */
     public function postUsersFriendsAction($id, Request $request)
@@ -374,7 +380,6 @@ class UserController extends FOSRestController
 
         $user = $this->getUserOr404($id);
         $apiLogger->info("User #{$user->getId()}");
-
         try {
             $friend = $this->container->get('wizem_api.user.handler')->addFriend(
                 $user,
@@ -384,21 +389,24 @@ class UserController extends FOSRestController
             $apiLogger->info(" ===== Adding friend from API ending ===== ");
             return $friend;
 
-        } catch (AccessDeniedException $exception) {
-            
-            $apiLogger->info("aefeaf ");
-            return $exception;
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
-
-        } catch (NotFoundHttpException $exception) {
-            
-            $apiLogger->info("aefeaf", array("e"=>$exception));
-            $apiLogger->info(" ===== Adding friend from API ending ===== ");
-            return $exception;
+        } catch (Exception $e){
+            return $e;
         }
+        // } catch (AccessDeniedException $exception) {
+            
+        //     $apiLogger->info(" ===== Adding friend from API ending ===== ");
+        //     return $exception;//->getMessage();
+
+        // } catch (InvalidFormException $exception) {
+
+        //     $apiLogger->info(" ===== Adding friend from API ending ===== ");
+        //     return $exception;//->getMessage();
+
+        // } catch (NotFoundHttpException $exception) {
+            
+        //     $apiLogger->info(" ===== Adding friend from API ending ===== ");
+        //     return $exception;//->getMessage();
+        // }
     }
 
     /**
