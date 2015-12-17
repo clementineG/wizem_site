@@ -85,7 +85,7 @@ class UserHandler
 
         // Suppression des doublons
         $friends = (array_unique($friends));
-        return ($friends);
+        return $friends;
     }
 
     /**
@@ -215,21 +215,26 @@ class UserHandler
     {
         $username = $request['username'];
 
+        $this->logger->error("User trying to add '{$username}'");
+
         if($username != ""){
             
             $um = $this->container->get('fos_user.user_manager');
             $friend = $um->findUserByUsername($username);
             if(!$friend){
+                $this->logger->error("Friend not found");
                 throw new NotFoundHttpException("User not found");
             }
             
             // Test if user and friend are already friends
             $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $user->getId(), "friend" => $friend->getId()));
             if($testFriendship){
+                $this->logger->error("Users are already friends");
                 throw new AccessDeniedException('You are already friends');
             }
             $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId()));
             if($testFriendship){
+                $this->logger->error("Users are already friends");
                 throw new AccessDeniedException('You are already friends');
             }
 
@@ -240,10 +245,36 @@ class UserHandler
             $this->om->persist($friendship);
             $this->om->flush();
                 
+            $this->logger->error("Friend added");
+
             return $friend;
         }
         
         throw new InvalidFormException('Invalid username');
+    }
+
+    /**
+     * Delete an User.
+     *
+     * @param mixed $id
+     *
+     * @return mixed $id
+     */
+    public function deleteFriend($user, $friend)
+    {
+        // Test if user and friend are friends
+        $friendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $user->getId(), "friend" => $friend->getId()));
+        if(!$friendship){
+            $friendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId()));
+            if(!$friendship){
+                throw new AccessDeniedException('User has not friendship relation with friend');
+            }
+        }
+
+        $this->om->remove($friendship);
+        $this->om->flush();
+
+        return $friend->getId();
     }
 
     /**
@@ -274,7 +305,8 @@ class UserHandler
             throw new AccessDeniedException("Wrong password");
         }
 
-        $this->loginUser($user);
+        // Pas besoin de loger l'user, c'est géré dans le local storage du mobile.
+        //$this->loginUser($user);
 
         return $user;
     }

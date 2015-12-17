@@ -5,6 +5,7 @@ namespace wizem\ApiBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
@@ -304,7 +305,7 @@ class UserController extends FOSRestController
         $user = $this->getUserOr404($id);
 
         if (!($users = $this->container->get('wizem_api.user.handler')->getAllFriends($user))) {
-            throw new NotFoundHttpException(sprintf('No friend for this user'));
+            throw new NotFoundHttpException('No friend for this user');
         }
 
         return $users;
@@ -321,6 +322,9 @@ class UserController extends FOSRestController
      *   }
      * )
      *
+     * @param int $userId id of the user
+     * @param int $eventId id of the event
+     *
      * @return array
      *
      * @throws NotFoundHttpException when no user
@@ -331,7 +335,7 @@ class UserController extends FOSRestController
         $event = $this->getEventOr404($eventId);
 
         if (!($users = $this->container->get('wizem_api.user.handler')->getAllUsersEvent($user, $event) )) {
-            throw new NotFoundHttpException(sprintf('No user for this event'));
+            throw new NotFoundHttpException('No user for this event');
         }
 
         return $users;
@@ -359,16 +363,17 @@ class UserController extends FOSRestController
      *
      * @throws InvalidFormException when form not valid
      * @throws InvalidUserException when User not exist
+     * @throws NotFoundHttpException when User or friend not exist
      *
      */
     public function postUsersFriendsAction($id, Request $request)
     {
         /* Log */
-        // $apiLogger = $this->container->get('api_logger');
-        // $apiLogger->info(" ===== New User from API begin ===== ");
-        // $apiLogger->info("User ", array("user" => $email));
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Adding friend from API begin ===== ");
 
         $user = $this->getUserOr404($id);
+        $apiLogger->info("User #{$user->getId()}");
 
         try {
             $friend = $this->container->get('wizem_api.user.handler')->addFriend(
@@ -376,18 +381,23 @@ class UserController extends FOSRestController
                 $request->request->all()
             );
 
-
+            $apiLogger->info(" ===== Adding friend from API ending ===== ");
             return $friend;
-            //$apiLogger->info(" ===== New User from API ending ===== ");
-            //return $this->routeRedirectView('api_user_get_user', $routeOptions, Codes::HTTP_CREATED);
+
+        } catch (AccessDeniedException $exception) {
+            
+            $apiLogger->info("aefeaf ");
+            return $exception;
 
         } catch (InvalidFormException $exception) {
 
             return $exception->getForm();
 
-        } catch (Exception $exception) {
+        } catch (NotFoundHttpException $exception) {
             
-            return $exception->getUser();
+            $apiLogger->info("aefeaf", array("e"=>$exception));
+            $apiLogger->info(" ===== Adding friend from API ending ===== ");
+            return $exception;
         }
     }
 
@@ -403,18 +413,20 @@ class UserController extends FOSRestController
      *   }
      * )
      *
-     * @param int     $id      the User id
+     * @param int     $id       the User id
+     * @param int     $friendId id of the friend to delete
      *
      * @return array
      *
-     * @throws NotFoundHttpException when User not exist
+     * @throws NotFoundHttpException when User or friend not exist
      */
-    public function deleteUsersFriendsAction($id,$friendId)
+    public function deleteUsersFriendsAction($id, $friendId)
     {
-        // $user = $this->getUserOr404($id);
+        $user = $this->getUserOr404($id);
+        $friend = $this->getUserOr404($friendId);
         
-        // $response = $this->container->get('wizem_api.user.handler')->delete($user->getId());
+        $response = $this->container->get('wizem_api.user.handler')->deleteFriend($user, $friend);
 
-        return $friendId;
+        return $response;
     }
 }

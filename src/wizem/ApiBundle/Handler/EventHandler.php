@@ -77,14 +77,14 @@ class EventHandler
      *
      * @return EventType
      */
-    public function getAllUserEvents($id)
+    public function getAllUserEvents($user)
     {
-        $userEvents = $this->om->getRepository("wizemUserBundle:UserEvent")->findByUser($id);
+        $userEvents = $this->om->getRepository("wizemUserBundle:UserEvent")->findByUser($user->getId());
         
         $tabEvents = array();
 
         foreach ($userEvents as $userEvent) {
-            $tabEvents[] = $userEvent->getEvent();
+            $tabEvents[] = $userEvent->getEvent()->getId();
         }
 
         return $tabEvents;
@@ -121,8 +121,8 @@ class EventHandler
     {
         $form = $this->formFactory->create(new EventType(), $event, array('method' => $method));
 
-        $userId = $parameters['user'];
-        unset($parameters['user']);
+        $userId = $parameters['userId'];
+        unset($parameters['userId']);
 
         $form->submit($parameters, 'PATCH' !== $method);
         $this->logger->info("Processing form");

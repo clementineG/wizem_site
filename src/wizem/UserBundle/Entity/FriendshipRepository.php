@@ -12,7 +12,7 @@ class FriendshipRepository extends \Doctrine\ORM\EntityRepository
 {
 
     /*
-     * 
+     * 	Recherche de tous les amis d'un user
      */
     public function getFriends($userId)
     {

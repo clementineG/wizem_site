@@ -119,14 +119,13 @@ class EventController extends FOSRestController
      *
      * @ApiDoc(
      *   resource = true,
-     *   parameters={
-     *      {"name"="id", "dataType"="integer", "required"=true, "description"="Id of the user to get his events"},
-     *   },
      *   statusCodes = {
      *     200 = "Returned when successful",
      *     404 = "Returned when no event"
      *   }
      * )
+     * 
+     * @param int $id id of the event
      *
      * @return array
      *
@@ -134,7 +133,9 @@ class EventController extends FOSRestController
      */
     public function getUserEventsAction($id)
     {
-        if (!($events = $this->container->get('wizem_api.event.handler')->getAllUserEvents($id))) {
+        $user = $this->getUserOr404($id);
+
+        if (!($events = $this->container->get('wizem_api.event.handler')->getAllUserEvents($user))) {
             throw new NotFoundHttpException(sprintf('No event for the user \'%s\'.', $id));
         }
 
