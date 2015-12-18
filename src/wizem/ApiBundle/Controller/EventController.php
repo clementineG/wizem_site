@@ -218,19 +218,13 @@ class EventController extends FOSRestController
         $user = $this->getUserOr404($userId);
 
         try {
-            // Create a new item through the item handler
             $newEvent = $this->container->get('wizem_api.event.handler')->update(
                 $request->request->all(),
                 $event,
                 $user
             );
 
-            $routeOptions = array(
-                'id' => $newEvent->getId(),
-                '_format' => $request->get('_format')
-            );
-
-            return $event;
+            return $newEvent;
 
         } catch (InvalidFormException $exception) {
 

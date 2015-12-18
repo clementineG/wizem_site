@@ -12,6 +12,8 @@ use wizem\ApiBundle\Exception\InvalidFormException;
 use wizem\ApiBundle\Form\EventType;
 
 use wizem\EventBundle\Entity\Event;
+use wizem\EventBundle\Entity\Date;
+use wizem\EventBundle\Entity\Place;
 
 use wizem\UserBundle\Entity\UserEvent;
 
@@ -84,7 +86,16 @@ class EventHandler
         $tabEvents = array();
 
         foreach ($userEvents as $userEvent) {
-            $tabEvents[] = $userEvent->getEvent()->getId();
+
+            $date  = $this->om->getRepository("wizemEventBundle:Date")->findOneBy(array("event" => $userEvent->getEvent()->getId(), "final" => true));
+            $place = $this->om->getRepository("wizemEventBundle:Place")->findOneBy(array("event" => $userEvent->getEvent()->getId(), "final" => true));
+
+            $tabEvents[] = array(
+                "idEvent"    => $userEvent->getEvent()->getId(),
+                "typeEvent"  => $userEvent->getEvent()->getTypeEvent()->getName(),
+                "dateEvent"  => $date ? $date->getDate() : null,
+                "placeEvent" => $place ? $place->getAdress() : null,
+            );
         }
 
         return $tabEvents;
@@ -188,10 +199,61 @@ class EventHandler
         $form = $this->formFactory->create(new EventType($this->container, $method), $event, array('method' => $method));
 
         unset($parameters['userId']);
+
+        // Gestion des dates si il y en a
+        $tabDate = array();
+        if(isset($parameters['date'])){
+            foreach ($parameters['date'] as $date) {
+                $tabDate[] = $date;
+            }
+            unset($parameters['date']);
+        }
+
+        // Gestion des lieux si il y en a
+        $tabPlace = array();
+        if(isset($parameters['place'])){
+            foreach ($parameters['place'] as $place) {
+                $tabPlace[] = $place;
+            }
+            unset($parameters['place']);
+        }
+
         $form->submit($parameters, 'PATCH' !== $method);
+
         if ($form->isValid()) {
 
             $event = $form->getData();
+
+
+            //////////// supprimer les anciennes dates ? places ?
+
+
+            foreach ($tabDate as $date) {
+                $newDate = new Date();
+                $dateObject = \Datetime::createFromFormat('Y-m-d H:i:s', $date);    
+                $newDate->setDate($dateObject);
+                $newDate->setEvent($event);
+                $newDate->setFinal(0);
+                $this->om->persist($newDate);
+                $event->addDate($newDate);
+            }
+
+            foreach ($tabPlace as $place) {
+                $newPlace = new Place();
+                $newPlace->setAddress($place);
+
+                // Initialisation des coordonnées
+                $coords = $newPlace->getCoords($place);
+                $newPlace->setLat($coords['lat']);
+                $newPlace->setLng($coords['lng']);
+
+                $newPlace->setEvent($event);
+                $newPlace->setFinal(0);
+                $this->om->persist($newPlace);
+                $event->addPlace($newPlace);
+            }
+
+
             $this->om->persist($event);
             $this->om->flush();
 

@@ -312,4 +312,30 @@ class Place
     {
         return $this->final;
     }
+
+
+    public function getCoords($adress)
+    {
+        $geocoder = "http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false";
+        
+        $adresse = $adress." France";
+
+        $url_address = utf8_encode($adresse);
+        $url_address = urlencode($url_address);
+        $query = sprintf($geocoder,$url_address);
+        $results = file_get_contents($query);
+
+        $json = (json_decode($results));
+
+        if($json->{'status'} == "OK"){
+            $latitude = $json->{'results'}[0]->{'geometry'}->{'location'}->{'lat'};
+            $longitude = $json->{'results'}[0]->{'geometry'}->{'location'}->{'lng'};
+            //$ville = $json->{'results'}[0]->{'formatted_address'};
+        }else{
+            $latitude = null;
+            $longitude = null;
+        }
+
+        return array("lat" => $latitude, "lng" => $longitude);
+    }
 }
