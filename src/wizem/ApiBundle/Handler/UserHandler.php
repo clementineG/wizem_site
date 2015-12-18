@@ -168,7 +168,7 @@ class UserHandler
      */
     public function getAllUsersEvent(User $user, Event $event)
     {
-        $this->container->get('wizem_api.event.handler')->checkIfUserHostEvent($event, $user);
+        $this->container->get('wizem_api.event.handler')->checkIfUserLinkToEvent($event, $user, true);
         
         $friends = $this->getAllFriends($user);
 

@@ -121,54 +121,6 @@ class Vote
     }
 
     /**
-     * Set date
-     *
-     * @param \wizem\EventBundle\Entity\Date $date
-     *
-     * @return Vote
-     */
-    public function setDate(\wizem\EventBundle\Entity\Date $date)
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    /**
-     * Get date
-     *
-     * @return \wizem\EventBundle\Entity\Date
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-    /**
-     * Set place
-     *
-     * @param \wizem\EventBundle\Entity\Place $place
-     *
-     * @return Vote
-     */
-    public function setPlace(\wizem\EventBundle\Entity\Place $place)
-    {
-        $this->place = $place;
-
-        return $this;
-    }
-
-    /**
-     * Get place
-     *
-     * @return \wizem\EventBundle\Entity\Place
-     */
-    public function getPlace()
-    {
-        return $this->place;
-    }
-
-    /**
      * Set event
      *
      * @param \wizem\EventBundle\Entity\Event $event
@@ -238,5 +190,53 @@ class Vote
     public function getDateUpdated()
     {
         return $this->dateUpdated;
+    }
+
+    /**
+     * Set date
+     *
+     * @param \wizem\EventBundle\Entity\Date $date
+     *
+     * @return Vote
+     */
+    public function setDate(\wizem\EventBundle\Entity\Date $date = null)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \wizem\EventBundle\Entity\Date
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * Set place
+     *
+     * @param \wizem\EventBundle\Entity\Place $place
+     *
+     * @return Vote
+     */
+    public function setPlace(\wizem\EventBundle\Entity\Place $place = null)
+    {
+        $this->place = $place;
+
+        return $this;
+    }
+
+    /**
+     * Get place
+     *
+     * @return \wizem\EventBundle\Entity\Place
+     */
+    public function getPlace()
+    {
+        return $this->place;
     }
 }

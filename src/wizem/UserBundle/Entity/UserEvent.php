@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * UserEvent
  *
  * @ORM\Table(name="User_Event", indexes={@ORM\Index(name="fk_User_Event_Event1_idx", columns={"Event_id"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="wizem\UserBundle\Entity\UserEventRepository")
  */
 class UserEvent
 {

@@ -224,7 +224,7 @@ class EventController extends FOSRestController
                 $user
             );
 
-            return $newEvent;
+            return $newEvent->getId();
 
         } catch (InvalidFormException $exception) {
 
@@ -332,30 +332,37 @@ class EventController extends FOSRestController
      */
     public function postVoteAction(Request $request)
     {
+        if(!isset($request->request->all()['date']) && !isset($request->request->all()['place'])){
+            throw new InvalidFormException("At least dateId or placeId is required.");
+        }
 
-        return $request->request->all();
+        $eventId = $request->request->all()['event'];
+        $userId = $request->request->all()['user'];
+        
+        $event = $this->getEventOr404($eventId);
+        $user = $this->getUserOr404($userId);
+        
+        //return $request->request->all();
+
         /* Log */
         // $apiLogger = $this->container->get('api_logger');
         // $apiLogger->info(" ===== New Event from API begin ===== ");
         // $apiLogger->info("Event ", array("event" => $request->request->all()));
 
-        // try {
-        //     // Create a new event through the event handler
-        //     $newEvent = $this->container->get('wizem_api.event.handler')->create(
-        //         $request->request->all()
-        //     );
+        try {
+            // Create a new event through the event handler
+            $vote = $this->container->get('wizem_api.event.handler')->vote(
+                $request->request->all(),
+                $event,
+                $user
+            );
 
-        //     $routeOptions = array(
-        //         'id' => $newEvent->getId(),
-        //         '_format' => $request->get('_format')
-        //     );
+            //$apiLogger->info(" ===== New Event from API ending ===== ");
+            return $vote;
 
-        //     $apiLogger->info(" ===== New Event from API ending ===== ");
-        //     return $this->routeRedirectView('api_event_get_event', $routeOptions, Codes::HTTP_CREATED);
+        } catch (InvalidFormException $exception) {
 
-        // } catch (InvalidFormException $exception) {
-
-        //     return $exception->getForm();
-        // }
+            return $exception->getForm();
+        }
     }
 }

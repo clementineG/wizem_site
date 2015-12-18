@@ -10,10 +10,12 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use wizem\ApiBundle\Exception\InvalidFormException;
 use wizem\ApiBundle\Form\EventType;
+use wizem\ApiBundle\Form\VoteType;
 
 use wizem\EventBundle\Entity\Event;
 use wizem\EventBundle\Entity\Date;
 use wizem\EventBundle\Entity\Place;
+use wizem\EventBundle\Entity\Vote;
 
 use wizem\UserBundle\Entity\UserEvent;
 
@@ -89,12 +91,14 @@ class EventHandler
 
             $date  = $this->om->getRepository("wizemEventBundle:Date")->findOneBy(array("event" => $userEvent->getEvent()->getId(), "final" => true));
             $place = $this->om->getRepository("wizemEventBundle:Place")->findOneBy(array("event" => $userEvent->getEvent()->getId(), "final" => true));
+            $host  = $this->om->getRepository("wizemUserBundle:UserEvent")->getHost($userEvent->getEvent()->getId());
 
             $tabEvents[] = array(
                 "idEvent"    => $userEvent->getEvent()->getId(),
                 "typeEvent"  => $userEvent->getEvent()->getTypeEvent()->getName(),
                 "dateEvent"  => $date ? $date->getDate() : null,
                 "placeEvent" => $place ? $place->getAdress() : null,
+                "hostEvent" => ($host['firstname'] && $host['lastname']) ? $host['firstname']." ".$host['lastname'] : $host['username']
             );
         }
 
@@ -177,7 +181,7 @@ class EventHandler
      */
     public function update(array $parameters, $event, $user)
     {
-        $this->checkIfUserHostEvent($event, $user);
+        $this->checkIfUserLinkToEvent($event, $user, true);
 
         // Process form does all the magic, validate and hydrate the event object.
         return $this->updateEventProcessForm($event, $parameters, 'PUT');
@@ -203,8 +207,8 @@ class EventHandler
         // Gestion des dates si il y en a
         $tabDate = array();
         if(isset($parameters['date'])){
-            foreach ($parameters['date'] as $date) {
-                $tabDate[] = $date;
+            foreach ($parameters['date'] as $id => $date) {
+                $tabDate[] = array("id" => $id, "date" => $date);
             }
             unset($parameters['date']);
         }
@@ -212,8 +216,8 @@ class EventHandler
         // Gestion des lieux si il y en a
         $tabPlace = array();
         if(isset($parameters['place'])){
-            foreach ($parameters['place'] as $place) {
-                $tabPlace[] = $place;
+            foreach ($parameters['place'] as $id => $place) {
+                $tabPlace[] = array("id" => $id, "place" => $place);
             }
             unset($parameters['place']);
         }
@@ -224,35 +228,52 @@ class EventHandler
 
             $event = $form->getData();
 
-
-            //////////// supprimer les anciennes dates ? places ?
-
-
             foreach ($tabDate as $date) {
-                $newDate = new Date();
-                $dateObject = \Datetime::createFromFormat('Y-m-d H:i:s', $date);    
-                $newDate->setDate($dateObject);
-                $newDate->setEvent($event);
-                $newDate->setFinal(0);
-                $this->om->persist($newDate);
-                $event->addDate($newDate);
+                
+                $dateObject = \Datetime::createFromFormat('Y-m-d H:i:s', $date['date']);    
+                
+                if( substr($date['id'], 0, 4) == "date" ){
+                    // Create new Date
+                    $newDate = new Date();
+                    $newDate->setDate($dateObject);
+                    $newDate->setEvent($event);
+                    $final = count($tabDate) > 1 ? false : true;
+                    $newDate->setFinal($final);
+                    $this->om->persist($newDate);
+                    $event->addDate($newDate);
+                }else{
+                    // Update existing Date
+                    $existingDate = $this->om->getRepository("wizemEventBundle:Date")->find($date['id']);
+                    $existingDate->setDate($dateObject);
+                    $this->om->persist($existingDate);
+                }
             }
 
             foreach ($tabPlace as $place) {
-                $newPlace = new Place();
-                $newPlace->setAddress($place);
 
-                // Initialisation des coordonnées
-                $coords = $newPlace->getCoords($place);
-                $newPlace->setLat($coords['lat']);
-                $newPlace->setLng($coords['lng']);
+                if( substr($place['id'], 0, 5) == "place" ){
+                    // Create new Place
+                    $newPlace = new Place();
+                    $newPlace->setAddress($place['place']);
+                    $coords = $newPlace->getCoords($place['place']);
+                    $newPlace->setLat($coords['lat']);
+                    $newPlace->setLng($coords['lng']);
+                    $newPlace->setEvent($event);
 
-                $newPlace->setEvent($event);
-                $newPlace->setFinal(0);
-                $this->om->persist($newPlace);
-                $event->addPlace($newPlace);
+                    $final = count($tabPlace) > 1 ? false : true;
+                    $newPlace->setFinal($final);
+                    $this->om->persist($newPlace);
+                    $event->addPlace($newPlace);
+                }else{
+                    // Update existing Place
+                    $existingPlace = $this->om->getRepository("wizemEventBundle:Place")->find($place['id']);
+                    $coords = $existingPlace->getCoords($place['place']);
+                    $existingPlace->setAddress($place['place']);
+                    $existingPlace->setLat($coords['lat']);
+                    $existingPlace->setLng($coords['lng']);
+                    $this->om->persist($existingPlace);
+                }
             }
-
 
             $this->om->persist($event);
             $this->om->flush();
@@ -272,7 +293,7 @@ class EventHandler
      */
     public function addFriends(array $parameters, $event, $user)
     {
-        $this->checkIfUserHostEvent($event, $user);
+        $this->checkIfUserLinkToEvent($event, $user, true);
 
         $this->logger->info("Begin adding friends to event #{$event->getId()}, hosted by user #{$user->getId()}");
 
@@ -315,21 +336,80 @@ class EventHandler
     }
 
     /**
-     * Check if user is the host of the event.
+     * Create a vote
      *
-     * @param Event         $event
-     * @param array         $parameters
-     * @param String        $method
+     * @param array $parameters
+     * @param Event $event
+     * @param User $user
+     *
+     * @return 
+     */
+    public function vote(array $parameters, $event, $user)
+    {
+        $this->checkIfUserLinkToEvent($event, $user, false);
+
+        $vote = $this->om->getRepository("wizemEventBundle:Vote")->findOneBy(array("user" => $user->getId(), "event" => $event->getId()));
+
+        if(!$vote){
+            $vote = new Vote();
+        }else{
+            if(!isset($parameters['date'])){
+                $parameters['date'] = $vote->getDate() ? $vote->getDate()->getId() : null;
+            }
+            if(!isset($parameters['place'])){
+                $parameters['place'] = $vote->getPlace() ? $vote->getPlace()->getId() : null;
+            }
+        }
+
+        return $this->updateVoteProcessForm($vote, $parameters, 'POST');
+    }
+
+    /**
+     * Processes the form.
+     *
+     * @param array     $parameters
+     * @param Event     $event
+     * @param User      $user
      *
      * @return Event
      *
      * @throws wizem\ApiBundle\Exception\InvalidFormException
      */
-    public function checkIfUserHostEvent($event, $user)
+    private function updateVoteProcessForm(Vote $vote, array $parameters, $method = "PUT")
+    {
+        $form = $this->formFactory->create(new VoteType(), $vote, array('method' => $method));
+
+        $form->submit($parameters, 'PATCH' !== $method);
+
+        if ($form->isValid()) {
+
+            $vote = $form->getData();
+
+            $this->om->persist($vote);
+            $this->om->flush();
+
+            return $vote;
+        }
+
+        throw new InvalidFormException('Invalid submitted data');
+    }
+
+    /**
+     * Check if user is link to the event.
+     *
+     * @param Event         $event
+     * @param User          $user
+     * @param boolean       $host
+     *
+     * @return 
+     *
+     * @throws AccessDeniedException
+     */
+    public function checkIfUserLinkToEvent($event, $user, $host = false)
     {
         $userEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findOneBy(array("event" => $event->getId(), "user" => $user->getId()));
 
-        if(!$userEvent){
+        if(!$userEvent || ($host == true && $userEvent->getState() == false) ){
             throw new AccessDeniedException('User is not allowed to access this event');
         }
     }
