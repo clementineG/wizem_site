@@ -210,7 +210,7 @@ class UserController extends FOSRestController
             );
 
             $apiLogger->info(" ===== New User from API ending ===== ");
-            return $user;
+            return $newUser;
 
         } catch (InvalidFormException $exception) {
 
