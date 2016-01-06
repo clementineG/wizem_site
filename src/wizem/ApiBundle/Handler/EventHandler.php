@@ -97,7 +97,7 @@ class EventHandler
                 "id"    => $userEvent->getEvent()->getId(),
                 "type"  => $userEvent->getEvent()->getTypeEvent()->getName(),
                 "date"  => $date ? $date->getDate() : null,
-                "place" => $place ? $place->getAdress() : null,
+                "place" => $place ? $place->getAddress() : null,
                 "host" => ($host['firstname'] && $host['lastname']) ? $host['firstname']." ".$host['lastname'] : $host['username']
             );
         }
