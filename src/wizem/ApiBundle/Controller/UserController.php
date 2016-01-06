@@ -227,6 +227,11 @@ class UserController extends FOSRestController
      *
      * @ApiDoc(
      *      parameters={
+     *          {"name"="firstname", "dataType"="text", "required"=false, "description"="Firstname of the user"},
+     *          {"name"="lastname", "dataType"="text", "required"=false, "description"="Lastname of the user"},
+     *          {"name"="birthDate", "dataType"="text", "required"=false, "description"="Birth date of the user"},
+     *          {"name"="place", "dataType"="array", "required"=false, "description"="Place (adresse) of the user"},
+     *          {"name"="notification", "dataType"="array", "required"=false, "description"="Boolean if user allow notifications"},
      *      },
      *      statusCodes = {
      *         201 = "Returned when successful",
@@ -240,9 +245,29 @@ class UserController extends FOSRestController
      * @throws wizem\ApiBundle\Exception\InvalidFormException
      */
     public function putUserAction($id, Request $request)
-    {   
+    {
+        $user = $this->getUserOr404($id);
 
-        return $request->request->all();
+        /* Log */
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Update User from API begin ===== ");
+        $apiLogger->info("User #{$user->getId()}");
+
+        try {
+            $newUser = $this->container->get('wizem_api.user.handler')->update(
+                $request->request->all(),
+                $user
+            );
+
+            $apiLogger->info(" ===== Update User from API ending ===== ");
+
+            return $newUser->getId();
+
+        } catch (InvalidFormException $exception) {
+
+            return $exception->getForm();
+        }
+
         // try {
         //     // Create a new item through the item handler
         //     $newEvent = $this->container->get('wizem_api.event.handler')->update(

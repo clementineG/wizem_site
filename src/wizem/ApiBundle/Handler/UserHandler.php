@@ -159,6 +159,71 @@ class UserHandler
     }
 
     /**
+     * Upadte an User.
+     *
+     * @param array $parameters
+     *
+     * @return User
+     */
+    public function update(array $parameters, $user)
+    {
+
+        return $this->updateUserProcessForm($user, $parameters, 'PUT');
+    }
+
+    /**
+     * Processes the form.
+     *
+     * @param User          $user
+     * @param array         $parameters
+     * @param String        $method
+     *
+     * @return User
+     *
+     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     */
+    private function updateUserProcessForm(User $user, array $parameters, $method = "PUT")
+    {
+        if(isset($parameters['firstname'])){
+            // Updating firstname
+            $firstname = $user->getFirstname();
+            $user->setFirstname($parameters['firstname']);
+            $this->logger->info("Updating firstname '{$firstname}' to '{$parameters['firstname']}' OK");
+        }
+        if(isset($parameters['lastname'])){
+            // Updating lastname
+            $lastname = $user->getLastname();
+            $user->setLastname($parameters['lastname']);
+            $this->logger->info("Updating lastname '{$lastname}' to '{$parameters['lastname']}' OK");
+        }
+        // if(isset($parameters['place'])){
+        //     // Updating place
+            
+        //     $lastname = $user->getLastname();
+        //     $user->setLastname($parameters['lastname']);
+        //     $this->logger->info("Updating lastname '{$lastname}' to '{$parameters['lastname']}' OK");
+        // }
+
+        $this->om->persist($user);
+        $this->om->flush();
+
+        return $user;
+
+        $form = $this->formFactory->create(new EventType($this->container, $method), $event, array('method' => $method));
+
+        unset($parameters['userId']);
+
+
+        $form->submit($parameters, 'PATCH' !== $method);
+
+
+
+        return $event;
+
+        throw new InvalidFormException('Invalid submitted data', $form);
+    }
+
+    /**
      * Check all users for an event.
      *
      * @param User      $user
