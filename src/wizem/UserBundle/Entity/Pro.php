@@ -37,6 +37,14 @@ class Pro
     private $description;
 
     /**
+     * @var \User
+     *
+     * @ORM\OneToOne(targetEntity="User", mappedBy="pro")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
+     */
+    private $user;
+
+    /**
      * @var \DateTime
      *
      * @Gedmo\Timestampable(on="create")
@@ -158,5 +166,29 @@ class Pro
     public function getDateUpdated()
     {
         return $this->dateUpdated;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \wizem\UserBundle\Entity\User $user
+     *
+     * @return Pro
+     */
+    public function setUser(\wizem\UserBundle\Entity\User $user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \wizem\UserBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

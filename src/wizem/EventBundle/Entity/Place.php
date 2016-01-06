@@ -77,7 +77,7 @@ class Place
     /**
      * @var \User
      *
-     * @ORM\OneToOne(targetEntity="wizem\UserBundle\Entity\User", inversedBy="place")
+     * @ORM\OneToOne(targetEntity="wizem\UserBundle\Entity\User", mappedBy="place")
      * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
     private $user;

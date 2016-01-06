@@ -37,6 +37,14 @@ class Pro
     private $description;
 
     /**
+     * @var \User
+     *
+     * @ORM\OneToOne(targetEntity="User", mappedBy="pro")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
+     */
+    private $user;
+
+    /**
      * @var \DateTime
      *
      * @Gedmo\Timestampable(on="create")

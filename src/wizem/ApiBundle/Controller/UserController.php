@@ -143,11 +143,6 @@ class UserController extends FOSRestController
                 $request->request->all()
             );
 
-            $routeOptions = array(
-                'id' => $user->getId(),
-                '_format' => $request->get('_format')
-            );
-
             return $user;
 
             //return $this->routeRedirectView('api_user_get_user', $routeOptions, Codes::HTTP_ACCEPTED);

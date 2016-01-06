@@ -9,7 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * User
  *
- * @ORM\Table(name="User", indexes={@ORM\Index(name="fk_User_Place1_idx", columns={"Place_id"}), @ORM\Index(name="fk_User_Pro1_idx", columns={"Pro_id"})})
+ * @ORM\Table(name="User")
  * @ORM\Entity
  */
 class User extends BaseUser
@@ -70,20 +70,14 @@ class User extends BaseUser
     /**
      * @var \Place
      *
-     * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Place")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Place_id", referencedColumnName="id")
-     * })
+     * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Place", inversedBy="user", cascade={"persist","remove"})
      */
     private $place;
 
     /**
      * @var \Pro
      *
-     * @ORM\OneToOne(targetEntity="Pro")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Pro_id", referencedColumnName="id")
-     * })
+     * @ORM\OneToOne(targetEntity="Pro", inversedBy="user", cascade={"persist","remove"})
      */
     private $pro;
 
@@ -93,7 +87,7 @@ class User extends BaseUser
     private $message;
 
     /**
-     * @ORM\OneToMany(targetEntity="UserEvent", mappedBy="user", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="UserEvent", mappedBy="user", cascade={"persist", "remove"})
      */
     private $userEvent;
 
@@ -108,12 +102,12 @@ class User extends BaseUser
     private $media;
 
     /**
-     * @ORM\OneToMany(targetEntity="Friendship", mappedBy="user", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Friendship", mappedBy="user", cascade={"persist", "remove"})
      */
     private $friendshipUser;
 
     /**
-     * @ORM\OneToMany(targetEntity="Friendship", mappedBy="friend", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Friendship", mappedBy="friend", cascade={"persist", "remove"})
      */
     private $friendshipFriend;
 
