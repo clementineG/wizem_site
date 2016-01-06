@@ -54,7 +54,7 @@ class User extends BaseUser
     /**
      * @var boolean
      *
-     * @ORM\Column(name="notifacation", type="boolean", nullable=false, options={"default" = false})
+     * @ORM\Column(name="notification", type="boolean", nullable=true, options={"default" = false})
      */
     private $notification;
 
@@ -133,6 +133,7 @@ class User extends BaseUser
         $this->media = new \Doctrine\Common\Collections\ArrayCollection();
         $this->friendshipUser = new \Doctrine\Common\Collections\ArrayCollection();
         $this->friendshipFriend = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->notification = 0;
     }
     
     /**
@@ -533,5 +534,39 @@ class User extends BaseUser
     public function getFriendshipFriend()
     {
         return $this->friendshipFriend;
+    }
+
+    /**
+     * Add userEvent
+     *
+     * @param \wizem\UserBundle\Entity\UserEvent $userEvent
+     *
+     * @return User
+     */
+    public function addUserEvent(\wizem\UserBundle\Entity\UserEvent $userEvent)
+    {
+        $this->userEvent[] = $userEvent;
+
+        return $this;
+    }
+
+    /**
+     * Remove userEvent
+     *
+     * @param \wizem\UserBundle\Entity\UserEvent $userEvent
+     */
+    public function removeUserEvent(\wizem\UserBundle\Entity\UserEvent $userEvent)
+    {
+        $this->userEvent->removeElement($userEvent);
+    }
+
+    /**
+     * Get userEvent
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUserEvent()
+    {
+        return $this->userEvent;
     }
 }

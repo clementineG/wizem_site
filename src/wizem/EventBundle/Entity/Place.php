@@ -75,6 +75,14 @@ class Place
     private $event;
 
     /**
+     * @var \User
+     *
+     * @ORM\OneToOne(targetEntity="wizem\UserBundle\Entity\User", inversedBy="place")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
+     */
+    private $user;
+
+    /**
      * @ORM\OneToMany(targetEntity="Vote", mappedBy="date", cascade={"persist","remove"})
      */
     private $vote;
@@ -337,5 +345,29 @@ class Place
         }
 
         return array("lat" => $latitude, "lng" => $longitude);
+    }
+
+    /**
+     * Set user
+     *
+     * @param \wizem\UserBundle\Entity\User $user
+     *
+     * @return Place
+     */
+    public function setUser(\wizem\UserBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \wizem\UserBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

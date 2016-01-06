@@ -196,13 +196,21 @@ class UserHandler
             $user->setLastname($parameters['lastname']);
             $this->logger->info("Updating lastname '{$lastname}' to '{$parameters['lastname']}' OK");
         }
-        // if(isset($parameters['place'])){
-        //     // Updating place
-            
-        //     $lastname = $user->getLastname();
-        //     $user->setLastname($parameters['lastname']);
-        //     $this->logger->info("Updating lastname '{$lastname}' to '{$parameters['lastname']}' OK");
-        // }
+        if(isset($parameters['place'])){
+            // Updating place
+            $place = $user->getPLace();
+            if($place){
+                // Updating existing place
+                $oldAdress = $place->getAdress();
+
+                $this->logger->info("Updating place '{$oldAdress}' to '{$parameters['place']}' OK");
+            }else{
+                // Creating new place
+
+                $this->logger->info("Creating place '{$oldAdress}' to '{$parameters['place']}' OK");
+            }
+            //$user->setPlace($parameters['lastname']);
+        }
 
         $this->om->persist($user);
         $this->om->flush();
