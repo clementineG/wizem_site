@@ -198,7 +198,7 @@ class EventController extends FOSRestController
      *          {"name"="description", "dataType"="text", "required"=false, "description"="Description of the event"},
      *          {"name"="place", "dataType"="array", "required"=true, "description"="array of one or max 3 places : { 'address' : $adress }"},
      *          {"name"="date", "dataType"="array", "required"=true, "description"="array of one or max 3 dates : { 'date' : $date } "},
-     *          {"name"="shoppingitem", "dataType"="array", "required"=false, "description"="array of items : { 'name' : $date, 'quantity' : $quantity } "},
+     *          {"name"="shoppingitem", "dataType"="array", "required"=false, "description"="array of items : { 'name' : $name, 'quantity' : $quantity } "},
      *      },
      *      statusCodes = {
      *         201 = "Returned when successful",

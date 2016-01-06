@@ -267,25 +267,6 @@ class UserController extends FOSRestController
 
             return $exception->getForm();
         }
-
-        // try {
-        //     // Create a new item through the item handler
-        //     $newEvent = $this->container->get('wizem_api.event.handler')->update(
-        //         $request->request->all(),
-        //         $id
-        //     );
-
-        //     $routeOptions = array(
-        //         'id' => $newEvent->getId(),
-        //         '_format' => $request->get('_format')
-        //     );
-
-        //     return $this->routeRedirectView('api_event_get_event', $routeOptions, Codes::HTTP_CREATED);
-
-        // } catch (InvalidFormException $exception) {
-
-        //     return $exception->getForm();
-        // }
     }
 
     /**

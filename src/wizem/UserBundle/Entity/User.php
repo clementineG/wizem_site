@@ -38,13 +38,6 @@ class User extends BaseUser
     private $lastname;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="home", type="string", length=45, nullable=true)
-     */
-    private $home;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="birth_date", type="datetime", nullable=true)
@@ -182,30 +175,6 @@ class User extends BaseUser
     public function getLastname()
     {
         return $this->lastname;
-    }
-
-    /**
-     * Set home
-     *
-     * @param string $home
-     *
-     * @return User
-     */
-    public function setHome($home)
-    {
-        $this->home = $home;
-
-        return $this;
-    }
-
-    /**
-     * Get home
-     *
-     * @return string
-     */
-    public function getHome()
-    {
-        return $this->home;
     }
 
     /**

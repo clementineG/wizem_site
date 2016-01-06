@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use wizem\UserBundle\Entity\User;
 use wizem\UserBundle\Entity\Friendship;
 use wizem\EventBundle\Entity\Event;
+use wizem\EventBundle\Entity\Place;
 
 use wizem\ApiBundle\Form\UserType;
 use wizem\ApiBundle\Exception\InvalidFormException;
@@ -196,39 +197,56 @@ class UserHandler
             $user->setLastname($parameters['lastname']);
             $this->logger->info("Updating lastname '{$lastname}' to '{$parameters['lastname']}' OK");
         }
+        if(isset($parameters['notification'])){
+            // Updating notification
+            $notification = $user->getNotification();
+            $user->setNotification($parameters['notification']);
+            $this->logger->info("Updating notification '{$notification}' to '{$parameters['notification']}' OK");
+        }
+        if(isset($parameters['birthDate'])){
+            // Updating birthDate
+            $birthDate = $user->getBirthDate() ? $user->getBirthDate()->format("Y-m-d H:i:s") : '';
+            $dateObject = \Datetime::createFromFormat('Y-m-d H:i:s', $parameters['birthDate']." 00:00:00");  
+            //return $dateObject;
+            $user->setBirthDate($dateObject);
+            $this->logger->info("Updating birthDate '{$birthDate}' to '{$parameters['birthDate']}' OK");
+        }
         if(isset($parameters['place'])){
             // Updating place
-            $place = $user->getPLace();
+            $place = $user->getPlace();
             if($place){
                 // Updating existing place
-                $oldAdress = $place->getAdress();
+                $oldAdress = $place->getAddress();
+
+                $place->setAddress($parameters['place']);
+                $coords = $place->getCoords($parameters['place']);
+                $place->setLat($coords['lat']);
+                $place->setLng($coords['lng']);
+                
+                $this->om->persist($place);
 
                 $this->logger->info("Updating place '{$oldAdress}' to '{$parameters['place']}' OK");
             }else{
                 // Creating new place
+                $newPlace = new Place();
+                $newPlace->setAddress($parameters['place']);
+                $coords = $newPlace->getCoords($parameters['place']);
+                $newPlace->setLat($coords['lat']);
+                $newPlace->setLng($coords['lng']);
+                $newPlace->setUser($user);
+                $newPlace->setFinal(true);
 
-                $this->logger->info("Creating place '{$oldAdress}' to '{$parameters['place']}' OK");
+                $user->setPlace($newPlace);
+                $this->om->persist($newPlace);
+                
+                $this->logger->info("Creating new place : '{$parameters['place']}' OK");
             }
-            //$user->setPlace($parameters['lastname']);
         }
 
         $this->om->persist($user);
         $this->om->flush();
 
         return $user;
-
-        $form = $this->formFactory->create(new EventType($this->container, $method), $event, array('method' => $method));
-
-        unset($parameters['userId']);
-
-
-        $form->submit($parameters, 'PATCH' !== $method);
-
-
-
-        return $event;
-
-        throw new InvalidFormException('Invalid submitted data', $form);
     }
 
     /**
