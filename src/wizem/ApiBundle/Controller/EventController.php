@@ -315,10 +315,10 @@ class EventController extends FOSRestController
      * @ApiDoc(
      *      resource = true,
      *      parameters={
-     *          {"name"="dateId", "dataType"="integer", "required"=false, "description"="Id of the date"},
-     *          {"name"="placeId", "dataType"="integer", "required"=false, "description"="Id of the place"},
-     *          {"name"="userId", "dataType"="integer", "required"=true, "description"="Id of the user"},
-     *          {"name"="eventId", "dataType"="integer", "required"=true, "description"="Id of the event"},
+     *          {"name"="date", "dataType"="integer", "required"=false, "description"="Id of the date"},
+     *          {"name"="place", "dataType"="integer", "required"=false, "description"="Id of the place"},
+     *          {"name"="user", "dataType"="integer", "required"=true, "description"="Id of the user"},
+     *          {"name"="event", "dataType"="integer", "required"=true, "description"="Id of the event"},
      *      },
      *      statusCodes = {
      *         200 = "Returned when successful",
@@ -333,7 +333,7 @@ class EventController extends FOSRestController
     public function postVoteAction(Request $request)
     {
         if(!isset($request->request->all()['date']) && !isset($request->request->all()['place'])){
-            throw new InvalidFormException("At least dateId or placeId is required.");
+            throw new InvalidFormException("At least 'date' or 'place' is required.");
         }
 
         $eventId = $request->request->all()['event'];
@@ -342,12 +342,10 @@ class EventController extends FOSRestController
         $event = $this->getEventOr404($eventId);
         $user = $this->getUserOr404($userId);
         
-        //return $request->request->all();
-
         /* Log */
-        // $apiLogger = $this->container->get('api_logger');
-        // $apiLogger->info(" ===== New Event from API begin ===== ");
-        // $apiLogger->info("Event ", array("event" => $request->request->all()));
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== New Vote from API begin ===== ");
+        $apiLogger->info("User #{$userId}");
 
         try {
             // Create a new event through the event handler

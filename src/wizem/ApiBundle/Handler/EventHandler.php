@@ -409,10 +409,10 @@ class EventHandler
     {
         $userEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findOneBy(array("event" => $event->getId(), "user" => $user->getId()));
 
-        if(!$userEvent || ($host == true && $userEvent->getState() == false) ){
+        if(!$userEvent || ($host == true && $userEvent->getHost() == false) ){
+            $host = ($host == true ? 'true' : 'false');
+            $this->logger->info("User #{$user->getId()} not allowed to access Event #{$event->getId()} (search for host : {$host}) ");
             throw new AccessDeniedException('User is not allowed to access this event');
         }
     }
-
-
 }

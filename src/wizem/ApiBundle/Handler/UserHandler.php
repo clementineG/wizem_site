@@ -74,14 +74,26 @@ class UserHandler
 
         $friends = array();
         foreach ($friendship as $friend) {
-            if($friend ->getFriend()->getId() != $user->getId())
-                $friends[] = $friend ->getFriend()->getId();
-            if($friend ->getUser()->getId() != $user->getId())
-                $friends[] = $friend ->getUser()->getId();
+            if($friend ->getFriend()->getId() != $user->getId()){
+                $friends[] = array(
+                    "id" => $friend ->getFriend()->getId(), 
+                    "username" => $friend ->getFriend()->getUsername(),
+                    "firstname" => $friend ->getFriend()->getFirstname(),
+                    "lastname" => $friend ->getFriend()->getLastname(),
+                );
+            }
+            if($friend ->getUser()->getId() != $user->getId()){
+                $friends[] = array(
+                    "id" => $friend ->getUser()->getId(), 
+                    "username" => $friend ->getUser()->getUsername(),
+                    "firstname" => $friend ->getUser()->getFirstname(),
+                    "lastname" => $friend ->getUser()->getLastname(),
+                );
+            }
         }
 
         // Suppression des doublons
-        $friends = (array_unique($friends));
+        //$friends = (array_unique($friends));
         return $friends;
     }
 
