@@ -380,6 +380,7 @@ class EventHandler
         $form = $this->formFactory->create(new VoteType(), $vote, array('method' => $method));
 
         $form->submit($parameters, 'PATCH' !== $method);
+        $this->logger->info("Submit form with params :", $parameters);
 
         if ($form->isValid()) {
 
@@ -388,6 +389,7 @@ class EventHandler
             $this->om->persist($vote);
             $this->om->flush();
 
+            $this->logger->info("Vote form valid");
             return $vote;
         }
 

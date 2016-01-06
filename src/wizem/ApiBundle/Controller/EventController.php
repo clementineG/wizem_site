@@ -355,7 +355,7 @@ class EventController extends FOSRestController
                 $user
             );
 
-            //$apiLogger->info(" ===== New Event from API ending ===== ");
+            $apiLogger->info(" ===== New Vote from API ending ===== ");
             return $vote;
 
         } catch (InvalidFormException $exception) {
