@@ -9,7 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * User
  *
- * @ORM\Table(name="User", indexes={@ORM\Index(name="fk_User_Pro1_idx", columns={"Pro_id"})})
+ * @ORM\Table(name="User")
  * @ORM\Entity
  */
 class User extends BaseUser
@@ -50,6 +50,13 @@ class User extends BaseUser
      * @ORM\Column(name="notification", type="boolean", nullable=true, options={"default" = false})
      */
     private $notification;
+
+    /**
+     * @var text
+     *
+     * @ORM\Column(name="image", type="text", nullable=true)
+     */
+    private $image;
 
     /**
      * @var \DateTime

@@ -55,6 +55,86 @@ class EventHandler
     }
 
     /**
+     * Get an application formated Event.
+     *
+     * @param Event $event
+     */
+    public function getFormatedEvent($event, $user)
+    {
+        $dates = $event->getDate();
+        $places = $event->getPlace();
+
+        $this->checkIfUserLinkToEvent($event, $user, false);
+
+        // Check all dates for final date
+        foreach ($dates as $date) {
+            if($date->getFinal() == true){
+                $finalDate = $date;
+                break;
+            }
+        }
+
+        // Check all places for final place
+        foreach ($places as $place) {
+            if($place->getFinal() == true){
+                $finalPlace = $place;
+                break;
+            }
+        }
+
+        // If no date here : the vote is not finish 
+        if(!isset($finalDate)){
+            $dateVote = $this->om->getRepository("wizemEventBundle:Vote")->findOneBy(array(
+                "event" => $event->getId(),
+                "user" => $user->getId() 
+            ));
+
+            $hasVotedDate = $dateVote ? ($dateVote->getDate() ? $dateVote->getDate()->getDate() : false ) : false;
+        }
+        // If no place here : the vote is not finish 
+        if(!isset($finalPlace)){
+            $placeVote = $this->om->getRepository("wizemEventBundle:Vote")->findOneBy(array(
+                "event" => $event->getId(),
+                "user" => $user->getId() 
+            ));
+
+            $hasVotedPlace = $placeVote ? ($placeVote->getPlace() ? $placeVote->getPlace()->getAddress() : false ) : false;
+        }
+
+        $date = array(
+            "final" => isset($finalDate) ? $finalDate->getDate() : null,
+            "hasVoted" => isset($hasVotedDate) ? $hasVotedDate : null,
+        );
+        $place = array(
+            "final" => isset($finalPlace) ? $finalPlace->getAddress() : null,
+            "hasVoted" => isset($hasVotedPlace) ? $hasVotedPlace : null,
+        );
+
+        $usersEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findByEvent($event->getId());
+
+        $tabUsers = array();
+        foreach ($usersEvent as $userEvent) {
+            $user = $userEvent->getUser();
+            $tabUsers[] = array(
+                "id" => $user->getId(),
+                "firstname" => $user->getFirstname(),
+                "lastname" => $user->getLastname(),
+                "username" => $user->getUsername(),
+                "image" => $user->getImage(),
+                "state" => $userEvent->getState(),
+            );
+        }
+
+        return array(
+            "typeEvent" => $event->getTypeEvent()->getName(),
+            "description" => $event->getDescription(),
+            "date" => $date,
+            "place" => $place,
+            "users" => $tabUsers,
+        );
+    }
+
+    /**
      * Get an event.
      *
      * @return Events

@@ -66,11 +66,17 @@ class EventController extends FOSRestController
      *
      * @throws NotFoundHttpException when event not exist
      */
-    public function getEventAction($id)
+    public function getUserEventAction($userId, $eventId)
     {
-        $event = $this->getEventOr404($id);
+        $event = $this->getEventOr404($eventId);
+        $user = $this->getUserOr404($userId);
 
-        return $event;
+        $formatedEvent = $this->container->get('wizem_api.event.handler')->getFormatedEvent(
+            $event,
+            $user
+        );
+
+        return $formatedEvent;
     }
 
     /**
