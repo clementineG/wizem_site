@@ -46,7 +46,11 @@ class UserController extends FOSRestController
     {
         $user = $this->getUserOr404($id);
 
-        return $user;
+        $formatedUser = $this->container->get('wizem_api.user.handler')->getFormatedUser(
+            $user
+        );
+
+        return $formatedUser;
     }
 
     /**
@@ -105,14 +109,14 @@ class UserController extends FOSRestController
      *
      * @throws NotFoundHttpException when no user
      */
-    public function getUsersAction()
-    {
-        if (!($users = $this->container->get('wizem_api.user.handler')->getAll())) {
-            throw new NotFoundHttpException(sprintf('No user'));
-        }
+    // public function getUsersAction()
+    // {
+    //     if (!($users = $this->container->get('wizem_api.user.handler')->getAll())) {
+    //         throw new NotFoundHttpException(sprintf('No user'));
+    //     }
 
-        return $users;
-    }
+    //     return $users;
+    // }
 
     /**
      * Allow connexion for a user 

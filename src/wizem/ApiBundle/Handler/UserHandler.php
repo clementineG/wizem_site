@@ -56,6 +56,30 @@ class UserHandler
     }
 
     /**
+     * Get an application formated User.
+     *
+     * @param User $user
+     */
+    public function getFormatedUser($user, $storage = false)
+    {
+        if($storage == true){
+            return array(
+                "id" => $user->getId(),
+                "username" => $user->getUsername(),
+                "email" => $user->getEmail(),
+            );
+        }
+
+        return array(
+            "id" => $user->getId(),
+            "firstname" => $user->getFirstname(),
+            "lastname" => $user->getLastname(),
+            "username" => $user->getUsername(),
+            "image" => $user->getImage(),
+        );
+    }
+
+    /**
      * Get all User.
      *
      */
@@ -163,7 +187,7 @@ class UserHandler
             $userManager->updateUser($user);
             $this->logger->info("User created");
 
-            return $user;
+            return $this->getFormatedUser($user, true);
         }
 
         $this->logger->info("Invalid submitted data");
@@ -258,7 +282,7 @@ class UserHandler
         $this->om->persist($user);
         $this->om->flush();
 
-        return $user;
+        return $this->getFormatedUser($user);
     }
 
     /**
@@ -407,7 +431,7 @@ class UserHandler
         // Pas besoin de loger l'user, c'est géré dans le local storage du mobile.
         //$this->loginUser($user);
 
-        return $user;
+        return $this->getFormatedUser($user, true);
     }
 
     /**
