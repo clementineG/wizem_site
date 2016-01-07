@@ -136,6 +136,13 @@ class UserHandler
         $username = $parameters['username'];
         $email = $parameters['email'];
 
+        if ( !preg_match("/^[a-zA-Z0-9_]{1,50}$/ " , $username ) ){
+            unset($parameters['password']);
+            $this->logger->error("User username not valid : ", array($parameters));
+            $this->logger->info(" ===== New User from API ending ===== ");
+            throw new InvalidUserException('User username not valid', $user);
+        }
+
         // Check if username already exists
         $userCheck = $um->findUserByUsername($username);
         if($userCheck){

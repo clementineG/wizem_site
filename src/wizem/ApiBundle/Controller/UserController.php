@@ -203,11 +203,6 @@ class UserController extends FOSRestController
                 $request->request->all()
             );
 
-            $routeOptions = array(
-                'id' => $newUser->getId(),
-                '_format' => $request->get('_format')
-            );
-
             $apiLogger->info(" ===== New User from API ending ===== ");
             return $newUser;
 
