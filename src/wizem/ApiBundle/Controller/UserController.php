@@ -260,7 +260,7 @@ class UserController extends FOSRestController
 
             $apiLogger->info(" ===== Update User from API ending ===== ");
 
-            return $newUser->getId();
+            return $newUser;
 
         } catch (InvalidFormException $exception) {
 
