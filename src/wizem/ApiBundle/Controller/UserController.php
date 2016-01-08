@@ -65,6 +65,8 @@ class UserController extends FOSRestController
     protected function getUserOr404($id)
     {
         if (!($user = $this->container->get('wizem_api.user.handler')->get($id))) {
+            $apiLogger = $this->container->get('api_logger');
+            $apiLogger->info("The user #{$id} was not found");
             throw new NotFoundHttpException(sprintf('The user \'%s\' was not found.',$id));
         }
 
@@ -141,15 +143,18 @@ class UserController extends FOSRestController
      */
     public function postUserLoginAction(Request $request)
     {
+        /* Log */
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== User login from API begin ===== ");
+
         try {
             // Create a new item through the item handler
             $user = $this->container->get('wizem_api.user.handler')->connect(
                 $request->request->all()
             );
 
+            $apiLogger->info(" ===== User login from API ending ===== ");
             return $user;
-
-            //return $this->routeRedirectView('api_user_get_user', $routeOptions, Codes::HTTP_ACCEPTED);
 
         } catch (InvalidFormException $exception) {
 
@@ -283,9 +288,14 @@ class UserController extends FOSRestController
      */
     public function deleteUserAction($id)
     {
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Deleting user from API begin ===== ");
+
         $user = $this->getUserOr404($id);
         
         $response = $this->container->get('wizem_api.user.handler')->delete($user->getId());
+
+        $apiLogger->info(" ===== Deleting event from API ending ===== ");
 
         return $response;
     }
@@ -430,6 +440,9 @@ class UserController extends FOSRestController
      */
     public function deleteUsersFriendsAction($id, $friendId)
     {
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Deleting friend from API begin ===== ");
+
         $user = $this->getUserOr404($id);
         $friend = $this->getUserOr404($friendId);
         

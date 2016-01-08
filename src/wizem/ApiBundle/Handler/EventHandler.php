@@ -19,7 +19,6 @@ use wizem\EventBundle\Entity\Vote;
 
 use wizem\UserBundle\Entity\UserEvent;
 
-
 class EventHandler
 {
     private $om;
@@ -259,11 +258,11 @@ class EventHandler
                 throw new NotFoundHttpException(sprintf('The user \'%s\' was not found.',$userId));
             }
 
-            // Création de la table User_Event qui fait la liaison entre l'user et l'évenement 
+            // User_Event creation for for link between user and event
             $userEvent = new UserEvent(); 
             $userEvent->setEvent($event);
             $userEvent->setUser($user);
-            // Si on est dans la création d'un évenement, l'user participe forcement, et est l'hote
+            // If creation of event, user is automatically the host and he participate 
             $userEvent->setState(1);
             $userEvent->setHost(1);
 
@@ -311,7 +310,7 @@ class EventHandler
 
         unset($parameters['userId']);
 
-        // Gestion des dates si il y en a
+        // Gestion of dates if there is any
         $tabDate = array();
         if(isset($parameters['date'])){
             foreach ($parameters['date'] as $id => $date) {
@@ -320,7 +319,7 @@ class EventHandler
             unset($parameters['date']);
         }
 
-        // Gestion des lieux si il y en a
+        // Gestion of places if there is any
         $tabPlace = array();
         if(isset($parameters['place'])){
             foreach ($parameters['place'] as $id => $place) {
@@ -408,10 +407,9 @@ class EventHandler
 
             $friend = $this->container->get('wizem_api.user.handler')->get($friendId);
 
-            // TODO : vérif si le friend est bien ami avec user et s'il n'est pas déjà dans l'évent  
-            // Si le friend passe ici c'est qu'il n'est pas dans l'event et qu'il est bien amis avec l'host
+            // If the friend is here, he is not allready in the event, and he is friend with host
 
-            // Création de la table User_Event qui fait la liaison entre l'user et l'évenement 
+            // User_Event creation for for link between user and event
             $userEvent = new UserEvent(); 
             $userEvent->setEvent($event);
             $userEvent->setUser($friend);
@@ -435,6 +433,8 @@ class EventHandler
     public function delete($id)
     {
         $event = $this->repository->find($id);
+
+        $this->logger->info("Deleting event #{$id} OK");
 
         $this->om->remove($event);
         $this->om->flush();

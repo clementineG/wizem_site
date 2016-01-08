@@ -328,6 +328,8 @@ class UserHandler
     {
         $user = $this->repository->find($id);
 
+        $this->logger->info("Deleting user #{$id} OK");
+
         $this->om->remove($user);
         $this->om->flush();
 
@@ -397,12 +399,15 @@ class UserHandler
         if(!$friendship){
             $friendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId()));
             if(!$friendship){
+                $this->logger->info("User #{$user->getId()} has not friendship relation with friend #{$friend->getId()}");
                 throw new AccessDeniedException('User has not friendship relation with friend');
             }
         }
 
         $this->om->remove($friendship);
         $this->om->flush();
+
+        $this->logger->info("User #{$user->getId()} delete friend #{$friend->getId()} OK");
 
         return $friend->getId();
     }
@@ -422,6 +427,8 @@ class UserHandler
         $username = $parameters['username'];
         $password = $parameters['password'];
 
+        $this->logger->info("User login : {$username}");
+
         $um = $this->container->get('fos_user.user_manager');
         $user = $um->findUserByUsername($username);
         if(!$user){
@@ -429,14 +436,18 @@ class UserHandler
         }
 
         if(!$user instanceof User){
+            $this->logger->info("User not found");
             throw new NotFoundHttpException("User not found");
         }
         if(!$this->checkUserPassword($user, $password)){
+            $this->logger->info("Wrong password");
             throw new AccessDeniedException("Wrong password");
         }
 
         // Pas besoin de loger l'user, c'est géré dans le local storage du mobile.
         //$this->loginUser($user);
+
+        $this->logger->info("Login OK");
 
         return $this->getFormatedUser($user, true);
     }

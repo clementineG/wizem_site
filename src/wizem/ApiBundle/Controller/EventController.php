@@ -195,7 +195,6 @@ class EventController extends FOSRestController
      */
     public function postEventAction(Request $request)
     {
-
         /* Log */
         $apiLogger = $this->container->get('api_logger');
         $apiLogger->info(" ===== New Event from API begin ===== ");
@@ -207,13 +206,8 @@ class EventController extends FOSRestController
                 $request->request->all()
             );
 
-            $routeOptions = array(
-                'id' => $newEvent->getId(),
-                '_format' => $request->get('_format')
-            );
-
             $apiLogger->info(" ===== New Event from API ending ===== ");
-            return $this->routeRedirectView('api_event_get_event', $routeOptions, Codes::HTTP_CREATED);
+            return $newEvent->getId();
 
         } catch (InvalidFormException $exception) {
 
@@ -334,10 +328,14 @@ class EventController extends FOSRestController
      */
     public function deleteEventAction($id)
     {
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Deleting event from API begin ===== ");
+
         $event = $this->getEventOr404($id);
         
         $response = $this->container->get('wizem_api.event.handler')->delete($event->getId());
 
+        $apiLogger->info(" ===== Deleting event from API ending ===== ");
         return $response;
     }
 
@@ -364,7 +362,13 @@ class EventController extends FOSRestController
      */
     public function postVoteAction(Request $request)
     {
+        /* Log */
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== New Vote from API begin ===== ");
+        
         if(!isset($request->request->all()['date']) && !isset($request->request->all()['place'])){
+            $apiLogger->info("At least 'date' or 'place' is required.");
+            $apiLogger->info(" ===== New Vote from API ending ===== ");
             throw new InvalidFormException("At least 'date' or 'place' is required.");
         }
 
@@ -374,9 +378,6 @@ class EventController extends FOSRestController
         $event = $this->getEventOr404($eventId);
         $user = $this->getUserOr404($userId);
         
-        /* Log */
-        $apiLogger = $this->container->get('api_logger');
-        $apiLogger->info(" ===== New Vote from API begin ===== ");
         $apiLogger->info("User #{$userId}");
 
         try {
