@@ -486,4 +486,52 @@ class UserHandler
     //     $security->setToken($token);
     // }
 
+
+    /**
+     * Valid a vote (place or date) by the host of an event.
+     *
+     * @param User          $user
+     * @param Event         $event
+     * @param Array        $parameters
+     *
+     * @return Event
+     *
+     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     */
+    public function validVote(User $user, Event $event, array $parameters)
+    {
+        $this->container->get('wizem_api.event.handler')->checkIfUserLinkToEvent($event, $user, true);
+
+        if(isset($parameters['date'])){
+            // Validate date
+            $date = $this->om->getRepository("wizemEventBundle:Date")->find($parameters['date']);
+            if(!$date){
+                $this->logger->info("Invalid id date");
+                throw new InvalidFormException('Invalid Id date');
+            }
+            $date->setFinal(true);
+
+            $this->om->persist($date);
+            $this->om->flush();
+
+            $this->logger->info("Validate date '#{$date->getId()}' OK");
+        }
+        if(isset($parameters['place'])){
+            // Validate place
+            $place = $this->om->getRepository("wizemEventBundle:Place")->find($parameters['place']);
+            if(!$place){
+                $this->logger->info("Invalid id place");
+                throw new InvalidFormException('Invalid Id place');
+            }
+            $place->setFinal(true);
+
+            $this->om->persist($place);
+            $this->om->flush();
+            
+            $this->logger->info("Validate place '#{$place->getId()}' OK");
+        }
+
+        return $event->getId();
+    }
+
 }

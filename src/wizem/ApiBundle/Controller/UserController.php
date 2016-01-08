@@ -451,4 +451,61 @@ class UserController extends FOSRestController
 
         return $response;
     }
+
+
+
+    /**
+     * Valid a vote by the host of the event 
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   input = "wizem\UsersBundle\Form\UsersType",
+     *   parameters={
+     *      {"name"="date", "dataType"="integer", "required"=true, "description"="Id of the date to vote"},
+     *      {"name"="place", "dataType"="integer", "required"=true, "description"="Id of the place to vote"},
+     *   },
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors",
+     *     404 = "Returned when the friend no exists"
+     *   }
+     * )
+     *
+     * @param int $id id of the user
+     * @param Request $request the request object
+     *
+     * @return $friend
+     *
+     */
+    public function postUserEventVoteAction($userId, $eventId,Request $request)
+    {
+        /* Log */
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Valid a vote from host from API begin ===== ");
+        
+        if(!isset($request->request->all()['date']) && !isset($request->request->all()['place'])){
+            $apiLogger->info("At least 'date' or 'place' is required.");
+            $apiLogger->info(" ===== Valid a vote from host from API ending ===== ");
+            throw new InvalidFormException("At least 'date' or 'place' is required.");
+        }
+
+        $user = $this->getUserOr404($userId);
+        $event = $this->getEventOr404($eventId);
+
+        $apiLogger->info("User #{$user->getId()}, Event #{$event->getId()}");
+
+        try {
+            $vote = $this->container->get('wizem_api.user.handler')->validVote(
+                $user,
+                $event,
+                $request->request->all()
+            );
+
+            $apiLogger->info(" ===== Valid a vote from host from API ending ===== ");
+            return $vote;
+
+        } catch (Exception $e){
+            return $e;
+        }
+    }
 }
