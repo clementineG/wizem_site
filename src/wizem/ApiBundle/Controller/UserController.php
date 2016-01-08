@@ -231,6 +231,7 @@ class UserController extends FOSRestController
      *          {"name"="birthDate", "dataType"="text", "required"=false, "description"="Birth date of the user"},
      *          {"name"="place", "dataType"="array", "required"=false, "description"="Place (adresse) of the user"},
      *          {"name"="notification", "dataType"="array", "required"=false, "description"="Boolean if user allow notifications"},
+     *          {"name"="image", "dataType"="text", "required"=false, "description"="Image of user"},
      *      },
      *      statusCodes = {
      *         201 = "Returned when successful",

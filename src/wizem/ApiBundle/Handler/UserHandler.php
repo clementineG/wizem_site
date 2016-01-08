@@ -288,6 +288,12 @@ class UserHandler
                 $this->logger->info("Creating new place : '{$parameters['place']}' OK");
             }
         }
+        if(isset($parameters['image'])){
+            // Updating image
+            $image = $user->getImage();
+            $user->setImage($parameters['image']);
+            $this->logger->info("Updating image '{$image}' to '{$parameters['image']}' OK");
+        }
 
         $this->om->persist($user);
         $this->om->flush();
