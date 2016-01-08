@@ -227,7 +227,21 @@ class EventHandler
         // Check all places
         $tabPlaces = array();
         foreach ($places as $place) {
-            $tabPlaces[] = array("address" => $place->getAddress(), "lat" => $place->getLat(), "lng" => $place->getLng());
+
+            // Calcul nb votes
+            $placeVotes = $this->om->getRepository("wizemEventBundle:Vote")->findBy(array(
+                "event" => $event->getId(),
+                "place" => $place->getId() 
+            ));
+
+            $nbVotes = count($placeVotes);
+
+            $tabPlaces[] = array(
+                "address" => $place->getAddress(), 
+                "lat" => $place->getLat(), 
+                "lng" => $place->getLng(),
+                "nbVotes" => $nbVotes 
+            );
         }
 
         // Get user vote if existing
@@ -258,16 +272,27 @@ class EventHandler
         // Check all places
         $tabDates = array();
         foreach ($dates as $date) {
-            $tabDates[] = array("date" => $date->getDate() );
+            // Calcul nb votes
+            $dateVotes = $this->om->getRepository("wizemEventBundle:Vote")->findBy(array(
+                "event" => $event->getId(),
+                "date" => $date->getId() 
+            ));
+
+            $nbVotes = count($dateVotes);
+
+            $tabDates[] = array(
+                "date" => $date->getDate(),
+                "nbVotes" => $nbVotes 
+            );
         }
 
         // Get user vote if existing
-        $dateVote = $this->om->getRepository("wizemEventBundle:Vote")->findOneBy(array(
+        $dateUserVote = $this->om->getRepository("wizemEventBundle:Vote")->findOneBy(array(
             "event" => $event->getId(),
             "user" => $user->getId() 
         ));
 
-        $hasVotedDate = $dateVote ? $dateVote->getDate()->getDate() : false;
+        $hasVotedDate = $dateUserVote ? $dateUserVote->getDate()->getDate() : false;
 
         return array(
             "dates" => $tabDates,
