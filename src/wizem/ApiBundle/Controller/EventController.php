@@ -396,4 +396,62 @@ class EventController extends FOSRestController
             return $exception->getForm();
         }
     }
+
+    /**
+     * Get all date votes for an event
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when the event is not found"
+     *   }
+     * )
+     *
+     * @param int     $id      the event id
+     *
+     * @return Vote
+     *
+     * @throws NotFoundHttpException when no date vote
+     */
+    public function getUserEventsVotesDateAction($userId, $eventId)
+    {
+        $event = $this->getEventOr404($eventId);
+        $user = $this->getUserOr404($userId);
+
+        if (!($votes = $this->container->get('wizem_api.event.handler')->getAllEventVotesDate($event, $user))) {
+            throw new NotFoundHttpException("No Vote found.");
+        }
+
+        return $votes;
+    }
+
+    /**
+     * Get all place votes for an event
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when the event is not found"
+     *   }
+     * )
+     *
+     * @param int     $id      the event id
+     *
+     * @return Vote
+     *
+     * @throws NotFoundHttpException when no place vote
+     */
+    public function getUserEventsVotesPlaceAction($userId, $eventId)
+    {
+        $event = $this->getEventOr404($eventId);
+        $user = $this->getUserOr404($userId);
+
+        if (!($votes = $this->container->get('wizem_api.event.handler')->getAllEventVotesPlace($event, $user))) {
+            throw new NotFoundHttpException("No Vote found.");
+        }
+
+        return $votes;
+    }
 }
