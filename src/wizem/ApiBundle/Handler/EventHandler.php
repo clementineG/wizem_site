@@ -105,7 +105,7 @@ class EventHandler
             "hasVoted" => isset($hasVotedDate) ? $hasVotedDate : null,
         );
         $place = array(
-            "final" => isset($finalPlace) ? $finalPlace->getAddress() : null,
+            "final" => isset($finalPlace) ? array("address" => $finalPlace->getAddress(), "lat" => $finalPlace->getLat(), "lng" => $finalPlace->getLng()) : null,
             "hasVoted" => isset($hasVotedPlace) ? $hasVotedPlace : null,
         );
 
