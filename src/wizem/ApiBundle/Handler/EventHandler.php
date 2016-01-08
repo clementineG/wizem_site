@@ -110,7 +110,7 @@ class EventHandler
             "hasVoted" => isset($hasVotedPlace) ? $hasVotedPlace : null,
         );
 
-        $usersEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findByEvent($event->getId());
+        $usersEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findByEvent($event->getId(), null, 3);
 
         $tabUsers = array();
         foreach ($usersEvent as $userEvent) {
@@ -159,7 +159,7 @@ class EventHandler
     /**
      * Get all events for a user.
      *
-     * @return EventType
+     * @return Events
      */
     public function getAllUserEvents($user)
     {
@@ -183,6 +183,33 @@ class EventHandler
         }
 
         return $tabEvents;
+    }
+
+    /**
+     * Get all users for an event.
+     *
+     * @return Users
+     */
+    public function getAllEventUsers($event)
+    {
+        $userEvents = $this->om->getRepository("wizemUserBundle:UserEvent")->findByEvent($event->getId());
+        
+        $tabUsers = array();
+
+        foreach ($userEvents as $userEvent) {
+
+            $user = $userEvent->getUser();
+            $tabUsers[] = array(
+                "id" => $user->getId(),
+                "firstname" => $user->getFirstname(),
+                "lastname" => $user->getLastname(),
+                "username" => $user->getUsername(),
+                "image" => $user->getImage(),
+                "state" => $userEvent->getState(),
+            );
+        }
+
+        return $tabUsers;
     }
 
     /**
