@@ -452,7 +452,52 @@ class UserController extends FOSRestController
         return $response;
     }
 
+    /**
+     * Confirm presence or not in an event for an user
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   parameters={
+     *      {"name"="confirm", "dataType"="boolean", "required"=true, "description"="Confirmation or not for the participation of the event"},
+     *   },
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors",
+     *     404 = "Returned when the friend no exists"
+     *   }
+     * )
+     *
+     * @param int $id id of the user
+     * @param Request $request the request object
+     *
+     * @return $friend
+     *
+     */
+    public function postUserEventConfirmAction($userId, $eventId,Request $request)
+    {
+        /* Log */
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Confirmation from user for an event from API begin ===== ");
+        
+        $user = $this->getUserOr404($userId);
+        $event = $this->getEventOr404($eventId);
 
+        $apiLogger->info("User #{$user->getId()} want to confirm for Event #{$event->getId()}");
+
+        try {
+            $confirmation = $this->container->get('wizem_api.user.handler')->confirm(
+                $user,
+                $event,
+                $request->request->all()
+            );
+
+            $apiLogger->info(" ===== Confirmation from user for an event from API ending ===== ");
+            return $confirmation;
+
+        } catch (Exception $e){
+            return $e;
+        }
+    }
 
     /**
      * Valid a vote by the host of the event 

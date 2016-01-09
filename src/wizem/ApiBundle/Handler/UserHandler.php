@@ -534,4 +534,45 @@ class UserHandler
         return $event->getId();
     }
 
+    /**
+     * Confirm presence or not in an event for an user
+     *
+     * @param User          $user
+     * @param Event         $event
+     * @param Array         $parameters
+     *
+     * @return 
+     *
+     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     */
+    public function confirm(User $user, Event $event, array $parameters)
+    {
+        $this->container->get('wizem_api.event.handler')->checkIfUserLinkToEvent($event, $user, false);
+
+        if(!isset($parameters['confirm'])){
+            $this->logger->info("Invalid json");
+            throw new InvalidFormException('Invalid json');
+        }
+
+        $confirm = ($parameters['confirm'] == 1) ? "true" : "false"; 
+        
+        // Validate confirmation
+        $userEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findOneBy(array("event" => $event->getId(), "user" => $user->getId()));
+
+        // A host can't confirm 
+        if($userEvent->getHost() == true){
+            $this->logger->info("User is the host, he can't confirm a presence or not");
+            throw new InvalidFormException("You are the host, you can't confirm");
+        }
+
+        $userEvent->setState($parameters['confirm']);
+
+        $this->om->persist($userEvent);
+        $this->om->flush();
+
+        $this->logger->info("Confirmation : {$confirm} OK");
+
+        return $parameters['confirm'];
+    }
+
 }
