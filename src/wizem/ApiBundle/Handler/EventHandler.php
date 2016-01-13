@@ -234,28 +234,25 @@ class EventHandler
                 "place" => $place->getId() 
             ));
 
+            // check if user has voted for this place or not
+            $placeVoteUser = $this->om->getRepository("wizemEventBundle:Vote")->findOneBy(array(
+                "event" => $event->getId(),
+                "place" => $place->getId(), 
+                "user" => $user->getId() 
+            ));
+
             $nbVotes = count($placeVotes);
 
             $tabPlaces[] = array(
                 "address" => $place->getAddress(), 
                 "lat" => $place->getLat(), 
                 "lng" => $place->getLng(),
-                "nbVotes" => $nbVotes 
+                "nbVotes" => $nbVotes,
+                "hasVoted" => $placeVoteUser ? true : false
             );
         }
 
-        // Get user vote if existing
-        $placeVote = $this->om->getRepository("wizemEventBundle:Vote")->findOneBy(array(
-            "event" => $event->getId(),
-            "user" => $user->getId() 
-        ));
-
-        $hasVotedPlace = $placeVote ? ($placeVote->getPlace() ? $placeVote->getPlace()->getAddress() : false ) : false;
-
-        return array(
-            "places" => $tabPlaces,
-            "hasVoted" => $hasVotedPlace
-        );
+        return $tabPlaces;
     }
 
     /**
@@ -278,26 +275,23 @@ class EventHandler
                 "date" => $date->getId() 
             ));
 
+            // check if user has voted for this date or not
+            $dateVoteUser = $this->om->getRepository("wizemEventBundle:Vote")->findOneBy(array(
+                "event" => $event->getId(),
+                "date" => $date->getId(), 
+                "user" => $user->getId() 
+            ));
+
             $nbVotes = count($dateVotes);
 
             $tabDates[] = array(
                 "date" => $date->getDate(),
-                "nbVotes" => $nbVotes 
+                "nbVotes" => $nbVotes,
+                "hasVoted" => $dateVoteUser ? true : false,
             );
         }
 
-        // Get user vote if existing
-        $dateUserVote = $this->om->getRepository("wizemEventBundle:Vote")->findOneBy(array(
-            "event" => $event->getId(),
-            "user" => $user->getId() 
-        ));
-
-        $hasVotedDate = $dateUserVote ? $dateUserVote->getDate()->getDate() : false;
-
-        return array(
-            "dates" => $tabDates,
-            "hasVoted" => $hasVotedDate
-        );
+        return $tabDates;
     }
 
     /**

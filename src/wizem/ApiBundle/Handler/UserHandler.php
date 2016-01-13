@@ -9,6 +9,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\HttpKernel\Exception;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+use FOS\RestBundle\Util\Codes;
 
 use wizem\UserBundle\Entity\User;
 use wizem\UserBundle\Entity\Friendship;
@@ -391,7 +395,7 @@ class UserHandler
             return $friend;
         }
         
-        throw new InvalidFormException('Invalid username');
+        throw new HttpException(Codes::HTTP_FORBIDDEN, "Invalid username");
     }
 
     /**

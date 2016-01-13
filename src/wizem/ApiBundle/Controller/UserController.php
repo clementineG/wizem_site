@@ -17,6 +17,8 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use wizem\ApiBundle\Exception\InvalidUserException;
 use wizem\ApiBundle\Exception\InvalidFormException;
 
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
 /**
  * User controller.
  *
@@ -391,7 +393,7 @@ class UserController extends FOSRestController
 
         $user = $this->getUserOr404($id);
         $apiLogger->info("User #{$user->getId()}");
-        try {
+        //try {
             $friend = $this->container->get('wizem_api.user.handler')->addFriend(
                 $user,
                 $request->request->all()
@@ -400,9 +402,8 @@ class UserController extends FOSRestController
             $apiLogger->info(" ===== Adding friend from API ending ===== ");
             return $friend;
 
-        } catch (Exception $e){
-            return $e;
-        }
+        // } catch (\Exception $e){
+        //     return $e;
         // } catch (AccessDeniedException $exception) {
             
         //     $apiLogger->info(" ===== Adding friend from API ending ===== ");
@@ -410,13 +411,21 @@ class UserController extends FOSRestController
 
         // } catch (InvalidFormException $exception) {
 
+        //     //return "e";
+        //     //return get_class($exception);
         //     $apiLogger->info(" ===== Adding friend from API ending ===== ");
-        //     return $exception;//->getMessage();
+        //     //throw new HttpException(404, $exception->getMessage());
+            
+        //     return $exception->getMessage();
 
         // } catch (NotFoundHttpException $exception) {
             
         //     $apiLogger->info(" ===== Adding friend from API ending ===== ");
         //     return $exception;//->getMessage();
+        // } catch (HttpException $exception) {
+            
+        //     $apiLogger->info(" ===== Adding friend from API ending ===== ");
+        //     return $exception->getMessage();
         // }
     }
 
