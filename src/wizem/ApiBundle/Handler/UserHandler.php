@@ -5,11 +5,8 @@ namespace wizem\ApiBundle\Handler;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\HttpKernel\Exception;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use FOS\RestBundle\Util\Codes;
@@ -20,8 +17,6 @@ use wizem\EventBundle\Entity\Event;
 use wizem\EventBundle\Entity\Place;
 
 use wizem\ApiBundle\Form\UserType;
-use wizem\ApiBundle\Exception\InvalidFormException;
-use wizem\ApiBundle\Exception\InvalidUserException;
 
 class UserHandler
 {
@@ -132,6 +127,9 @@ class UserHandler
      * Create a new User.
      *
      * @param array $parameters
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     *
      */
     public function create(array $parameters)
     {
@@ -147,7 +145,7 @@ class UserHandler
             unset($parameters['password']);
             $this->logger->error("User username not valid : ", array($parameters));
             $this->logger->info(" ===== New User from API ending ===== ");
-            throw new InvalidUserException('User username not valid', $user);
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "User username not valid");
         }
 
         // Check if username already exists
@@ -156,7 +154,7 @@ class UserHandler
             unset($parameters['password']);
             $this->logger->error("User username already exists : ", array($parameters));
             $this->logger->info(" ===== New User from API ending ===== ");
-            throw new InvalidUserException('User username already exists', $user);
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "User username already exists");
         }
 
         // Check if email already exists
@@ -165,7 +163,7 @@ class UserHandler
             unset($parameters['password']);
             $this->logger->error("User email already exists : ", array($parameters));
             $this->logger->info(" ===== New User from API ending ===== ");
-            throw new InvalidUserException('User email already exists', $user);
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "User email already exists");
         }
 
         return $this->createUserProcessForm($user, $parameters, 'POST');
@@ -178,7 +176,7 @@ class UserHandler
      * @param array     $parameters
      * @param String    $method
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     private function createUserProcessForm(User $user, array $parameters, $method = "PUT")
     {
@@ -206,7 +204,7 @@ class UserHandler
 
         $this->logger->info("Invalid submitted data");
         $this->logger->info(" ===== New User from API ending ===== ");
-        throw new InvalidFormException('Invalid submitted data', $form);
+        throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid submitted data");
     }
 
     /**
@@ -229,9 +227,8 @@ class UserHandler
      * @param array         $parameters
      * @param String        $method
      *
-     * @return User
+     * @return User         $user
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
      */
     private function updateUserProcessForm(User $user, array $parameters, $method = "PUT")
     {
@@ -311,7 +308,8 @@ class UserHandler
      * @param User      $user
      * @param Event     $event
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @return array    $friendsToInvite
+     *
      */
     public function getAllUsersEvent(User $user, Event $event)
     {
@@ -355,6 +353,9 @@ class UserHandler
      * @param mixed $id
      *
      * @return mixed $id
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     * 
      */
     public function addFriend($user, $request)
     {
@@ -368,19 +369,19 @@ class UserHandler
             $friend = $um->findUserByUsername($username);
             if(!$friend){
                 $this->logger->error("Friend not found");
-                throw new NotFoundHttpException("Friend not found");
+                throw new HttpException(Codes::HTTP_NOT_FOUND, "Friend not found");
             }
             
             // Test if user and friend are already friends
             $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $user->getId(), "friend" => $friend->getId()));
             if($testFriendship){
                 $this->logger->error("Users are already friends");
-                throw new AccessDeniedException('You are already friends');
+                throw new HttpException(Codes::HTTP_FORBIDDEN, "You are already friends");
             }
             $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId()));
             if($testFriendship){
                 $this->logger->error("Users are already friends");
-                throw new AccessDeniedException('You are already friends');
+                throw new HttpException(Codes::HTTP_FORBIDDEN, "You are already friends");
             }
 
             $friendship = new Friendship(); 
@@ -413,7 +414,7 @@ class UserHandler
             $friendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId()));
             if(!$friendship){
                 $this->logger->info("User #{$user->getId()} has not friendship relation with friend #{$friend->getId()}");
-                throw new AccessDeniedException('User has not friendship relation with friend');
+                throw new HttpException(Codes::HTTP_FORBIDDEN, "User has not friendship relation with friend");
             }
         }
 
@@ -432,8 +433,7 @@ class UserHandler
      *
      * @return User $user
      *
-     * @throws Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-     * @throws Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function connect(array $parameters)
     {
@@ -450,11 +450,11 @@ class UserHandler
 
         if(!$user instanceof User){
             $this->logger->info("User not found");
-            throw new NotFoundHttpException("User not found");
+            throw new HttpException(Codes::HTTP_NOT_FOUND, "User not found");
         }
         if(!$this->checkUserPassword($user, $password)){
             $this->logger->info("Wrong password");
-            throw new AccessDeniedException("Wrong password");
+            throw new HttpException(Codes::HTTP_FORBIDDEN, "Wrong password");
         }
 
         // Pas besoin de loger l'user, c'est géré dans le local storage du mobile.
@@ -500,7 +500,7 @@ class UserHandler
      *
      * @return Event
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function validVote(User $user, Event $event, array $parameters)
     {
@@ -511,7 +511,7 @@ class UserHandler
             $date = $this->om->getRepository("wizemEventBundle:Date")->find($parameters['date']);
             if(!$date){
                 $this->logger->info("Invalid id date");
-                throw new InvalidFormException('Invalid Id date');
+                throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid Id date");
             }
             $date->setFinal(true);
 
@@ -525,7 +525,7 @@ class UserHandler
             $place = $this->om->getRepository("wizemEventBundle:Place")->find($parameters['place']);
             if(!$place){
                 $this->logger->info("Invalid id place");
-                throw new InvalidFormException('Invalid Id place');
+                throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid Id place");
             }
             $place->setFinal(true);
 
@@ -547,7 +547,7 @@ class UserHandler
      *
      * @return 
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function confirm(User $user, Event $event, array $parameters)
     {
@@ -555,7 +555,7 @@ class UserHandler
 
         if(!isset($parameters['confirm'])){
             $this->logger->info("Invalid json");
-            throw new InvalidFormException('Invalid json');
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid json");
         }
 
         $confirm = ($parameters['confirm'] == 1) ? "true" : "false"; 
@@ -566,7 +566,7 @@ class UserHandler
         // A host can't confirm 
         if($userEvent->getHost() == true){
             $this->logger->info("User is the host, he can't confirm a presence or not");
-            throw new InvalidFormException("You are the host, you can't confirm");
+            throw new HttpException(Codes::HTTP_FORBIDDEN, "You are the host, you can't confirm");
         }
 
         $userEvent->setState($parameters['confirm']);

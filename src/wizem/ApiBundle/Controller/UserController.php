@@ -4,18 +4,12 @@ namespace wizem\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\HttpKernel\Exception;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-
-use wizem\ApiBundle\Exception\InvalidUserException;
-use wizem\ApiBundle\Exception\InvalidFormException;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -42,7 +36,7 @@ class UserController extends FOSRestController
      *
      * @return array
      *
-     * @throws NotFoundHttpException when user not exist
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getUserAction($id)
     {
@@ -62,14 +56,14 @@ class UserController extends FOSRestController
      *
      * @return User $user
      *
-     * @throws NotFoundHttpException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     protected function getUserOr404($id)
     {
         if (!($user = $this->container->get('wizem_api.user.handler')->get($id))) {
             $apiLogger = $this->container->get('api_logger');
             $apiLogger->info("The user #{$id} was not found");
-            throw new NotFoundHttpException(sprintf('The user \'%s\' was not found.',$id));
+            throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('The user \'%s\' was not found.',$id));
         }
 
         return $user;
@@ -82,7 +76,7 @@ class UserController extends FOSRestController
      *
      * @return User
      *
-     * @throws NotFoundHttpException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     protected function getEventOr404($eventId)
     {
@@ -90,7 +84,7 @@ class UserController extends FOSRestController
         if (!($event = $this->container->get('wizem_api.event.handler')->get($id))) {
             $apiLogger = $this->container->get('api_logger');
             $apiLogger->info("The event #{$id} was not found");
-            throw new NotFoundHttpException(sprintf('The event \'%s\' was not found.',$id));
+            throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('The event \'%s\' was not found.',$id));
         }
 
         return $event;
@@ -111,12 +105,12 @@ class UserController extends FOSRestController
      *
      * @return array
      *
-     * @throws NotFoundHttpException when no user
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     // public function getUsersAction()
     // {
     //     if (!($users = $this->container->get('wizem_api.user.handler')->getAll())) {
-    //         throw new NotFoundHttpException(sprintf('No user'));
+    //         throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('No user'));
     //     }
 
     //     return $users;
@@ -141,7 +135,7 @@ class UserController extends FOSRestController
      *
      * @return User $user
      *
-     * @throws InvalidFormException when form not valid
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function postUserLoginAction(Request $request)
     {
@@ -149,19 +143,12 @@ class UserController extends FOSRestController
         $apiLogger = $this->container->get('api_logger');
         $apiLogger->info(" ===== User login from API begin ===== ");
 
-        try {
-            // Create a new item through the item handler
-            $user = $this->container->get('wizem_api.user.handler')->connect(
-                $request->request->all()
-            );
+        $user = $this->container->get('wizem_api.user.handler')->connect(
+            $request->request->all()
+        );
 
-            $apiLogger->info(" ===== User login from API ending ===== ");
-            return $user;
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
-        }
+        $apiLogger->info(" ===== User login from API ending ===== ");
+        return $user;
     }
 
     /**
@@ -185,8 +172,7 @@ class UserController extends FOSRestController
      *
      * @return FormTypeInterface|View
      *
-     * @throws InvalidFormException when form not valid
-     * @throws InvalidUserException when User not exist
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      *
      */
     public function postUserAction(Request $request)
@@ -201,26 +187,16 @@ class UserController extends FOSRestController
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
             $apiLogger->error("Email not allowed");
             $apiLogger->info(" ===== New User from API ending ===== ");
-            throw new InvalidUserException('Email not allowed');
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "Email not allowed");
         }
 
-        try {
-            // Create a new user through the user handler
-            $newUser = $this->container->get('wizem_api.user.handler')->create(
-                $request->request->all()
-            );
+        // Create a new user through the user handler
+        $newUser = $this->container->get('wizem_api.user.handler')->create(
+            $request->request->all()
+        );
 
-            $apiLogger->info(" ===== New User from API ending ===== ");
-            return $newUser;
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
-
-        } catch (Exception $exception) {
-            
-            return $exception->getUser();
-        }
+        $apiLogger->info(" ===== New User from API ending ===== ");
+        return $newUser;
     }
 
     /**
@@ -244,7 +220,7 @@ class UserController extends FOSRestController
      * @param mixed $id
      * @param Request $request the request object
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @return User     $newUser
      */
     public function putUserAction($id, Request $request)
     {
@@ -255,20 +231,14 @@ class UserController extends FOSRestController
         $apiLogger->info(" ===== Update User from API begin ===== ");
         $apiLogger->info("User #{$user->getId()}");
 
-        try {
-            $newUser = $this->container->get('wizem_api.user.handler')->update(
-                $request->request->all(),
-                $user
-            );
+        $newUser = $this->container->get('wizem_api.user.handler')->update(
+            $request->request->all(),
+            $user
+        );
 
-            $apiLogger->info(" ===== Update User from API ending ===== ");
+        $apiLogger->info(" ===== Update User from API ending ===== ");
 
-            return $newUser;
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
-        }
+        return $newUser;
     }
 
     /**
@@ -287,7 +257,6 @@ class UserController extends FOSRestController
      *
      * @return array
      *
-     * @throws NotFoundHttpException when User not exist
      */
     public function deleteUserAction($id)
     {
@@ -316,14 +285,14 @@ class UserController extends FOSRestController
      *
      * @return array
      *
-     * @throws NotFoundHttpException when no user
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getUsersFriendsAction($id)
     {
         $user = $this->getUserOr404($id);
 
         if (!($users = $this->container->get('wizem_api.user.handler')->getAllFriends($user))) {
-            throw new NotFoundHttpException('No friend for this user');
+            throw new HttpException(Codes::HTTP_NOT_FOUND, "No friend for this user");
         }
 
         return $users;
@@ -345,7 +314,7 @@ class UserController extends FOSRestController
      *
      * @return array
      *
-     * @throws NotFoundHttpException when no user
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getUsersEventFriendsAction($userId, $eventId)
     {
@@ -353,7 +322,7 @@ class UserController extends FOSRestController
         $event = $this->getEventOr404($eventId);
 
         if (!($users = $this->container->get('wizem_api.user.handler')->getAllUsersEvent($user, $event) )) {
-            throw new NotFoundHttpException('No user for this event');
+            throw new HttpException(Codes::HTTP_NOT_FOUND, "No user for this event");
         }
 
         return $users;
@@ -380,9 +349,7 @@ class UserController extends FOSRestController
      *
      * @return $friend
      *
-     * @throws InvalidFormException when form not valid
-     * @throws NotFoundHttpException when User or friend not exist
-     * @throws AccessDeniedException when access denied
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      *
      */
     public function postUsersFriendsAction($id, Request $request)
@@ -393,40 +360,14 @@ class UserController extends FOSRestController
 
         $user = $this->getUserOr404($id);
         $apiLogger->info("User #{$user->getId()}");
-        //try {
-            $friend = $this->container->get('wizem_api.user.handler')->addFriend(
-                $user,
-                $request->request->all()
-            );
 
-            $apiLogger->info(" ===== Adding friend from API ending ===== ");
-            return $friend;
+        $friend = $this->container->get('wizem_api.user.handler')->addFriend(
+            $user,
+            $request->request->all()
+        );
 
-        // } catch (\Exception $e){
-        //     return $e;
-        // } catch (AccessDeniedException $exception) {
-            
-        //     $apiLogger->info(" ===== Adding friend from API ending ===== ");
-        //     return $exception;//->getMessage();
-
-        // } catch (InvalidFormException $exception) {
-
-        //     //return "e";
-        //     //return get_class($exception);
-        //     $apiLogger->info(" ===== Adding friend from API ending ===== ");
-        //     //throw new HttpException(404, $exception->getMessage());
-            
-        //     return $exception->getMessage();
-
-        // } catch (NotFoundHttpException $exception) {
-            
-        //     $apiLogger->info(" ===== Adding friend from API ending ===== ");
-        //     return $exception;//->getMessage();
-        // } catch (HttpException $exception) {
-            
-        //     $apiLogger->info(" ===== Adding friend from API ending ===== ");
-        //     return $exception->getMessage();
-        // }
+        $apiLogger->info(" ===== Adding friend from API ending ===== ");
+        return $friend;
     }
 
     /**
@@ -446,7 +387,7 @@ class UserController extends FOSRestController
      *
      * @return array
      *
-     * @throws NotFoundHttpException when User or friend not exist
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function deleteUsersFriendsAction($id, $friendId)
     {
@@ -481,6 +422,8 @@ class UserController extends FOSRestController
      *
      * @return $friend
      *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     *
      */
     public function postUserEventConfirmAction($userId, $eventId,Request $request)
     {
@@ -493,19 +436,14 @@ class UserController extends FOSRestController
 
         $apiLogger->info("User #{$user->getId()} want to confirm for Event #{$event->getId()}");
 
-        try {
-            $confirmation = $this->container->get('wizem_api.user.handler')->confirm(
-                $user,
-                $event,
-                $request->request->all()
-            );
+        $confirmation = $this->container->get('wizem_api.user.handler')->confirm(
+            $user,
+            $event,
+            $request->request->all()
+        );
 
-            $apiLogger->info(" ===== Confirmation from user for an event from API ending ===== ");
-            return $confirmation;
-
-        } catch (Exception $e){
-            return $e;
-        }
+        $apiLogger->info(" ===== Confirmation from user for an event from API ending ===== ");
+        return $confirmation;
     }
 
     /**
@@ -530,6 +468,8 @@ class UserController extends FOSRestController
      *
      * @return $friend
      *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     *
      */
     public function postUserEventVoteAction($userId, $eventId,Request $request)
     {
@@ -540,7 +480,7 @@ class UserController extends FOSRestController
         if(!isset($request->request->all()['date']) && !isset($request->request->all()['place'])){
             $apiLogger->info("At least 'date' or 'place' is required.");
             $apiLogger->info(" ===== Valid a vote from host from API ending ===== ");
-            throw new InvalidFormException("At least 'date' or 'place' is required.");
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "At least 'date' or 'place' is required.");
         }
 
         $user = $this->getUserOr404($userId);
@@ -548,18 +488,13 @@ class UserController extends FOSRestController
 
         $apiLogger->info("User #{$user->getId()}, Event #{$event->getId()}");
 
-        try {
-            $vote = $this->container->get('wizem_api.user.handler')->validVote(
-                $user,
-                $event,
-                $request->request->all()
-            );
+        $vote = $this->container->get('wizem_api.user.handler')->validVote(
+            $user,
+            $event,
+            $request->request->all()
+        );
 
-            $apiLogger->info(" ===== Valid a vote from host from API ending ===== ");
-            return $vote;
-
-        } catch (Exception $e){
-            return $e;
-        }
+        $apiLogger->info(" ===== Valid a vote from host from API ending ===== ");
+        return $vote;
     }
 }

@@ -5,10 +5,7 @@ namespace wizem\ApiBundle\Handler;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use wizem\ApiBundle\Exception\InvalidFormException;
 use wizem\ApiBundle\Form\EventType;
 use wizem\ApiBundle\Form\VoteType;
 
@@ -320,8 +317,7 @@ class EventHandler
      *
      * @return Event
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
-     * @throws wizem\ApiBundle\Exception\NotFoundHttpException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     private function createEventProcessForm(Event $event, array $parameters, $method = "PUT")
     {
@@ -340,7 +336,7 @@ class EventHandler
             $this->om->flush();
 
             if (!($user = $this->container->get('wizem_api.user.handler')->get($userId))) {
-                throw new NotFoundHttpException(sprintf('The user \'%s\' was not found.',$userId));
+                throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('The user \'%s\' was not found.',$userId));
             }
 
             // User_Event creation for for link between user and event
@@ -360,7 +356,7 @@ class EventHandler
 
         $this->logger->info("Invalid submitted data");
         $this->logger->info(" ===== New Event from API ending ===== ");
-        throw new InvalidFormException('Invalid submitted data', $form);
+        throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid submitted data");
     }
 
     /**
@@ -387,7 +383,7 @@ class EventHandler
      *
      * @return Event
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     private function updateEventProcessForm(Event $event, array $parameters, $method = "PUT")
     {
@@ -472,7 +468,7 @@ class EventHandler
             return $event;
         }
 
-        throw new InvalidFormException('Invalid submitted data', $form);
+        throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid submitted data");
     }
 
     /**
@@ -565,7 +561,7 @@ class EventHandler
      *
      * @return Event
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     private function updateVoteProcessForm(Vote $vote, array $parameters, $method = "PUT")
     {
@@ -585,7 +581,7 @@ class EventHandler
             return $vote;
         }
 
-        throw new InvalidFormException('Invalid submitted data');
+        throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid submitted data");
     }
 
     /**
@@ -597,7 +593,7 @@ class EventHandler
      *
      * @return 
      *
-     * @throws AccessDeniedException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function checkIfUserLinkToEvent($event, $user, $host = false)
     {
@@ -606,7 +602,7 @@ class EventHandler
         if(!$userEvent || ($host == true && $userEvent->getHost() == false) ){
             $host = ($host == true ? 'true' : 'false');
             $this->logger->info("User #{$user->getId()} not allowed to access Event #{$event->getId()} (search for host : {$host}) ");
-            throw new AccessDeniedException('User is not allowed to access this event');
+            throw new HttpException(Codes::HTTP_FORBIDDEN, "User is not allowed to access this event");
         }
     }
 }

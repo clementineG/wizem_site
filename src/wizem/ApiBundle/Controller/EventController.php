@@ -4,15 +4,13 @@ namespace wizem\ApiBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-
-use wizem\ApiBundle\Exception\InvalidFormException;
 
 /**
  * Event controller.
@@ -36,12 +34,12 @@ class EventController extends FOSRestController
      *
      * @return Event
      *
-     * @throws NotFoundHttpException when event not exist
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getEventsTypesAction()
     {
         if (!($eventTypes = $this->container->get('wizem_api.event.handler')->getAllTypes())) {
-            throw new NotFoundHttpException("No TypeEvent found.");
+            throw new HttpException(Codes::HTTP_NOT_FOUND, "No TypeEvent found.");
         }
 
         return $eventTypes;
@@ -62,7 +60,7 @@ class EventController extends FOSRestController
      *
      * @return Event
      *
-     * @throws NotFoundHttpException when event not exist
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getUserEventAction($userId, $eventId)
     {
@@ -84,14 +82,14 @@ class EventController extends FOSRestController
      *
      * @return Event
      *
-     * @throws NotFoundHttpException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     protected function getEventOr404($id)
     {
         if (!($event = $this->container->get('wizem_api.event.handler')->get($id))) {
             $apiLogger = $this->container->get('api_logger');
             $apiLogger->info("The event #{$id} was not found");
-            throw new NotFoundHttpException(sprintf('The event \'%s\' was not found.',$id));
+            throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('The event \'%s\' was not found.',$id));
         }
 
         return $event;
@@ -104,7 +102,7 @@ class EventController extends FOSRestController
      *
      * @return User
      *
-     * @throws NotFoundHttpException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     protected function getUserOr404($userId)
     {
@@ -112,7 +110,7 @@ class EventController extends FOSRestController
         if (!($user = $this->container->get('wizem_api.user.handler')->get($id))) {
             $apiLogger = $this->container->get('api_logger');
             $apiLogger->info("The user #{$id} was not found");
-            throw new NotFoundHttpException(sprintf('The user \'%s\' was not found.',$id));
+            throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('The user \'%s\' was not found.',$id));
         }
 
         return $user;
@@ -133,14 +131,14 @@ class EventController extends FOSRestController
      *
      * @return array
      *
-     * @throws NotFoundHttpException when no event
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getUserEventsAction($id)
     {
         $user = $this->getUserOr404($id);
 
         if (!($events = $this->container->get('wizem_api.event.handler')->getAllUserEvents($user))) {
-            throw new NotFoundHttpException(sprintf('No event for the user \'%s\'.', $id));
+            throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('No event for the user \'%s\'.', $id));
         }
 
         return $events;
@@ -161,14 +159,14 @@ class EventController extends FOSRestController
      *
      * @return array
      *
-     * @throws NotFoundHttpException when no user
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getEventUsersAction($id)
     {
         $event = $this->getEventOr404($id);
 
         if (!($users = $this->container->get('wizem_api.event.handler')->getAllEventUsers($event))) {
-            throw new NotFoundHttpException(sprintf('No user for the event \'%s\'.', $id));
+            throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('No user for the event \'%s\'.', $id));
         }
 
         return $users;
@@ -191,7 +189,7 @@ class EventController extends FOSRestController
      *
      * @param Request $request the request object
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function postEventAction(Request $request)
     {
@@ -200,19 +198,13 @@ class EventController extends FOSRestController
         $apiLogger->info(" ===== New Event from API begin ===== ");
         $apiLogger->info("Event ", array("event" => $request->request->all()));
 
-        try {
-            // Create a new event through the event handler
-            $newEvent = $this->container->get('wizem_api.event.handler')->create(
-                $request->request->all()
-            );
+        // Create a new event through the event handler
+        $newEvent = $this->container->get('wizem_api.event.handler')->create(
+            $request->request->all()
+        );
 
-            $apiLogger->info(" ===== New Event from API ending ===== ");
-            return $newEvent->getId();
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
-        }
+        $apiLogger->info(" ===== New Event from API ending ===== ");
+        return $newEvent->getId();
     }
 
     /**
@@ -235,7 +227,7 @@ class EventController extends FOSRestController
      * @param mixed $id
      * @param Request $request the request object
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function putEventAction(Request $request, $id)
     {   
@@ -243,19 +235,13 @@ class EventController extends FOSRestController
         $userId = $request->request->all()['userId']; 
         $user = $this->getUserOr404($userId);
 
-        try {
-            $newEvent = $this->container->get('wizem_api.event.handler')->update(
-                $request->request->all(),
-                $event,
-                $user
-            );
+        $newEvent = $this->container->get('wizem_api.event.handler')->update(
+            $request->request->all(),
+            $event,
+            $user
+        );
 
-            return $newEvent->getId();
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
-        }
+        return $newEvent->getId();
     }
 
     /**
@@ -275,11 +261,10 @@ class EventController extends FOSRestController
      *
      * @param Request $request the request object
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function postEventUserAction($id, Request $request)
     {
-
         $userId = $request->request->all()['userId']; 
         
         /* Log */
@@ -290,21 +275,15 @@ class EventController extends FOSRestController
         $event = $this->getEventOr404($id);
         $user = $this->getUserOr404($userId);
 
-        try {
-            // Create a new event through the event handler
-            $event = $this->container->get('wizem_api.event.handler')->addFriends(
-                $request->request->all(),
-                $event,
-                $user
-            );
+        // Create a new event through the event handler
+        $event = $this->container->get('wizem_api.event.handler')->addFriends(
+            $request->request->all(),
+            $event,
+            $user
+        );
 
-            $apiLogger->info(" ===== Add friends to event from API ending ===== ");
-            return $event;
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
-        }
+        $apiLogger->info(" ===== Add friends to event from API ending ===== ");
+        return $event;
     }
 
     /**
@@ -324,7 +303,7 @@ class EventController extends FOSRestController
      *
      * @return array
      *
-     * @throws NotFoundHttpException when event not exist
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function deleteEventAction($id)
     {
@@ -358,7 +337,7 @@ class EventController extends FOSRestController
      *
      * @param Request $request the request object
      *
-     * @throws wizem\ApiBundle\Exception\InvalidFormException
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function postVoteAction(Request $request)
     {
@@ -369,7 +348,7 @@ class EventController extends FOSRestController
         if(!isset($request->request->all()['date']) && !isset($request->request->all()['place'])){
             $apiLogger->info("At least 'date' or 'place' is required.");
             $apiLogger->info(" ===== New Vote from API ending ===== ");
-            throw new InvalidFormException("At least 'date' or 'place' is required.");
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "At least 'date' or 'place' is required.");
         }
 
         $eventId = $request->request->all()['event'];
@@ -380,21 +359,15 @@ class EventController extends FOSRestController
         
         $apiLogger->info("User #{$userId}");
 
-        try {
-            // Create a new event through the event handler
-            $vote = $this->container->get('wizem_api.event.handler')->vote(
-                $request->request->all(),
-                $event,
-                $user
-            );
+        // Create a new event through the event handler
+        $vote = $this->container->get('wizem_api.event.handler')->vote(
+            $request->request->all(),
+            $event,
+            $user
+        );
 
-            $apiLogger->info(" ===== New Vote from API ending ===== ");
-            return $vote;
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
-        }
+        $apiLogger->info(" ===== New Vote from API ending ===== ");
+        return $vote;
     }
 
     /**
@@ -412,7 +385,7 @@ class EventController extends FOSRestController
      *
      * @return Vote
      *
-     * @throws NotFoundHttpException when no date vote
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getUserEventsVotesDateAction($userId, $eventId)
     {
@@ -420,7 +393,7 @@ class EventController extends FOSRestController
         $user = $this->getUserOr404($userId);
 
         if (!($votes = $this->container->get('wizem_api.event.handler')->getAllEventVotesDate($event, $user))) {
-            throw new NotFoundHttpException("No Vote found.");
+            throw new HttpException(Codes::HTTP_NOT_FOUND, "No Vote found.");
         }
 
         return $votes;
@@ -441,7 +414,7 @@ class EventController extends FOSRestController
      *
      * @return Vote
      *
-     * @throws NotFoundHttpException when no place vote
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getUserEventsVotesPlaceAction($userId, $eventId)
     {
@@ -449,7 +422,7 @@ class EventController extends FOSRestController
         $user = $this->getUserOr404($userId);
 
         if (!($votes = $this->container->get('wizem_api.event.handler')->getAllEventVotesPlace($event, $user))) {
-            throw new NotFoundHttpException("No Vote found.");
+            throw new HttpException(Codes::HTTP_NOT_FOUND, "No Vote found.");
         }
 
         return $votes;
