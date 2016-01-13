@@ -244,6 +244,7 @@ class EventHandler
             $nbVotes = count($placeVotes);
 
             $tabPlaces[] = array(
+                "id" => $place->getId(), 
                 "address" => $place->getAddress(), 
                 "lat" => $place->getLat(), 
                 "lng" => $place->getLng(),
@@ -285,6 +286,7 @@ class EventHandler
             $nbVotes = count($dateVotes);
 
             $tabDates[] = array(
+                "id" => $date->getId(),
                 "date" => $date->getDate(),
                 "nbVotes" => $nbVotes,
                 "hasVoted" => $dateVoteUser ? true : false,
