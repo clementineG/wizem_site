@@ -63,17 +63,18 @@ class EventHandler
         $this->checkIfUserLinkToEvent($event, $user, false);
 
         // Check all dates for final date
+        $tabDates = array();
         foreach ($dates as $date) {
+            $tabDates[] = array("id" => $date->getId(), "date" => $date->getDate());
             if($date->getFinal() == true){
                 $finalDate = $date;
-                break;
             }
         }
 
         // Check all places for final place
         $tabPlaces = array();
         foreach ($places as $place) {
-            $tabPlaces[] = array("address" => $place->getAddress(), "lat" => $place->getLat(), "lng" => $place->getLng());
+            $tabPlaces[] = array("id" => $place->getId(), "address" => $place->getAddress(), "lat" => $place->getLat(), "lng" => $place->getLng());
             if($place->getFinal() == true){
                 $finalPlace = $place;
             }
@@ -85,7 +86,6 @@ class EventHandler
                 "event" => $event->getId(),
                 "user" => $user->getId() 
             ));
-
             $hasVotedDate = $dateVote ? ($dateVote->getDate() ? $dateVote->getDate()->getDate() : false ) : false;
         }
         // If no place here : the vote is not finish 
@@ -94,16 +94,16 @@ class EventHandler
                 "event" => $event->getId(),
                 "user" => $user->getId() 
             ));
-
             $hasVotedPlace = $placeVote ? ($placeVote->getPlace() ? $placeVote->getPlace()->getAddress() : false ) : false;
         }
 
         $date = array(
-            "final" => isset($finalDate) ? $finalDate->getDate() : null,
+            "final" => isset($finalDate) ? array("id" => $finalDate->getId(), "date" => $finalDate->getDate()) : null,
+            "dates" => $tabDates,
             "hasVoted" => isset($hasVotedDate) ? $hasVotedDate : null,
         );
         $place = array(
-            "final" => isset($finalPlace) ? array("address" => $finalPlace->getAddress(), "lat" => $finalPlace->getLat(), "lng" => $finalPlace->getLng()) : null,
+            "final" => isset($finalPlace) ? array("id" => $finalPlace->getId(), "address" => $finalPlace->getAddress(), "lat" => $finalPlace->getLat(), "lng" => $finalPlace->getLng()) : null,
             "places" => $tabPlaces,
             "hasVoted" => isset($hasVotedPlace) ? $hasVotedPlace : null,
         );
