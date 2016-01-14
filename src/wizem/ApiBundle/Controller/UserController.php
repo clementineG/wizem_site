@@ -63,6 +63,7 @@ class UserController extends FOSRestController
         if (!($user = $this->container->get('wizem_api.user.handler')->get($id))) {
             $apiLogger = $this->container->get('api_logger');
             $apiLogger->info("The user #{$id} was not found");
+            $apiLogger->info(" ===== Ending getUserOr404 ===== ");
             throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('The user \'%s\' was not found.',$id));
         }
 
@@ -84,6 +85,7 @@ class UserController extends FOSRestController
         if (!($event = $this->container->get('wizem_api.event.handler')->get($id))) {
             $apiLogger = $this->container->get('api_logger');
             $apiLogger->info("The event #{$id} was not found");
+            $apiLogger->info(" ===== Ending getEventOr404 ===== ");
             throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('The event \'%s\' was not found.',$id));
         }
 
@@ -399,6 +401,7 @@ class UserController extends FOSRestController
         
         $response = $this->container->get('wizem_api.user.handler')->deleteFriend($user, $friend);
 
+        $apiLogger->info(" ===== Deleting friend from API ending ===== ");
         return $response;
     }
 

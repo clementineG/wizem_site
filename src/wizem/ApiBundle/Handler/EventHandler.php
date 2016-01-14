@@ -5,6 +5,9 @@ namespace wizem\ApiBundle\Handler;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+use FOS\RestBundle\Util\Codes;
 
 use wizem\ApiBundle\Form\EventType;
 use wizem\ApiBundle\Form\VoteType;
@@ -336,6 +339,8 @@ class EventHandler
             $this->om->flush();
 
             if (!($user = $this->container->get('wizem_api.user.handler')->get($userId))) {
+                $this->logger->info("The user #{$userId} was not found");
+                $this->logger->info(" ===== New Event from API ending ===== ");
                 throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('The user \'%s\' was not found.',$userId));
             }
 
@@ -413,6 +418,7 @@ class EventHandler
 
         if ($form->isValid()) {
 
+            $this->logger->info("Valid form");
             $event = $form->getData();
 
             foreach ($tabDate as $date) {
@@ -428,11 +434,13 @@ class EventHandler
                     $newDate->setFinal($final);
                     $this->om->persist($newDate);
                     $event->addDate($newDate);
+                    $this->logger->info("New date created : {$date['date']}");
                 }else{
                     // Update existing Date
                     $existingDate = $this->om->getRepository("wizemEventBundle:Date")->find($date['id']);
                     $existingDate->setDate($dateObject);
                     $this->om->persist($existingDate);
+                    $this->logger->info("Existing date #{$date['id']} updated ");
                 }
             }
 
@@ -451,6 +459,7 @@ class EventHandler
                     $newPlace->setFinal($final);
                     $this->om->persist($newPlace);
                     $event->addPlace($newPlace);
+                    $this->logger->info("New place created : {$place['place']}");
                 }else{
                     // Update existing Place
                     $existingPlace = $this->om->getRepository("wizemEventBundle:Place")->find($place['id']);
@@ -459,6 +468,7 @@ class EventHandler
                     $existingPlace->setLat($coords['lat']);
                     $existingPlace->setLng($coords['lng']);
                     $this->om->persist($existingPlace);
+                    $this->logger->info("Existing place #{$place['id']} updated");
                 }
             }
 
@@ -468,6 +478,8 @@ class EventHandler
             return $event;
         }
 
+        $this->logger->info("Invalid submitted data");
+        $this->logger->info(" ===== Update Event from API begin ===== ");
         throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid submitted data");
     }
 
@@ -581,6 +593,8 @@ class EventHandler
             return $vote;
         }
 
+        $this->logger->info("Invalid submitted data");
+        $this->logger->info(" ===== New Vote from API ending ===== ");
         throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid submitted data");
     }
 
@@ -590,8 +604,6 @@ class EventHandler
      * @param Event         $event
      * @param User          $user
      * @param boolean       $host
-     *
-     * @return 
      *
      * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */

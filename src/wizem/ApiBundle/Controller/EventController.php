@@ -89,6 +89,7 @@ class EventController extends FOSRestController
         if (!($event = $this->container->get('wizem_api.event.handler')->get($id))) {
             $apiLogger = $this->container->get('api_logger');
             $apiLogger->info("The event #{$id} was not found");
+            $apiLogger->info(" ===== Ending getEventOr404 ===== ");
             throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('The event \'%s\' was not found.',$id));
         }
 
@@ -110,6 +111,7 @@ class EventController extends FOSRestController
         if (!($user = $this->container->get('wizem_api.user.handler')->get($id))) {
             $apiLogger = $this->container->get('api_logger');
             $apiLogger->info("The user #{$id} was not found");
+            $apiLogger->info(" ===== Ending getUserOr404 ===== ");
             throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('The user \'%s\' was not found.',$id));
         }
 
@@ -231,6 +233,10 @@ class EventController extends FOSRestController
      */
     public function putEventAction(Request $request, $id)
     {   
+        /* Log */
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Update Event from API begin ===== ");
+
         $event = $this->getEventOr404($id);
         $userId = $request->request->all()['userId']; 
         $user = $this->getUserOr404($userId);
@@ -241,6 +247,7 @@ class EventController extends FOSRestController
             $user
         );
 
+        $apiLogger->info(" ===== Update Event from API begin ===== ");
         return $newEvent->getId();
     }
 

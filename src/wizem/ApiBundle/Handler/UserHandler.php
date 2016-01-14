@@ -369,6 +369,7 @@ class UserHandler
             $friend = $um->findUserByUsername($username);
             if(!$friend){
                 $this->logger->error("Friend not found");
+                $this->logger->info(" ===== Adding friend from API ending ===== ");
                 throw new HttpException(Codes::HTTP_NOT_FOUND, "Friend not found");
             }
             
@@ -376,11 +377,13 @@ class UserHandler
             $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $user->getId(), "friend" => $friend->getId()));
             if($testFriendship){
                 $this->logger->error("Users are already friends");
+                $this->logger->info(" ===== Adding friend from API ending ===== ");
                 throw new HttpException(Codes::HTTP_FORBIDDEN, "You are already friends");
             }
             $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId()));
             if($testFriendship){
                 $this->logger->error("Users are already friends");
+                $this->logger->info(" ===== Adding friend from API ending ===== ");
                 throw new HttpException(Codes::HTTP_FORBIDDEN, "You are already friends");
             }
 
@@ -396,6 +399,8 @@ class UserHandler
             return $friend;
         }
         
+        $this->logger->error("Invalid username");
+        $this->logger->info(" ===== Adding friend from API ending ===== ");
         throw new HttpException(Codes::HTTP_FORBIDDEN, "Invalid username");
     }
 
@@ -414,6 +419,7 @@ class UserHandler
             $friendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId()));
             if(!$friendship){
                 $this->logger->info("User #{$user->getId()} has not friendship relation with friend #{$friend->getId()}");
+                $this->logger->info(" ===== Deleting friend from API ending ===== ");
                 throw new HttpException(Codes::HTTP_FORBIDDEN, "User has not friendship relation with friend");
             }
         }
@@ -450,10 +456,12 @@ class UserHandler
 
         if(!$user instanceof User){
             $this->logger->info("User not found");
+            $this->logger->info(" ===== User login from API ending ===== ");
             throw new HttpException(Codes::HTTP_NOT_FOUND, "User not found");
         }
         if(!$this->checkUserPassword($user, $password)){
             $this->logger->info("Wrong password");
+            $this->logger->info(" ===== User login from API ending ===== ");
             throw new HttpException(Codes::HTTP_FORBIDDEN, "Wrong password");
         }
 
@@ -510,7 +518,8 @@ class UserHandler
             // Validate date
             $date = $this->om->getRepository("wizemEventBundle:Date")->find($parameters['date']);
             if(!$date){
-                $this->logger->info("Invalid id date");
+                $this->logger->info("Invalid Id date");
+                $this->logger->info(" ===== Valid a vote from host from API ending ===== ");
                 throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid Id date");
             }
             $date->setFinal(true);
@@ -524,7 +533,8 @@ class UserHandler
             // Validate place
             $place = $this->om->getRepository("wizemEventBundle:Place")->find($parameters['place']);
             if(!$place){
-                $this->logger->info("Invalid id place");
+                $this->logger->info("Invalid Id place");
+                $this->logger->info(" ===== Valid a vote from host from API ending ===== ");
                 throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid Id place");
             }
             $place->setFinal(true);
@@ -555,6 +565,7 @@ class UserHandler
 
         if(!isset($parameters['confirm'])){
             $this->logger->info("Invalid json");
+            $this->logger->info(" ===== Confirmation from user for an event from API ending ===== ");
             throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid json");
         }
 
@@ -566,6 +577,7 @@ class UserHandler
         // A host can't confirm 
         if($userEvent->getHost() == true){
             $this->logger->info("User is the host, he can't confirm a presence or not");
+            $this->logger->info(" ===== Confirmation from user for an event from API ending ===== ");
             throw new HttpException(Codes::HTTP_FORBIDDEN, "You are the host, you can't confirm");
         }
 
