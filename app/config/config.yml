@@ -135,8 +135,16 @@ fos_rest:
 # NELMIO CORS BUNDLE
 nelmio_cors:
     paths:
-        '^/api':
+        '^/api/':
             allow_origin: ['*']
             allow_headers: ['X-Custom-Auth', 'Content-Type']
             allow_methods: ['POST', 'PUT', 'GET', 'DELETE', 'OPTIONS']
             max_age: 3600
+
+# JWTbundle
+lexik_jwt_authentication:
+    private_key_path: %jwt_private_key_path%
+    public_key_path:  %jwt_public_key_path%
+    pass_phrase:      %jwt_key_pass_phrase%
+    token_ttl:        %jwt_token_ttl%
+    encoder_service:     lexik_jwt_authentication.jwt_encoder    # token encoder / decoder service - defaults to the jwt encoder (based on the namshi/jose library)
