@@ -14,6 +14,9 @@ security:
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
+        doc:
+            pattern: ^/api/doc
+            anonymous:    true
         login:
             pattern:  ^/api/login
             provider:  fos_userbundle
@@ -41,6 +44,7 @@ security:
             anonymous:    true
 
     access_control:
+        - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
