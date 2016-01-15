@@ -131,6 +131,7 @@ fos_rest:
             'Symfony\Component\Routing\Exception\ResourceNotFoundException': 404
         messages:
             'Symfony\Component\Routing\Exception\ResourceNotFoundException': true
+            'Symfony\Component\HttpKernel\Exception\HttpException': true
 
 # NELMIO CORS BUNDLE
 nelmio_cors:
