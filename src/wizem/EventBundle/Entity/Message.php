@@ -8,7 +8,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * Message
  *
- * @ORM\Table(name="Message", indexes={@ORM\Index(name="fk_Message_Discussion1_idx", columns={"Discussion_id"}), @ORM\Index(name="fk_Message_User1_idx", columns={"User_id"})})
+ * @ORM\Table(name="Message")
  * @ORM\Entity
  */
 class Message

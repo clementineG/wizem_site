@@ -1,0 +1,40 @@
+<?php
+
+namespace wizem\ApiBundle\Form;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+class DiscussionType extends AbstractType
+{
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('event')
+        ;
+    }
+    
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {   
+        $resolver->setDefaults(array(
+            'data_class' => 'wizem\EventBundle\Entity\Discussion',
+            'csrf_protection' => false,
+        ));
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'wizem_apibundle_discussion';
+    }
+}

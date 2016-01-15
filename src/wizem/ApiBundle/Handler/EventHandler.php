@@ -16,8 +16,10 @@ use wizem\EventBundle\Entity\Event;
 use wizem\EventBundle\Entity\Date;
 use wizem\EventBundle\Entity\Place;
 use wizem\EventBundle\Entity\Vote;
+use wizem\EventBundle\Entity\Discussion;
 
 use wizem\UserBundle\Entity\UserEvent;
+use wizem\UserBundle\Entity\User;
 
 class EventHandler
 {
@@ -300,21 +302,23 @@ class EventHandler
      * Create a new Event.
      *
      * @param array $parameters
+     * @param User  $user
      *
      * @return Event
      */
-    public function create(array $parameters)
+    public function create(array $parameters, User $user)
     {
         $event = new $this->entityClass();
 
         // Process form does all the magic, validate and hydrate the event object.
-        return $this->createEventProcessForm($event, $parameters, 'POST');
+        return $this->createEventProcessForm($event, $user, $parameters, 'POST');
     }
 
     /**
      * Processes the form.
      *
      * @param Event         $event
+     * @param User          $user
      * @param array         $parameters
      * @param String        $method
      *
@@ -322,7 +326,7 @@ class EventHandler
      *
      * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
-    private function createEventProcessForm(Event $event, array $parameters, $method = "PUT")
+    private function createEventProcessForm(Event $event, User $user, array $parameters, $method = "PUT")
     {
         $form = $this->formFactory->create(new EventType(), $event, array('method' => $method));
 
@@ -338,12 +342,6 @@ class EventHandler
             $this->om->persist($event);
             $this->om->flush();
 
-            if (!($user = $this->container->get('wizem_api.user.handler')->get($userId))) {
-                $this->logger->info("The user #{$userId} was not found");
-                $this->logger->info(" ===== New Event from API ending ===== ");
-                throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('The user \'%s\' was not found.',$userId));
-            }
-
             // User_Event creation for for link between user and event
             $userEvent = new UserEvent(); 
             $userEvent->setEvent($event);
@@ -352,8 +350,18 @@ class EventHandler
             $userEvent->setState(1);
             $userEvent->setHost(1);
 
+            // Discussion creation
+            $discussion = $this->container->get('wizem_api.discussion.handler')->create(
+                $event
+            );
+            $event->setDiscussion($discussion);
+
+
+            $this->om->persist($discussion);
+            $this->om->persist($event);
             $this->om->persist($userEvent);
             $this->om->flush();
+            $this->logger->info("Creating associate Discussion() : #{$discussion->getId()} ");
             $this->logger->info("Creating associate UserEvent() : #{$userEvent->getId()} ");
 
             return $event;

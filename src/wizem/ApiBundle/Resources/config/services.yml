@@ -18,3 +18,12 @@ services:
             service_container: "@service_container"
             logger: "@api_logger"
             encoderFactory: "@security.encoder_factory"
+
+    wizem_api.discussion.handler:
+        class: wizem\ApiBundle\Handler\DiscussionHandler
+        arguments: 
+            entityManager: "@doctrine.orm.entity_manager"
+            entityClass: "wizem\EventBundle\Entity\Discussion"
+            form.factory: "@form.factory"
+            service_container: "@service_container"
+            logger: "@api_logger"

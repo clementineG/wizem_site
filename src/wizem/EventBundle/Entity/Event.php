@@ -86,6 +86,11 @@ class Event
     private $vote;
 
     /**
+     * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Discussion", inversedBy="event", cascade={"persist","remove"})
+     */
+    private $discussion;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -420,5 +425,29 @@ class Event
     public function getUserEvent()
     {
         return $this->userEvent;
+    }
+
+    /**
+     * Set discussion
+     *
+     * @param \wizem\EventBundle\Entity\Discussion $discussion
+     *
+     * @return Event
+     */
+    public function setDiscussion(\wizem\EventBundle\Entity\Discussion $discussion = null)
+    {
+        $this->discussion = $discussion;
+
+        return $this;
+    }
+
+    /**
+     * Get discussion
+     *
+     * @return \wizem\EventBundle\Entity\Discussion
+     */
+    public function getDiscussion()
+    {
+        return $this->discussion;
     }
 }

@@ -200,11 +200,16 @@ class EventController extends FOSRestController
         $apiLogger->info(" ===== New Event from API begin ===== ");
         $apiLogger->info("Event ", array("event" => $request->request->all()));
 
+        $userId = $request->request->all()['userId'];
+        $user = $this->getUserOr404($userId);
+
         // Create a new event through the event handler
         $newEvent = $this->container->get('wizem_api.event.handler')->create(
-            $request->request->all()
+            $request->request->all(),
+            $user
         );
 
+        $apiLogger->info("Event #{$newEvent->getId()} created");
         $apiLogger->info(" ===== New Event from API ending ===== ");
         return $newEvent->getId();
     }

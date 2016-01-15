@@ -8,7 +8,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * Discussion
  *
- * @ORM\Table(name="Discussion", indexes={@ORM\Index(name="IDX_8FE4FADF88818ADD", columns={"Event_id"})})
+ * @ORM\Table(name="Discussion")
  * @ORM\Entity
  */
 class Discussion
@@ -41,15 +41,13 @@ class Discussion
     /**
      * @var \Event
      *
-     * @ORM\OneToOne(targetEntity="Event")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Event_id", referencedColumnName="id")
-     * })
+     * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Event", mappedBy="discussion")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
      */
     private $event;
 
     /**
-     * @ORM\OneToMany(targetEntity="Message", mappedBy="discussion", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Message", mappedBy="discussion", cascade={"persist", "remove"})
      */
     private $message;
 
