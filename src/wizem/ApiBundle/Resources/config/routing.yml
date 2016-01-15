@@ -13,3 +13,9 @@ wizem_api_user:
     prefix: /api
     resource: wizem\ApiBundle\Controller\UserController
     name_prefix:  api_user_ 
+
+wizem_api_discussion:
+    type: rest
+    prefix: /api
+    resource: wizem\ApiBundle\Controller\DiscussionController
+    name_prefix:  api_discussion_ 
