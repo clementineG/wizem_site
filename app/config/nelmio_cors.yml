@@ -1,0 +1,8 @@
+# NELMIO CORS BUNDLE
+nelmio_cors:
+    paths:
+        '^/api':
+            allow_origin: ['*']
+            allow_headers: ['X-Custom-Auth', 'Content-Type']
+            allow_methods: ['POST', 'PUT', 'GET', 'DELETE', 'OPTIONS']
+            max_age: 3600
