@@ -67,6 +67,9 @@ class EventHandler
 
         $this->checkIfUserLinkToEvent($event, $user, false);
 
+        $userLogged = $this->om->getRepository("wizemUserBundle:UserEvent")->findOneBy(array('user' => $user->getId(), "event" => $event->getId()));
+        $userHost = $userLogged->getHost();
+        
         // Check all dates for final date
         $tabDates = array();
         foreach ($dates as $date) {
@@ -129,6 +132,7 @@ class EventHandler
         }
 
         return array(
+            "host" => $userHost,
             "typeEvent" => $event->getTypeEvent()->getName(),
             "description" => $event->getDescription(),
             "date" => $date,
