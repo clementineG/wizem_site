@@ -186,12 +186,6 @@ class UserController extends FOSRestController
         $apiLogger->info(" ===== New User from API begin ===== ");
         $apiLogger->info("User ", array("user" => $email));
 
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-            $apiLogger->error("Email not allowed");
-            $apiLogger->info(" ===== New User from API ending ===== ");
-            throw new HttpException(Codes::HTTP_BAD_REQUEST, "Email not allowed");
-        }
-
         // Create a new user through the user handler
         $newUser = $this->container->get('wizem_api.user.handler')->create(
             $request->request->all()
@@ -499,5 +493,83 @@ class UserController extends FOSRestController
 
         $apiLogger->info(" ===== Valid a vote from host from API ending ===== ");
         return $vote;
+    }
+
+
+    /*
+    * ====================================
+    *         FACEBOOK CONNEXION
+    * ====================================
+    */
+
+    /**
+     * Sign up a User throw the Facebook connexion. 1) Check if user already exists in DB. 2) Update or create his account with his choice.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   input = "wizem\UsersBundle\Form\UsersType",
+     *   parameters={
+     *      {"name"="email", "dataType"="email", "required"=true, "description"="Email of the user"},
+     *      {"name"="update", "dataType"="boolean", "required"=true, "description"="Check if we update the user"},
+     *      {"name"="create", "dataType"="boolean", "required"=true, "description"="Check if we create the user"},
+     *      {"name"="facebookId", "dataType"="integer", "required"=false, "description"="Id of the place to vote"},
+     *      {"name"="userId", "dataType"="integer", "required"=false, "description"="Id of the User if he update his account"},
+     *      {"name"="username", "dataType"="integer", "required"=false, "description"="Username of the user"},
+     *      {"name"="firstname", "dataType"="text", "required"=false, "description"="Firstname of the user"},
+     *      {"name"="lastname", "dataType"="text", "required"=false, "description"="Lastname of the user"},
+     *      {"name"="image", "dataType"="text", "required"=false, "description"="Profile picture of the user"},
+     *   },
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors",
+     *   }
+     * )
+     *
+     * @param Request $request the request object
+     *
+     * @return $friend
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     *
+     */
+    public function postUserFacebookAction(Request $request)
+    {
+        /* Log */
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Adding new User with Facebook from API begin ===== ");
+        
+        if(isset($request->request->all()['update']) && $request->request->all()['update'] == true){
+            // User has already an account and want to update his informations with Facebook's
+            $apiLogger->info("User has already an account and want to update his informations with Facebook's");
+            
+            $updatedUser = $this->container->get('wizem_api.user.handler')->updateFacebookUser(
+                $request->request->all()
+            );
+
+            return $updatedUser;
+        }
+        if(isset($request->request->all()['create']) && $request->request->all()['create'] == true ){
+            // User want to create a new account with his Facebook informations
+            $apiLogger->info("User want to create a new account with his Facebook informations");
+
+            $createdUser = $this->container->get('wizem_api.user.handler')->createFacebookUser(
+                $request->request->all()
+            );
+
+            return $createdUser;
+        }
+
+        // Check if User exist or not in DB
+        $apiLogger->info("Check if User exist or not in DB");
+
+        $exists = $this->container->get('wizem_api.user.handler')->checkFacebookUser(
+            $request->request->all()
+        );
+
+        $apiLogger->info(" ===== Adding new User with Facebook from API ending ===== ");
+        return array(
+            "email" => $request->request->all()['email'],
+            "exists" => $exists
+        );
     }
 }

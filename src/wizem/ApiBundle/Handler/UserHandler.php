@@ -143,6 +143,14 @@ class UserHandler
         $username = $parameters['username'];
         $email = $parameters['email'];
 
+        // Check email
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            $this->logger->error("Email not allowed");
+            $this->logger->info(" ===== New User from API ending ===== ");
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "Email not allowed");
+        }
+
+        // Check username
         if ( !preg_match("/^[a-zA-Z0-9_]{1,50}$/ " , $username ) ){
             unset($parameters['password']);
             $this->logger->error("User username not valid : ", array($parameters));
@@ -591,6 +599,131 @@ class UserHandler
         $this->logger->info("Confirmation : {$confirm} OK");
 
         return $parameters['confirm'];
+    }
+
+    /*
+    * ====================================
+    *         FACEBOOK CONNEXION
+    * ====================================
+    */
+
+    /**
+     * Check if a new Facebook User exists in DB
+     *
+     * @param array $parameters
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     *
+     */
+    public function checkFacebookUser(array $parameters)
+    {
+        $email = $parameters['email'];
+
+        // Check email
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            $this->logger->error("Email not allowed");
+            $this->logger->info(" ===== Adding new User with Facebook from API ending ===== ");
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "Email not allowed");
+        }
+
+        // Check if email already exists
+        $um = $this->container->get('fos_user.user_manager');
+        $userCheck = $um->findUserByEmail($email);
+        if($userCheck){
+            $this->logger->error("User email already exists : ", array($parameters));
+            $exists = $userCheck->getId(); 
+        }else{
+            $this->logger->error("User email don't exist in DB");
+            $exists = false;
+        }
+
+        return $exists;
+    }
+
+    /**
+     * Update a User when he connect with Facebook
+     *
+     * @param array $parameters
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     *
+     */
+    public function updateFacebookUser(array $parameters)
+    {
+        if(!isset($parameters['facebookId']) || !isset($parameters['userId'])){
+            $this->logger->error("Invalid data");
+            $this->logger->info(" ===== Adding new User with Facebook from API ending ===== ");
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid data");
+        }
+
+        return "e";
+    }
+
+    /**
+     * Create a User when he connect with Facebook
+     *
+     * @param array $parameters
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     *
+     */
+    public function createFacebookUser(array $parameters)
+    {
+        if(!isset($parameters['facebookId']) || !isset($parameters['username'])){
+            $this->logger->error("Invalid data");
+            $this->logger->info(" ===== Adding new User with Facebook from API ending ===== ");
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid data");
+        }
+
+        $user = new $this->entityClass();
+
+        unset($parameters['create']);
+
+        $parameters['password'] = "az";
+        $parameters['firstname'] = isset($parameters['firstname']) ? $parameters['firstname'] : null;
+        $parameters['lastname'] = isset($parameters['lastname']) ? $parameters['lastname'] : null;
+        $parameters['image'] = isset($parameters['image']) ? $parameters['image'] : null;
+        return $parameters;
+
+        return $this->createFacebookUserProcessForm($user, $parameters, 'POST');
+    }
+
+    /**
+     * Processes the form.
+     *
+     * @param User      $user
+     * @param array     $parameters
+     * @param String    $method
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    private function createFacebookUserProcessForm(User $user, array $parameters, $method = "PUT")
+    {
+        $form = $this->formFactory->create(new UserType($this->container, $facebook = true), $user, array('method' => $method));
+        $form->submit($parameters, 'PATCH' !== $method);
+        $this->logger->info("Processing form");
+        if ($form->isValid()) {
+
+            $data = $form->getData();
+            $this->logger->info("Submit post form ok");
+
+            $userManager = $this->container->get('fos_user.user_manager');
+            $user = $userManager->createUser();
+
+            $user->setEmail($data->getEmail());
+            $user->setUsername($data->getUsername());
+            $user->setPlainPassword($data->getPassword());
+            $user->setEnabled(true);
+
+            $userManager->updateUser($user);
+            $this->logger->info("User created");
+
+            return $this->getFormatedUser($user, true);
+        }
+
+        $this->logger->info("Invalid submitted data");
+        $this->logger->info(" ===== New User from API ending ===== ");
+        throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid submitted data");
     }
 
 }

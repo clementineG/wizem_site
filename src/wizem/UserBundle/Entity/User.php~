@@ -59,6 +59,13 @@ class User extends BaseUser
     private $image;
 
     /**
+     * @var text
+     *
+     * @ORM\Column(name="facebookId", type="text", nullable=true)
+     */
+    private $facebookId;
+
+    /**
      * @var \DateTime
      *
      * @Gedmo\Timestampable(on="create")
@@ -538,5 +545,29 @@ class User extends BaseUser
     public function getUserEvent()
     {
         return $this->userEvent;
+    }
+
+    /**
+     * Set image
+     *
+     * @param string $image
+     *
+     * @return User
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return string
+     */
+    public function getImage()
+    {
+        return $this->image;
     }
 }

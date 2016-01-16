@@ -5,9 +5,20 @@ namespace wizem\ApiBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UserType extends AbstractType
 {
+
+    private $container;
+    private $facebook;
+
+    public function __construct(ContainerInterface $container = null, $facebook = false)
+    {
+        $this->container = $container;
+        $this->facebook = $facebook;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -19,6 +30,12 @@ class UserType extends AbstractType
             ->add('email', 'email')
             ->add('password', 'password')
         ;
+
+        if($this->facebook == true){
+            $builder
+                ->add('facebookId')
+            ;
+        }
     }
     
     /**
