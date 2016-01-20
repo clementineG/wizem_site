@@ -495,6 +495,49 @@ class UserController extends FOSRestController
         return $vote;
     }
 
+    /**
+     * Change password for a user 
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   parameters={
+     *      {"name"="oldPassword", "dataType"="text", "required"=true, "description"="Old password of the user"},
+     *      {"name"="newPassword1", "dataType"="text", "required"=true, "description"="First new password of the user"},
+     *      {"name"="newPassword2", "dataType"="text", "required"=true, "description"="Second new password of the user"},
+     *   },
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors",
+     *   }
+     * )
+     *
+     * @param int       $id         id of the user
+     * @param Request   $request    the request object
+     *
+     * @return $user
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     *
+     */
+    public function postUserPasswordAction($id, Request $request)
+    {
+        /* Log */
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Change password from API begin ===== ");
+        
+        $user = $this->getUserOr404($id);
+
+        $apiLogger->info("User #{$user->getId()}");
+
+        $result = $this->container->get('wizem_api.user.handler')->changePassword(
+            $user,
+            $request->request->all()
+        );
+
+        $apiLogger->info(" ===== Change password from API ending ===== ");
+        return $result;
+    }
+
 
     /*
     * ====================================
