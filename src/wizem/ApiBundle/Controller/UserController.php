@@ -510,8 +510,8 @@ class UserController extends FOSRestController
      *   input = "wizem\UsersBundle\Form\UsersType",
      *   parameters={
      *      {"name"="email", "dataType"="email", "required"=true, "description"="Email of the user"},
-     *      {"name"="update", "dataType"="boolean", "required"=true, "description"="Check if we update the user"},
-     *      {"name"="create", "dataType"="boolean", "required"=true, "description"="Check if we create the user"},
+     *      {"name"="update", "dataType"="boolean", "required"=false, "description"="Check if we update the user"},
+     *      {"name"="create", "dataType"="boolean", "required"=false, "description"="Check if we create the user"},
      *      {"name"="facebookId", "dataType"="integer", "required"=false, "description"="Id of the place to vote"},
      *      {"name"="userId", "dataType"="integer", "required"=false, "description"="Id of the User if he update his account"},
      *      {"name"="username", "dataType"="integer", "required"=false, "description"="Username of the user"},
@@ -541,11 +541,21 @@ class UserController extends FOSRestController
         if(isset($request->request->all()['update']) && $request->request->all()['update'] == true){
             // User has already an account and want to update his informations with Facebook's
             $apiLogger->info("User has already an account and want to update his informations with Facebook's");
+
+            if(!isset($request->request->all()['userId'])){
+                $apiLogger->error("Invalid data, missing userId");
+                $apiLogger->info(" ===== Adding new User with Facebook from API ending ===== ");
+                throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid data, missing userId");
+            }
+
+            $user = $this->getUserOr404($request->request->all()['userId']);
             
             $updatedUser = $this->container->get('wizem_api.user.handler')->updateFacebookUser(
-                $request->request->all()
+                $request->request->all(),
+                $user
             );
 
+            $apiLogger->info(" ===== Adding new User with Facebook from API ending ===== ");
             return $updatedUser;
         }
         if(isset($request->request->all()['create']) && $request->request->all()['create'] == true ){
@@ -556,6 +566,7 @@ class UserController extends FOSRestController
                 $request->request->all()
             );
 
+            $apiLogger->info(" ===== Adding new User with Facebook from API ending ===== ");
             return $createdUser;
         }
 

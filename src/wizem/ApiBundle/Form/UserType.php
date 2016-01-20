@@ -12,11 +12,13 @@ class UserType extends AbstractType
 
     private $container;
     private $facebook;
+    private $udpate;
 
-    public function __construct(ContainerInterface $container = null, $facebook = false)
+    public function __construct(ContainerInterface $container = null, $facebook = false, $udpate = false)
     {
         $this->container = $container;
         $this->facebook = $facebook;
+        $this->udpate = $udpate;
     }
 
     /**
@@ -34,6 +36,17 @@ class UserType extends AbstractType
         if($this->facebook == true){
             $builder
                 ->add('facebookId')
+                ->add('firstname')
+                ->add('lastname')
+                ->add('image')
+            ;
+        }
+
+        if($this->udpate == true){
+            $builder
+                ->remove('username')
+                ->remove('email')
+                ->remove('password')
             ;
         }
     }

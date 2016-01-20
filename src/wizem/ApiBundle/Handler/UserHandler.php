@@ -648,21 +648,67 @@ class UserHandler
      * @throws Symfony\Component\HttpKernel\Exception\HttpException
      *
      */
-    public function updateFacebookUser(array $parameters)
+    public function updateFacebookUser(array $parameters, User $user)
     {
-        if(!isset($parameters['facebookId']) || !isset($parameters['userId'])){
-            $this->logger->error("Invalid data");
+        if(!isset($parameters['facebookId'])){
+            $this->logger->error("Invalid data, missing facebookId");
             $this->logger->info(" ===== Adding new User with Facebook from API ending ===== ");
-            throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid data");
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid data, missing facebookId");
         }
 
-        return "e";
+        unset($parameters['update']);
+        unset($parameters['userId']);
+        unset($parameters['email']);
+        unset($parameters['username']);
+
+        $parameters['firstname'] = isset($parameters['firstname']) ? $parameters['firstname'] : null;
+        $parameters['lastname'] = isset($parameters['lastname']) ? $parameters['lastname'] : null;
+        $parameters['image'] = isset($parameters['image']) ? $parameters['image'] : null;
+
+        //return $parameters;
+
+        return $this->updateFacebookUserProcessForm($user, $parameters, 'PUT');
+    }
+
+    /**
+     * Processes the form.
+     *
+     * @param User      $user
+     * @param array     $parameters
+     * @param String    $method
+     * 
+     * @return User     $user
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    private function updateFacebookUserProcessForm(User $user, array $parameters, $method = "PUT")
+    {
+        $form = $this->formFactory->create(new UserType($this->container, $facebook = true, $udpate = true), $user, array('method' => $method));
+        $form->submit($parameters, 'PATCH' !== $method);
+        $this->logger->info("Processing form");
+
+        if ($form->isValid()) {
+
+            $user = $form->getData();
+            $this->logger->info("Submit post form ok");
+
+            $this->om->persist($user);
+            $this->om->flush();
+
+            return $this->getFormatedUser($user, true);
+        }
+
+        $this->logger->info("Invalid submitted data");
+        $this->logger->info(" ===== Adding new User with Facebook from API ending ===== ");
+        throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid submitted data");
     }
 
     /**
      * Create a User when he connect with Facebook
      *
      * @param array $parameters
+     *
+     * @return User     $user
      *
      * @throws Symfony\Component\HttpKernel\Exception\HttpException
      *
@@ -675,6 +721,24 @@ class UserHandler
             throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid data");
         }
 
+        $um = $this->container->get('fos_user.user_manager');
+        $username = $parameters['username'];
+
+        // Check username
+        if ( !preg_match("/^[a-zA-Z0-9_]{1,50}$/ " , $username ) ){
+            $this->logger->error("User username not valid : ", array($parameters));
+            $this->logger->info(" ===== Adding new User with Facebook from API ending ===== ");
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "User username not valid");
+        }
+
+        // Check if username already exists
+        $userCheck = $um->findUserByUsername($username);
+        if($userCheck){
+            $this->logger->error("User username already exists : ", array($parameters));
+            $this->logger->info(" ===== Adding new User with Facebook from API ending ===== ");
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "User username already exists");
+        }
+
         $user = new $this->entityClass();
 
         unset($parameters['create']);
@@ -683,7 +747,6 @@ class UserHandler
         $parameters['firstname'] = isset($parameters['firstname']) ? $parameters['firstname'] : null;
         $parameters['lastname'] = isset($parameters['lastname']) ? $parameters['lastname'] : null;
         $parameters['image'] = isset($parameters['image']) ? $parameters['image'] : null;
-        return $parameters;
 
         return $this->createFacebookUserProcessForm($user, $parameters, 'POST');
     }
@@ -694,6 +757,8 @@ class UserHandler
      * @param User      $user
      * @param array     $parameters
      * @param String    $method
+     * 
+     * @return User     $user
      *
      * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
@@ -715,6 +780,11 @@ class UserHandler
             $user->setPlainPassword($data->getPassword());
             $user->setEnabled(true);
 
+            $user->setFirstname($data->getFirstname());
+            $user->setLastname($data->getLastname());
+            $user->setImage($data->getImage());
+            $user->setFacebookId($data->getFacebookId());
+
             $userManager->updateUser($user);
             $this->logger->info("User created");
 
@@ -722,7 +792,7 @@ class UserHandler
         }
 
         $this->logger->info("Invalid submitted data");
-        $this->logger->info(" ===== New User from API ending ===== ");
+        $this->logger->info(" ===== Adding new User with Facebook from API ending ===== ");
         throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid submitted data");
     }
 
