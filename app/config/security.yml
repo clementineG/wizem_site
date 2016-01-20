@@ -18,8 +18,7 @@ security:
             pattern: ^/api/doc
             anonymous:    true
         login:
-            pattern:  ^/api/login
-            provider:  fos_userbundle
+            pattern:  ^/api/users/logins
             stateless: true
             anonymous: true
             form_login:
@@ -27,6 +26,7 @@ security:
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
                 failure_handler:          lexik_jwt_authentication.handler.authentication_failure
                 require_previous_session: false
+            lexik_jwt: ~
         api:
             pattern:   ^/api
             stateless: true
@@ -45,7 +45,7 @@ security:
 
     access_control:
         - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/users/logins, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
