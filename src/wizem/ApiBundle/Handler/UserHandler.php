@@ -76,7 +76,7 @@ class UserHandler
             "username" => $user->getUsername(),
             "email" => $user->getEmail(),
             "birthDate" => $user->getBirthDate() ? $user->getBirthDate() : null,
-            "adresse" => $user->getPlace() ? $user->getPlace()->getAddress() : null,
+            "place" => $user->getPlace() ? $user->getPlace()->getAddress() : null,
             "image" => $user->getImage(),
         );
     }

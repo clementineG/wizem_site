@@ -61,6 +61,13 @@ class User extends BaseUser
     /**
      * @var text
      *
+     * @ORM\Column(name="cover", type="text", nullable=true)
+     */
+    private $cover;
+
+    /**
+     * @var text
+     *
      * @ORM\Column(name="facebookId", type="text", nullable=true)
      */
     private $facebookId;
@@ -593,5 +600,29 @@ class User extends BaseUser
     public function getFacebookId()
     {
         return $this->facebookId;
+    }
+
+    /**
+     * Set cover
+     *
+     * @param string $cover
+     *
+     * @return User
+     */
+    public function setCover($cover)
+    {
+        $this->cover = $cover;
+
+        return $this;
+    }
+
+    /**
+     * Get cover
+     *
+     * @return string
+     */
+    public function getCover()
+    {
+        return $this->cover;
     }
 }
