@@ -8,7 +8,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Request\ParamFetcherInterface;
+use FOS\RestBundle\Controller\Annotations;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -128,18 +129,24 @@ class EventController extends FOSRestController
      *     404 = "Returned when no event"
      *   }
      * )
+     *
+     * @Annotations\QueryParam(name="offset", requirements="\d+", default="0", nullable=true, description="Offset from which event to start listing.")
+     * @Annotations\QueryParam(name="limit", requirements="\d+", default="10", nullable=true, description="How many events to return.")
      * 
-     * @param int $id id of the user
+     * @param   int   $id     id of the user
      *
-     * @return array
+     * @return  array
      *
-     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws  Symfony\Component\HttpKernel\Exception\HttpException
      */
-    public function getUserEventsAction($id)
+    public function getUserEventsAction($id, ParamFetcherInterface $paramFetcher)
     {
         $user = $this->getUserOr404($id);
 
-        if (!($events = $this->container->get('wizem_api.event.handler')->getAllUserEvents($user))) {
+        $offset = $paramFetcher->get('offset');
+        $limit = $paramFetcher->get('limit');
+
+        if (!($events = $this->container->get('wizem_api.event.handler')->getAllUserEvents($user, $limit, $offset))) {
             throw new HttpException(Codes::HTTP_NOT_FOUND, sprintf('No event for the user \'%s\'.', $id));
         }
 
@@ -157,11 +164,11 @@ class EventController extends FOSRestController
      *   }
      * )
      * 
-     * @param int $id id of the event
+     * @param   int     $id     id of the event
      *
-     * @return array
+     * @return  array
      *
-     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws  Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function getEventUsersAction($id)
     {

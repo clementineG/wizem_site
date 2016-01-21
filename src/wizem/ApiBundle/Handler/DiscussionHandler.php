@@ -145,7 +145,6 @@ class DiscussionHandler
         $parameters['user'] = $user->getId();
         $parameters['discussion'] = $discussion->getId();
 
-        // Process form does all the magic, validate and hydrate the event object.
         return $this->createMessageProcessForm($message, $user, $parameters, 'POST');
     }
 

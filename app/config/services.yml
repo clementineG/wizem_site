@@ -1,7 +1,7 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
-#    parameter_name: value
+    log_file_max_number : 10
 
 services:
     api_logger:
@@ -11,4 +11,4 @@ services:
                 - [pushHandler, [@api_handler]]
     api_handler:
             class: Monolog\Handler\RotatingFileHandler
-            arguments: [%kernel.logs_dir%/%kernel.environment%.api.log]
+            arguments: [%kernel.logs_dir%/%kernel.environment%.api.log, %log_file_max_number%]

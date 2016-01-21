@@ -168,10 +168,10 @@ class EventHandler
      *
      * @return Events
      */
-    public function getAllUserEvents($user)
+    public function getAllUserEvents($user, $limit, $offset)
     {
-        $userEvents = $this->om->getRepository("wizemUserBundle:UserEvent")->findByUser($user->getId());
-        
+        $userEvents = $this->om->getRepository("wizemUserBundle:UserEvent")->findByUser($user->getId(), null, $limit, $offset);
+
         $tabEvents = array();
 
         foreach ($userEvents as $userEvent) {

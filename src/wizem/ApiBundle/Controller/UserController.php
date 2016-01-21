@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -529,13 +528,13 @@ class UserController extends FOSRestController
 
         $apiLogger->info("User #{$user->getId()}");
 
-        $result = $this->container->get('wizem_api.user.handler')->changePassword(
+        $user = $this->container->get('wizem_api.user.handler')->changePassword(
             $user,
             $request->request->all()
         );
 
         $apiLogger->info(" ===== Change password from API ending ===== ");
-        return $result;
+        return $user;
     }
 
 

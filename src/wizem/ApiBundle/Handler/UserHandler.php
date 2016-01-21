@@ -69,6 +69,10 @@ class UserHandler
             );
         }
 
+        $friendship = $this->om->getRepository("wizemUserBundle:Friendship")->getFriends($user->getId());
+        $userParticipatedEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findBy(array("host" => false, "user" => $user->getId(), "state" => true));
+        $userHostedEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findBy(array("host" => true, "user" => $user->getId()));
+
         return array(
             "id" => $user->getId(),
             "firstname" => $user->getFirstname(),
@@ -78,6 +82,10 @@ class UserHandler
             "birthDate" => $user->getBirthDate() ? $user->getBirthDate() : null,
             "place" => $user->getPlace() ? $user->getPlace()->getAddress() : null,
             "image" => $user->getImage(),
+            "cover" => $user->getCover(),
+            "nbFriends" => count($friendship),
+            "parcicipatedEvent" => count($userParticipatedEvent),
+            "hostedEvent" => count($userHostedEvent),
         );
     }
 
@@ -599,6 +607,40 @@ class UserHandler
         $this->logger->info("Confirmation : {$confirm} OK");
 
         return $parameters['confirm'];
+    }
+
+    /**
+     * Change password of the user
+     *
+     * @param User          $user
+     * @param Array         $parameters
+     *
+     * @return $user
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function changePassword(User $user, array $parameters)
+    {
+        // check if new passwords are the same
+        if( $parameters['newPassword1'] != $parameters['newPassword2'] ){
+            $this->logger->error("New passwords are not the same");
+            $this->logger->info(" ===== Change password from API ending ===== ");
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "New passwords are not the same");
+        }
+
+        // Check old password 
+        if(!$this->checkUserPassword($user, $parameters['oldPassword'])){
+            $this->logger->error("Wrong password");
+            $this->logger->info(" ===== Change password from API ending ===== ");
+            throw new HttpException(Codes::HTTP_FORBIDDEN, "Wrong password");
+        }
+
+        // Set new password with user manager
+        $user->setPlainPassword($parameters['newPassword1']);
+        $this->container->get('fos_user.user_manager')->updateUser($user); // automatic flush 
+
+        $this->logger->info("Change password OK");
+        return $this->getFormatedUser($user, true);
     }
 
     /*
