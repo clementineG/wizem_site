@@ -268,7 +268,7 @@ class UserController extends FOSRestController
     }
 
     /**
-     * Get all friends for an user
+     * Get all friends for an user (confirmed or not)
      *
      * @ApiDoc(
      *   resource = true,
@@ -286,7 +286,7 @@ class UserController extends FOSRestController
     {
         $user = $this->getUserOr404($id);
 
-        if (!($users = $this->container->get('wizem_api.user.handler')->getAllFriends($user))) {
+        if (!($users = $this->container->get('wizem_api.user.handler')->getAllFriends($user, $confirmed = false))) {
             throw new HttpException(Codes::HTTP_NOT_FOUND, "No friend for this user");
         }
 
@@ -366,6 +366,50 @@ class UserController extends FOSRestController
     }
 
     /**
+     * Confirm friendship or not for an user
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   parameters={
+     *      {"name"="confirm", "dataType"="boolean", "required"=true, "description"="Confirmation or not for the friendship"},
+     *   },
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors",
+     *     404 = "Returned when the friend no exists"
+     *   }
+     * )
+     *
+     * @param int $id id of the user
+     * @param Request $request the request object
+     *
+     * @return $friend
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     *
+     */
+    public function postUserFriendConfirmAction($userId, $friendId, Request $request)
+    {
+        /* Log */
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Confirmation friendship from user from API begin ===== ");
+        
+        $user = $this->getUserOr404($userId);
+        $friend = $this->getUserOr404($friendId);
+
+        $apiLogger->info("User #{$userId} want to confirm for friend #{$friendId}");
+
+        $confirmation = $this->container->get('wizem_api.user.handler')->confirmFriendship(
+            $user,
+            $friend,
+            $request->request->all()
+        );
+
+        $apiLogger->info(" ===== Confirmation friendship from user from API ending ===== ");
+        return $confirmation;
+    }
+
+    /**
      * Delete an friend of a user for a given id.
      *
      * @ApiDoc(
@@ -432,7 +476,7 @@ class UserController extends FOSRestController
 
         $apiLogger->info("User #{$user->getId()} want to confirm for Event #{$event->getId()}");
 
-        $confirmation = $this->container->get('wizem_api.user.handler')->confirm(
+        $confirmation = $this->container->get('wizem_api.user.handler')->confirmEvent(
             $user,
             $event,
             $request->request->all()

@@ -101,10 +101,13 @@ class UserHandler
     /**
      * Get all friends of a User.
      *
+     * @param   User    $user       User to get friends
+     * @param   Boolean $confirmed  If true : friends only if state is confirmed
+     *
      */
-    public function getAllFriends($user)
+    public function getAllFriends(User $user, $confirmed = true)
     {
-        $friendship = $this->om->getRepository("wizemUserBundle:Friendship")->getFriends($user->getId());
+        $friendship = $this->om->getRepository("wizemUserBundle:Friendship")->getFriends($user->getId(), $confirmed);
 
         $friends = array();
         foreach ($friendship as $friend) {
@@ -114,7 +117,8 @@ class UserHandler
                     "username" => $friend ->getFriend()->getUsername(),
                     "firstname" => $friend ->getFriend()->getFirstname(),
                     "lastname" => $friend ->getFriend()->getLastname(),
-                    "image" => $friend ->getFriend()->getImage()
+                    "image" => $friend ->getFriend()->getImage(),
+                    "state" => $friend ->getState()
                 );
             }
             if($friend->getUser()->getId() != $user->getId()){
@@ -123,7 +127,8 @@ class UserHandler
                     "username" => $friend ->getUser()->getUsername(),
                     "firstname" => $friend ->getUser()->getFirstname(),
                     "lastname" => $friend ->getUser()->getLastname(),
-                    "image" => $friend ->getUser()->getImage()
+                    "image" => $friend ->getUser()->getImage(),
+                    "state" => $friend ->getState()
                 );
             }
         }
@@ -336,11 +341,11 @@ class UserHandler
     {
         $this->container->get('wizem_api.event.handler')->checkIfUserLinkToEvent($event, $user, true);
         
-        $friends = $this->getAllFriends($user);
+        $friends = $this->getAllFriends($user, $confirmed = true);
 
         $friendsToInvite = array();
         foreach($friends as $friend) {
-            $userEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findOneBy(array("event" => $event->getId(), "user" => $friend));
+            $userEvent = $this->om->getRepository("wizemUserBundle:UserEvent")->findOneBy(array("event" => $event->getId(), "user" => $friend['id']));
             if(!$userEvent){
                 $friendsToInvite[] = $friend;
             }
@@ -423,6 +428,56 @@ class UserHandler
         $this->logger->error("Invalid username");
         $this->logger->info(" ===== Adding friend from API ending ===== ");
         throw new HttpException(Codes::HTTP_FORBIDDEN, "Invalid username");
+    }
+
+    /**
+     * Confirm friendship or not for an user
+     *
+     * @param User          $user
+     * @param User          $friend
+     * @param Array         $parameters
+     *
+     * @return confirm
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function confirmFriendship(User $user, User $friend, array $parameters)
+    {
+        if(!isset($parameters['confirm'])){
+            $this->logger->info("Invalid json");
+            $this->logger->info(" ===== Confirmation friendship from user from API ending ===== ");
+            throw new HttpException(Codes::HTTP_BAD_REQUEST, "Invalid json");
+        }
+
+        $confirm = ($parameters['confirm'] == 1) ? "true" : "false"; 
+        
+        // Test if user and friend have friendship relation
+        $friendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $user->getId(), "friend" => $friend->getId(), "state" => null));
+        if(!$friendship){
+            $friendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId(), "state" => null));
+            if(!$friendship){
+                $this->logger->info("User #{$user->getId()} has not friendship relation with friend #{$friend->getId()}");
+                $this->logger->info(" ===== Confirmation friendship from user from API ending ===== ");
+                throw new HttpException(Codes::HTTP_FORBIDDEN, "User has not friendship relation with friend");
+            }
+        }
+
+        // Validate confirmation
+        if($parameters['confirm'] == 1){
+            // Updating friendship table : set state to 1
+            $friendship->setState($parameters['confirm']);
+
+            $this->om->persist($friendship);
+            $this->om->flush();
+        }else{
+            // Deleting friendship table
+            $this->om->remove($friendship);
+            $this->om->flush();
+        }
+
+        $this->logger->info("Confirmation : {$confirm} OK");
+
+        return $parameters['confirm'];
     }
 
     /**
@@ -580,7 +635,7 @@ class UserHandler
      *
      * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
-    public function confirm(User $user, Event $event, array $parameters)
+    public function confirmEvent(User $user, Event $event, array $parameters)
     {
         $this->container->get('wizem_api.event.handler')->checkIfUserLinkToEvent($event, $user, false);
 
