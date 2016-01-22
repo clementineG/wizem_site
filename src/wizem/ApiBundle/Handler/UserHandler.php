@@ -269,12 +269,15 @@ class UserHandler
             $this->logger->info("Updating notification '{$notification}' to '{$parameters['notification']}' OK");
         }
         if(isset($parameters['birthDate'])){
+
             // Updating birthDate
             $birthDate = $user->getBirthDate() ? $user->getBirthDate()->format("Y-m-d H:i:s") : '';
-            $dateObject = \Datetime::createFromFormat('Y-m-d H:i:s', $parameters['birthDate']." 00:00:00");  
-            //return $dateObject;
-            $user->setBirthDate($dateObject);
-            $this->logger->info("Updating birthDate '{$birthDate}' to '{$parameters['birthDate']}' OK");
+
+            // Convert Timestamp in milliseconds to DateTime in seconds
+            $timestamp = \DateTime::createFromFormat('U', ($parameters['birthDate'] / 1000 ));
+            $newDate = \Datetime::createFromFormat('Y-m-d H:i:s', $timestamp->format('Y-m-d H:i:s'));  
+            $user->setBirthDate($newDate);
+            $this->logger->info("Updating birthDate '{$birthDate}' to '{$newDate->format('Y-m-d H:i:s')}' OK");
         }
         if(isset($parameters['place'])){
             // Updating place
