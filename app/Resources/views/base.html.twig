@@ -2,12 +2,54 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <title>{% block title %}Wizem{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />      
+
+        {% include "::stylesheets.html.twig" %}
+
+{#        {% stylesheets output="css/app.css" filter='cssrewrite, compass'
+        'bundles/wizemfront/scss/main.scss' %}
+          <link rel="stylesheet" href="{{ asset_url }}" type="text/css" />
+        {% endstylesheets %}
+#}
+        {% block css %}{% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+
+    <body id="{% block body_id %}{% endblock %}">
+        
+        {% block header %}
+            <header>
+                <div class="navbar navbar-default navbar-static-top" role="navigation">
+                    <div class="container">
+                        <div class="navbar-header">
+                            wizem 
+                        </div>
+                    </div>
+                </div>
+            </header>
+        {% endblock %}
+
+        {% block content %}
+            <div class="container body-container">
+                {% block body %}
+                {% endblock %}
+            </div>
+        {% endblock %}
+        
+        {% block footer %}
+            <footer>
+
+            </footer>
+        {% endblock %}
+
+        
+        {% javascripts
+        '@wizemFrontBundle/Resources/public/js/jquery.min.js'
+        '@wizemFrontBundle/Resources/public/js/materialize.min.js'
+        '@wizemFrontBundle/Resources/public/js/scripts.js' %}
+          <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
         {% block javascripts %}{% endblock %}
     </body>
 </html>

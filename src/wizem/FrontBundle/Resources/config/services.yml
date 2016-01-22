@@ -1,0 +1,4 @@
+services:
+#    wizem_front.example:
+#        class: wizem\FrontBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
