@@ -731,10 +731,26 @@ class UserHandler
         $userCheck = $um->findUserByEmail($email);
         if($userCheck){
             $this->logger->error("User email already exists : ", array($parameters));
-            $exists = $userCheck->getId(); 
+            
+            if($userCheck->getFacebookId()){
+                // User has already facebook connected : log in OK
+                $this->logger->info("Login OK");
+                $exists = $this->getFormatedUser($userCheck, true);
+            }else{
+                // User not loged by facebook 
+                $this->logger->info("User never connected by Facebook");
+                $exists = array(
+                    "email" => $parameters['email'],
+                    "id" => $userCheck->getId(),
+                    "facebookId" => false
+                );
+            }
         }else{
             $this->logger->error("User email don't exist in DB");
-            $exists = false;
+            $exists = array(
+                "email" => $parameters['email'],
+                "exists" => false
+            );
         }
 
         return $exists;

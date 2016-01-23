@@ -664,9 +664,6 @@ class UserController extends FOSRestController
         );
 
         $apiLogger->info(" ===== Adding new User with Facebook from API ending ===== ");
-        return array(
-            "email" => $request->request->all()['email'],
-            "exists" => $exists
-        );
+        return $exists;
     }
 }
