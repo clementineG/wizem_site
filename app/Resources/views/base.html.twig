@@ -5,13 +5,16 @@
         <title>{% block title %}Wizem{% endblock %}</title>
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />      
 
-        {% include "::stylesheets.html.twig" %}
 
-{#        {% stylesheets output="css/app.css" filter='cssrewrite, compass'
-        'bundles/wizemfront/scss/main.scss' %}
-          <link rel="stylesheet" href="{{ asset_url }}" type="text/css" />
-        {% endstylesheets %}
-#}
+
+        {% if app.environment == 'prod' %}
+            <!-- prod:front.css --><!-- endbuild -->
+        {% else %}
+            <!-- dev:front.css -->
+<link rel="stylesheet" href="/assets/front.css/front_0.css" />
+<!-- endbuild -->
+        {% endif %}
+
         {% block css %}{% endblock %}
     </head>
 
@@ -42,13 +45,16 @@
             </footer>
         {% endblock %}
 
-        
-        {% javascripts
-        '@wizemFrontBundle/Resources/public/js/jquery.min.js'
-        '@wizemFrontBundle/Resources/public/js/materialize.min.js'
-        '@wizemFrontBundle/Resources/public/js/scripts.js' %}
-          <script type="text/javascript" src="{{ asset_url }}"></script>
-        {% endjavascripts %}
+
+        {% if app.environment == 'prod' %}
+            <!-- prod:front.js --><!-- endbuild -->
+        {% else %}
+            <!-- dev:front.js -->
+<script src="/assets/front.js/jquery.min_0.js"></script>
+<script src="/assets/front.js/materialize.min_1.js"></script>
+<script src="/assets/front.js/scripts_2.js"></script>
+<!-- endbuild -->
+        {% endif %}
 
         {% block javascripts %}{% endblock %}
     </body>

@@ -1,5 +1,8 @@
-$background: #000000;
+@import "materialize";
+
+
+$background: #ffffff;
 
 body{
     background-color:$background;
-}
+} 

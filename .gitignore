@@ -27,6 +27,10 @@
 /web/bundles/
 /web/uploads/
 
+# Bower and Node files
+/node_modules/
+/bower_components/
+
 # Assets managed by Bower
 /web/assets/vendor/
 
