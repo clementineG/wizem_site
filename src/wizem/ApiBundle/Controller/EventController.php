@@ -228,9 +228,9 @@ class EventController extends FOSRestController
      *      parameters={
      *          {"name"="userId", "dataType"="integer", "required"=true, "description"="Id of the user who want to update this event"},
      *          {"name"="description", "dataType"="text", "required"=false, "description"="Description of the event"},
-     *          {"name"="place", "dataType"="array", "required"=true, "description"="array of one or max 3 places : { 'address' : $adress }"},
-     *          {"name"="date", "dataType"="array", "required"=true, "description"="array of one or max 3 dates : { 'date' : $date } "},
-     *          {"name"="shoppingitem", "dataType"="array", "required"=false, "description"="array of items : { 'name' : $name, 'quantity' : $quantity } "},
+     *          {"name"="place", "dataType"="array", "required"=false, "description"="array of one or max 3 places : {'place' : {'4' : $place, 'date1' : $place}}"},
+     *          {"name"="date", "dataType"="array", "required"=false, "description"="array of one or max 3 dates : {'date' : {'4' : $date, 'date1' : $date}} "},
+     *          {"name"="shoppingItem", "dataType"="array", "required"=false, "description"="array of items : { 'shoppingItem' : { 'item1' : { 'name' : $name, 'quantity' : $quantity }, '5' : { 'name' : $name, 'quantity' : $quantity } } } "},
      *      },
      *      statusCodes = {
      *         201 = "Returned when successful",
@@ -260,7 +260,7 @@ class EventController extends FOSRestController
         );
 
         $apiLogger->info(" ===== Update Event from API begin ===== ");
-        return $newEvent->getId();
+        return $newEvent;
     }
 
     /**

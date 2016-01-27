@@ -76,7 +76,7 @@ class Event
     private $media;
 
     /**
-     * @ORM\OneToMany(targetEntity="Media", mappedBy="event", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Shoppingitem", mappedBy="event", cascade={"persist", "remove"})
      */
     private $shoppingItem;
 
@@ -326,40 +326,6 @@ class Event
     }
 
     /**
-     * Add shoppingItem
-     *
-     * @param \wizem\EventBundle\Entity\Media $shoppingItem
-     *
-     * @return Event
-     */
-    public function addShoppingItem(\wizem\EventBundle\Entity\Media $shoppingItem)
-    {
-        $this->shoppingItem[] = $shoppingItem;
-
-        return $this;
-    }
-
-    /**
-     * Remove shoppingItem
-     *
-     * @param \wizem\EventBundle\Entity\Media $shoppingItem
-     */
-    public function removeShoppingItem(\wizem\EventBundle\Entity\Media $shoppingItem)
-    {
-        $this->shoppingItem->removeElement($shoppingItem);
-    }
-
-    /**
-     * Get shoppingItem
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getShoppingItem()
-    {
-        return $this->shoppingItem;
-    }
-
-    /**
      * Add vote
      *
      * @param \wizem\EventBundle\Entity\Vote $vote
@@ -425,5 +391,29 @@ class Event
     public function getUserEvent()
     {
         return $this->userEvent;
+    }
+
+    /**
+     * Set discussion
+     *
+     * @param \wizem\EventBundle\Entity\Discussion $discussion
+     *
+     * @return Event
+     */
+    public function setDiscussion(\wizem\EventBundle\Entity\Discussion $discussion = null)
+    {
+        $this->discussion = $discussion;
+
+        return $this;
+    }
+
+    /**
+     * Get discussion
+     *
+     * @return \wizem\EventBundle\Entity\Discussion
+     */
+    public function getDiscussion()
+    {
+        return $this->discussion;
     }
 }

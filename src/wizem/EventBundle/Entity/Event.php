@@ -76,7 +76,7 @@ class Event
     private $media;
 
     /**
-     * @ORM\OneToMany(targetEntity="Media", mappedBy="event", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Shoppingitem", mappedBy="event", cascade={"persist", "remove"})
      */
     private $shoppingItem;
 
@@ -326,40 +326,6 @@ class Event
     }
 
     /**
-     * Add shoppingItem
-     *
-     * @param \wizem\EventBundle\Entity\Media $shoppingItem
-     *
-     * @return Event
-     */
-    public function addShoppingItem(\wizem\EventBundle\Entity\Media $shoppingItem)
-    {
-        $this->shoppingItem[] = $shoppingItem;
-
-        return $this;
-    }
-
-    /**
-     * Remove shoppingItem
-     *
-     * @param \wizem\EventBundle\Entity\Media $shoppingItem
-     */
-    public function removeShoppingItem(\wizem\EventBundle\Entity\Media $shoppingItem)
-    {
-        $this->shoppingItem->removeElement($shoppingItem);
-    }
-
-    /**
-     * Get shoppingItem
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getShoppingItem()
-    {
-        return $this->shoppingItem;
-    }
-
-    /**
      * Add vote
      *
      * @param \wizem\EventBundle\Entity\Vote $vote
@@ -449,5 +415,39 @@ class Event
     public function getDiscussion()
     {
         return $this->discussion;
+    }
+
+    /**
+     * Add shoppingItem
+     *
+     * @param \wizem\EventBundle\Entity\Shoppingitem $shoppingItem
+     *
+     * @return Event
+     */
+    public function addShoppingItem(\wizem\EventBundle\Entity\Shoppingitem $shoppingItem)
+    {
+        $this->shoppingItem[] = $shoppingItem;
+
+        return $this;
+    }
+
+    /**
+     * Remove shoppingItem
+     *
+     * @param \wizem\EventBundle\Entity\Shoppingitem $shoppingItem
+     */
+    public function removeShoppingItem(\wizem\EventBundle\Entity\Shoppingitem $shoppingItem)
+    {
+        $this->shoppingItem->removeElement($shoppingItem);
+    }
+
+    /**
+     * Get shoppingItem
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getShoppingItem()
+    {
+        return $this->shoppingItem;
     }
 }

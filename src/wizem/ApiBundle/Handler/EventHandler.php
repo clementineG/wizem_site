@@ -17,6 +17,7 @@ use wizem\EventBundle\Entity\Date;
 use wizem\EventBundle\Entity\Place;
 use wizem\EventBundle\Entity\Vote;
 use wizem\EventBundle\Entity\Discussion;
+use wizem\EventBundle\Entity\Shoppingitem;
 
 use wizem\UserBundle\Entity\UserEvent;
 use wizem\UserBundle\Entity\User;
@@ -64,6 +65,7 @@ class EventHandler
     {
         $dates = $event->getDate();
         $places = $event->getPlace();
+        $shoppingItems = $event->getShoppingItem();
 
         $this->checkIfUserLinkToEvent($event, $user, false);
 
@@ -86,6 +88,12 @@ class EventHandler
             if($place->getFinal() == true){
                 $finalPlace = $place;
             }
+        }
+
+        // Check all shoppingItems
+        $tabShoppingItem = array();
+        foreach ($shoppingItems as $shoppingItem) {
+            $tabShoppingItem[] = array("id" => $shoppingItem->getId(), "name" => $shoppingItem->getName(), "quantity" => $shoppingItem->getQuantity());
         }
 
         // If no date here : the vote is not finish 
@@ -137,6 +145,7 @@ class EventHandler
             "description" => $event->getDescription(),
             "date" => $date,
             "place" => $place,
+            "shoppingItem" => $tabShoppingItem,
             "users" => $tabUsers,
         );
     }
@@ -426,6 +435,15 @@ class EventHandler
             unset($parameters['place']);
         }
 
+        // Gestion of shoppingItems if there is any
+        $tabShoppingItem = array();
+        if(isset($parameters['shoppingItem'])){
+            foreach ($parameters['shoppingItem'] as $id => $shoppingItem) {
+                $tabShoppingItem[] = array("id" => $id, "shoppingItem" => $shoppingItem);
+            }
+            unset($parameters['shoppingItem']);
+        }
+
         $form->submit($parameters, 'PATCH' !== $method);
 
         if ($form->isValid()) {
@@ -484,10 +502,32 @@ class EventHandler
                 }
             }
 
+            foreach ($tabShoppingItem as $shoppingItem) {
+
+                if( substr($shoppingItem['id'], 0, 4) == "item" ){
+                    // Create new shoppingItem
+                    $newShoppingItem = new Shoppingitem();
+                    $newShoppingItem->setName($shoppingItem['shoppingItem']['name']);
+                    $newShoppingItem->setQuantity($shoppingItem['shoppingItem']['quantity']);
+                    $newShoppingItem->setEvent($event);
+
+                    $this->om->persist($newShoppingItem);
+                    $event->addShoppingItem($newShoppingItem);
+                    $this->logger->info("New shoppingItem created : {$shoppingItem['shoppingItem']['name']} => {$shoppingItem['shoppingItem']['quantity']}");
+                }else{
+                    // Update existing shoppingItem
+                    $existingShopingItem = $this->om->getRepository("wizemEventBundle:Shoppingitem")->find($shoppingItem['id']);
+                    $existingShopingItem->setName($shoppingItem['shoppingItem']['name']);
+                    $existingShopingItem->setQuantity($shoppingItem['shoppingItem']['quantity']);
+                    $this->om->persist($existingShopingItem);
+                    $this->logger->info("Existing shoppingItem #{$shoppingItem['id']} updated : {$shoppingItem['shoppingItem']['name']} => {$shoppingItem['shoppingItem']['quantity']}");
+                }
+            }
+
             $this->om->persist($event);
             $this->om->flush();
 
-            return $event;
+            return $event->getId();
         }
 
         $this->logger->info("Invalid submitted data");
