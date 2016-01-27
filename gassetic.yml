@@ -1,5 +1,6 @@
 requires:
     sass: gulp-sass
+    minify: gulp-cssnano
     concat: gulp-concat
     uglify: gulp-uglify
     freeze: gulp-freeze
@@ -14,13 +15,13 @@ mimetypes:
             outputFolder: web/assets/compiled
             webPath:      assets/compiled
             tasks:
-                - { name: sass }
+                # This task compile scss files
+                - { name: sass, filter: ['*.scss'] }
                 # This task concats all the files into one
                 - { name: concat, args: '%filename%' }
                 # This task minifies the scripts
-                - { name: uglify, args: { mangle: false } }
-                # This is a cache busting gulp plugin that appends
-                #  an md5 of the contents to the filename
+                - { name: minify }
+                # This is a cache busting gulp plugin that appends an md5 of the contents to the filename
                 - { name: freeze }
         files:
             front.css:
@@ -38,8 +39,7 @@ mimetypes:
                 - { name: concat, args: '%filename%' }
                 # This task minifies the scripts
                 - { name: uglify, args: { mangle: false } }
-                # This is a cache busting gulp plugin that appends
-                #  an md5 of the contents to the filename
+                # This is a cache busting gulp plugin that appends an md5 of the contents to the filename
                 - { name: freeze }
         files:
             front.js:
