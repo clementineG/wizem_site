@@ -5,8 +5,6 @@
         <title>{% block title %}Wizem{% endblock %}</title>
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />      
 
-
-
         {% if app.environment == 'prod' %}
             <!-- prod:front.css -->
 <link rel="stylesheet" href="assets/compiled/front.css/front_800d6a843d548fd120d85bfa9e828770.css" />
@@ -24,13 +22,35 @@
         
         {% block header %}
             <header>
-                <div class="navbar navbar-default navbar-static-top" role="navigation">
-                    <div class="container">
-                        <div class="navbar-header">
-                            wizem 
+                <nav>
+                    {# Desktop view : header in top #}
+                    <ul class="hide-on-med-and-down">
+                        <div class="left">
+                            <li><a href="{{ path('wizem_front_home_index') }}">WIZEM</a></li>
                         </div>
-                    </div>
-                </div>
+                        <div class="right">
+                        {% if app.user %}
+                            <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
+                        {% else %}
+                            <li><a href="{{ path('fos_user_security_login') }}">Connexion</a></li>
+                            <li><a href="#!">Inscription</a></li>
+                        {% endif %}
+                        </div>
+                    </ul>
+
+                    {# Mobile view : header in left menu #}
+                    <ul id="slide-out" class="side-nav">
+                        <li><a href="{{ path('wizem_front_home_index') }}">WIZEM</a></li>
+                        {% if app.user %}
+                            <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
+                        {% else %}
+                            <li><a href="{{ path('fos_user_security_login') }}">Connexion</a></li>
+                            <li><a href="#!">Inscription</a></li>
+                        {% endif %}
+                    </ul>
+
+                    <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+                </nav>
             </header>
         {% endblock %}
 
@@ -42,8 +62,30 @@
         {% endblock %}
         
         {% block footer %}
-            <footer>
-
+            <footer class="page-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col l6 s12">
+                            <h5 class="white-text">Footer Content</h5>
+                            <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+                        </div>
+                        <div class="col l4 offset-l2 s12">
+                            <h5 class="white-text">Links</h5>
+                            <ul>
+                                <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+                                <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+                                <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+                                <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-copyright">
+                    <div class="container">
+                        © 2016 Copyright Wizem
+                        <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+                    </div>
+                </div>
             </footer>
         {% endblock %}
 
