@@ -1,45 +1,48 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Event list</h1>
+    <h1>Mes évenements</h1>
+        
 
-    <table class="records_list">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Description</th>
-                <th>Datecreated</th>
-                <th>Dateupdated</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('event_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.description }}</td>
-                <td>{% if entity.dateCreated %}{{ entity.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{% if entity.dateUpdated %}{{ entity.dateUpdated|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('event_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('event_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {% if events %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Datecreated</th>
+                    <th>Dateupdated</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for event in events %}
+                <tr>
+                    <td><a href="{{ path('wizem_event_event_show', { 'id': event.id }) }}">{{ event.id }}</a></td>
+                    <td>{{ event.description }}</td>
+                    <td>{% if event.dateCreated %}{{ event.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
+                    <td>{% if event.dateUpdated %}{{ event.dateUpdated|date('Y-m-d H:i:s') }}{% endif %}</td>
+                    <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('wizem_event_event_show', { 'id': event.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('wizem_event_event_edit', { 'id': event.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        Vous n'avez aucun évènement,
+    {% endif %}
+    
+    <div>
+        <a class="waves-effect waves-light btn" href="{{ path('wizem_event_event_new') }}">
+            Créer un nouvel évènement
+        </a>
+    </div>
 
-        <ul>
-        <li>
-            <a href="{{ path('event_new') }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
-    {% endblock %}
+{% endblock %}

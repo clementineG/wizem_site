@@ -1,0 +1,21 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+
+    <div class="well">
+        <h1>
+            Une erreur s'est produite...
+        </h1>
+        <h2>
+        	Le serveur retourne : "{{ status_code }} {{ status_text }}".
+    	</h2>
+        <h3>
+        	Merci de contacter un responsable technique en présisant l'URL de la page.
+    	</h3>
+
+        <a class="btn btn-default"href="{{ path('wizem_front_home_index') }}" title="Retour à l'accueil">
+            Retour à l'accueil
+        </a> 
+    </div>
+
+{% endblock %}
