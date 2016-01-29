@@ -1,0 +1,39 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col s12">
+            <h1>Téléchargement des fichiers de log</h1>
+        </div>
+    </div>
+
+        {% for logName in tabLogName %}
+            {% if loop.index is odd %}
+                <div class="row">
+            {% endif %}
+            
+            <div class="col m6">
+                <h3>Logs <strong>{{ logName }}</strong></h3>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <tbody>
+                            {% for logFile in logFiles if logName in logFile %}
+                                <tr>
+                                    <td>{{ logFile }}</td>
+                                    <td><a href="{{ path ('wizem_front_admin_downloadLog', {filename : logFile}) }}"><button class="btn btn-success">Télécharger</button></a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            {% if loop.index is even or loop.last %}
+                </div>
+            {% endif %}
+        {% else %}
+            Aucun log
+        {% endfor %}
+
+{% endblock %}

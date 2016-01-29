@@ -12,3 +12,8 @@ services:
     api_handler:
             class: Monolog\Handler\RotatingFileHandler
             arguments: [%kernel.logs_dir%/%kernel.environment%.api.log, %log_file_max_number%]
+
+    user.form.registration:
+        class: wizem\UserBundle\Form\RegistrationFormType
+        tags:
+            - { name: form.type, alias: wizem_user_registration }

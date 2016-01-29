@@ -33,7 +33,7 @@
                             <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                         {% else %}
                             <li><a href="{{ path('fos_user_security_login') }}">Connexion</a></li>
-                            <li><a href="#!">Inscription</a></li>
+                            <li><a href="{{ path('fos_user_registration_register') }}">Inscription</a></li>
                         {% endif %}
                         </div>
                     </ul>
@@ -45,7 +45,7 @@
                             <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                         {% else %}
                             <li><a href="{{ path('fos_user_security_login') }}">Connexion</a></li>
-                            <li><a href="#!">Inscription</a></li>
+                            <li><a href="{{ path('fos_user_registration_register') }}">Inscription</a></li>
                         {% endif %}
                     </ul>
 
@@ -54,12 +54,15 @@
             </header>
         {% endblock %}
 
+
+        <div class="body-container">
         {% block content %}
-            <div class="container body-container">
+            <div class="container">
                 {% block body %}
                 {% endblock %}
             </div>
         {% endblock %}
+        </div>
         
         {% block footer %}
             <footer class="page-footer">
@@ -101,6 +104,14 @@
 <script src="/assets/front.js/scripts_2.js"></script>
 <!-- endbuild -->
         {% endif %}
+
+        {% for key, messages in app.session.getFlashBag().all() %}
+            {% for flash in messages %}
+                <script>
+                    Materialize.toast('{%autoescape false%}{{ flash|trans }}{%endautoescape%}', 5000, 'toast-{{ key }}');
+                </script>
+            {% endfor %}
+        {% endfor %}
 
         {% block javascripts %}{% endblock %}
     </body>

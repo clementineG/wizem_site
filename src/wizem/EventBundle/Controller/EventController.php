@@ -54,6 +54,7 @@ class EventController extends Controller
             $em->persist($entity);
             $em->flush();
 
+            $this->get('session')->getFlashBag()->add('success',"Votre évènement a bien été créé !");
             return $this->redirect($this->generateUrl('wizem_event_event_show', array('id' => $entity->getId())));
         }
 

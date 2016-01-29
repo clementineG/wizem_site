@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class EventType extends AbstractType
+class TypeeventType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,14 +15,7 @@ class EventType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('typeevent', 'entity', array(
-                'class' => 'wizemEventBundle:Typeevent',
-                'label' => 'Type', 
-                'required' => true, 
-                'multiple' => false, 
-                'expanded' => true, 
-            ))
-            ->add('description')
+            ->add('name')
         ;
     }
     
@@ -32,7 +25,7 @@ class EventType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'wizem\EventBundle\Entity\Event',
+            'data_class' => 'wizem\EventBundle\Entity\Typeevent'
         ));
     }
 
@@ -41,6 +34,6 @@ class EventType extends AbstractType
      */
     public function getName()
     {
-        return 'wizem_eventbundle_event';
+        return 'wizem_eventbundle_typeevent';
     }
 }

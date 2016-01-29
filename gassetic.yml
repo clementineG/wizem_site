@@ -59,6 +59,20 @@ mimetypes:
         files:
             fonts:
               - src/wizem/FrontBundle/Resources/public/fonts/**/*
+    images:
+        dev:
+            outputFolder: web/assets
+            tasks: []
+            autoRenaming: false
+        prod:
+            outputFolder: web/assets/compiled
+            tasks: []
+            autoRenaming: false
+        files:
+            images:
+                - src/wizem/FrontBundle/Resources/public/images/**/*
+        watch:
+                - src/wizem/FrontBundle/Resources/public/images/**/*
 
 replacementPaths:
     - app/**/*.html.twig
@@ -68,3 +82,4 @@ default:
     - fonts
     - js
     - css
+    - images

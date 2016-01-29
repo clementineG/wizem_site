@@ -10,18 +10,9 @@ wizem_event_event_new:
     path:     /new
     defaults: { _controller: "wizemEventBundle:Event:new" }
 
-wizem_event_event_create:
-    path:     /create
-    defaults: { _controller: "wizemEventBundle:Event:create" }
-    methods:  POST
-
 wizem_event_event_edit:
     path:     /{id}/edit
     defaults: { _controller: "wizemEventBundle:Event:edit" }
-
-wizem_event_event_update:
-    path:     /{id}/update
-    defaults: { _controller: "wizemEventBundle:Event:update" }
     methods:  [POST, PUT]
 
 wizem_event_event_delete:

@@ -96,3 +96,5 @@ fos_user:
     registration:
         confirmation:
             enabled: false
+        form:
+            type: wizem_user_registration

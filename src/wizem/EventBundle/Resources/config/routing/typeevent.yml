@@ -1,0 +1,30 @@
+wizem_event_type:
+    path:     /
+    defaults: { _controller: "wizemEventBundle:Typeevent:index" }
+
+wizem_event_type_show:
+    path:     /{id}/show
+    defaults: { _controller: "wizemEventBundle:Typeevent:show" }
+
+wizem_event_type_new:
+    path:     /new
+    defaults: { _controller: "wizemEventBundle:Typeevent:new" }
+
+wizem_event_type_create:
+    path:     /create
+    defaults: { _controller: "wizemEventBundle:Typeevent:create" }
+    methods:  POST
+
+wizem_event_type_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "wizemEventBundle:Typeevent:edit" }
+
+wizem_event_type_update:
+    path:     /{id}/update
+    defaults: { _controller: "wizemEventBundle:Typeevent:update" }
+    methods:  [POST, PUT]
+
+wizem_event_type_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "wizemEventBundle:Typeevent:delete" }
+    methods:  [POST, DELETE]

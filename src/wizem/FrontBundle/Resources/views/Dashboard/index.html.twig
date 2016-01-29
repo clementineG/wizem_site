@@ -2,17 +2,6 @@
 
 {% block body -%}
 
-    {% for key, messages in app.session.getFlashBag().all() %}
-        {% for flash in messages %}
-            <div class="alert alert-{{ key }}">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                {%autoescape false%}
-                    {{ flash|trans }}
-                {%endautoescape%}
-            </div>
-        {% endfor %}
-    {% endfor %}
-
     <h1>Dashboard User {{app.user.username}}</h1>
     
     
