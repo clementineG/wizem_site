@@ -1,19 +1,52 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
+
     <h1>Event creation</h1>
 
-		{{ form_start(form) }}
-		    {{ form_widget(form) }}
+	{{ form_start(form) }}
 
-		    <input type="submit" value="Valider" class="btn waves-effect waves-light" />
-		{{ form_end(form) }}
+    <div class="row">
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('wizem_event_event') }}">
-            Back to the list
-        </a>
-    </li>
-</ul>
+        <div class="input-field col s12">
+            <p>
+                {{ form_label(form.typeevent, null, {'label_attr': {'class': ''}}) }}
+            </p>
+            <p>
+            {{ form_widget(form.typeevent, {'attr': {'class': ''}}) }}
+            {{ form_errors(form.typeevent) }}
+            </p>
+        </div>
+
+        <div class="input-field col s12">
+            <i class="material-icons prefix">mode_edit</i>
+            {{ form_widget(form.description, {'attr': {'class': 'materialize-textarea'}}) }}
+            {{ form_label(form.description, null, {'label_attr': {'class': ''}}) }}
+            {{ form_errors(form.description) }}
+        </div>
+
+        <div id="formdateplace">
+        </div>
+
+       {# <div class="input-field col s12">
+            {{ form_label(form.date, null, {'label_attr': {'class': ''}}) }}
+            {{ form_widget(form.date, {'attr': {'class': ''}}) }}
+            {{ form_errors(form.date) }}
+        </div>
+
+        <div class="input-field col s12">
+            {{ form_label(form.place, null, {'label_attr': {'class': ''}}) }}
+            {{ form_widget(form.place, {'attr': {'class': ''}}) }}
+            {{ form_errors(form.place) }}
+        </div>#}
+    </div>
+
+    <input type="submit" value="Valider" class="btn waves-effect waves-light" />
+	
+    {{ form_end(form) }}
+
+    <a href="{{ path('wizem_event_event') }}">
+        Retour
+    </a>
+    
 {% endblock %}
