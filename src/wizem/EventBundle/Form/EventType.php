@@ -30,43 +30,18 @@ class EventType extends AbstractType
                 'expanded' => true, 
             ))
             ->add('description')
-        ;
-
-        $formModifier = function (FormInterface $form, Typeevent $typeevent = null) {
-           // var_dump($typeevent);exit();
-            if($typeevent == 1){
-                $form->add('date','collection',array(
-                    'type'=> new DateType(),
-                    'label'=> ' ', 
-                    'attr' => array('class' => '' ),
-                    'allow_add' => true,
-                ));
-            }else{
-                $form->add('place','collection',array(
-                    'type'=> new PlaceType(),
-                    'label'=> ' ', 
-                    'attr' => array('class' => '' ),
-                    'allow_add' => true,
-                ));
-            }
-        };
-
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($formModifier) {
-                // this would be your entity, i.e. SportMeetup
-                $data = $event->getData();
-                $formModifier($event->getForm(), $data->getTypeevent());
-            }
-        );
-
-        $builder->get('typeevent')->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($formModifier) {
-                $typeevent = $event->getForm()->getData();
-                $formModifier($event->getForm()->getParent(), $typeevent);
-            }
-        );        
+            ->add('date','collection',array(
+                'type'=> new DateType(),
+                'label'=> ' ', 
+                'attr' => array('class' => '' ),
+                'allow_add' => true,
+            ))
+            ->add('place','collection',array(
+                'type'=> new PlaceType(),
+                'label'=> ' ', 
+                'attr' => array('class' => '' ),
+                'allow_add' => true,
+            ));
     }
     
     /**

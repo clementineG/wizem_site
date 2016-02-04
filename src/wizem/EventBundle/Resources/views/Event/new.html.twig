@@ -1,49 +1,61 @@
 {% extends '::base.html.twig' %}
+        
+{% block javascripts %}
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?libraries=places"></script>
+    {% if app.environment == 'prod' %}
+        <!-- prod:newEvent.js --><!-- endbuild -->
+    {% else %}
+        <!-- dev:newEvent.js -->
+<script src="/assets/newEvent.js/newEvent_0.js"></script>
+<!-- endbuild -->
+    {% endif %}
+{% endblock %}
 
 {% block body -%}
+
 
     <h1>Event creation</h1>
 
 	{{ form_start(form) }}
 
-    <div class="row">
 
+    <div class="input-field col s12">
+        <p>
+            {{ form_label(form.typeevent, null, {'label_attr': {'class': ''}}) }}
+        </p>
+        <p>
+        {{ form_widget(form.typeevent, {'attr': {'class': ''}}) }}
+        {{ form_errors(form.typeevent) }}
+        </p>
+    </div>
+    
+    <div class="input-field col s12">
+        <i class="material-icons prefix">mode_edit</i>
+        {{ form_widget(form.description, {'attr': {'class': 'materialize-textarea'}}) }}
+        {{ form_label(form.description, null, {'label_attr': {'class': ''}}) }}
+        {{ form_errors(form.description) }}
+    </div>
+
+
+    <div class="input-field col s12">
+        {{ form_label(form.date, null, {'label_attr': {'class': ''}}) }}
+        {{ form_widget(form.date, {'attr': {'class': ''}}) }}
+        {{ form_errors(form.date) }}
+    </div>
+
+    <div>
         <div class="input-field col s12">
-            <p>
-                {{ form_label(form.typeevent, null, {'label_attr': {'class': ''}}) }}
-            </p>
-            <p>
-            {{ form_widget(form.typeevent, {'attr': {'class': ''}}) }}
-            {{ form_errors(form.typeevent) }}
-            </p>
-        </div>
-
-        <div class="input-field col s12">
-            <i class="material-icons prefix">mode_edit</i>
-            {{ form_widget(form.description, {'attr': {'class': 'materialize-textarea'}}) }}
-            {{ form_label(form.description, null, {'label_attr': {'class': ''}}) }}
-            {{ form_errors(form.description) }}
-        </div>
-
-        <div id="formdateplace">
-        </div>
-
-       {# <div class="input-field col s12">
-            {{ form_label(form.date, null, {'label_attr': {'class': ''}}) }}
-            {{ form_widget(form.date, {'attr': {'class': ''}}) }}
-            {{ form_errors(form.date) }}
-        </div>
-
-        <div class="input-field col s12">
-            {{ form_label(form.place, null, {'label_attr': {'class': ''}}) }}
+            {{ form_label(form.place, null, {'label_attr': {'': ''}}) }}
             {{ form_widget(form.place, {'attr': {'class': ''}}) }}
             {{ form_errors(form.place) }}
-        </div>#}
+        </div>
     </div>
+
+    {{ form_end(form) }}
 
     <input type="submit" value="Valider" class="btn waves-effect waves-light" />
 	
-    {{ form_end(form) }}
 
     <a href="{{ path('wizem_event_event') }}">
         Retour

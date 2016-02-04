@@ -16,7 +16,7 @@ class PlaceType extends AbstractType
     {
         $builder
             ->add('adress', 'text', array(
-                // 'class' => 'wizemEventBundle:Typeevent',
+                'attr' => array( 'class' => 'autocomplete'),
                 // 'label' => 'Type', 
                 // 'required' => true, 
                 // 'multiple' => false, 
