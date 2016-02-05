@@ -8,7 +8,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use wizem\EventBundle\Entity\Event;
 use wizem\EventBundle\Form\EventType;
+use wizem\EventBundle\Entity\Date;
+use wizem\EventBundle\Entity\Place;
+use wizem\EventBundle\Entity\Vote;
+use wizem\EventBundle\Entity\Discussion;
 
+use wizem\UserBundle\Entity\UserEvent;
 
 /**
  * Event controller.
@@ -41,25 +46,51 @@ class EventController extends Controller
      */
     public function newAction(Request $request)
     {
-        $entity = new Event();
+        $event = new Event();
 
-        $form = $this->createForm(new EventType(), $entity, array(
+        $form = $this->createForm(new EventType(), $event, array(
             'method' => 'POST',
+            'action' => $this->generateUrl('wizem_event_event_new'),
         ));
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
+
+            // User_Event creation for for link between user and event
+            $userEvent = new UserEvent(); 
+            $userEvent->setEvent($event);
+            $userEvent->setUser($this->getUser());
+            // If creation of event, user is automatically the host and he participate 
+            $userEvent->setState(1);
+            $userEvent->setHost(1);
+
+            foreach ($event->getPlace() as $place) {
+                $final = count($event->getPlace()) > 1 ? false : true;
+                $place->setFinal($final);
+                $place->setEvent($event);
+                $coords = $place->getCoords($place->getAddress());
+                $place->setLat($coords['lat']);
+                $place->setLng($coords['lng']);
+            }
+
+            foreach ($event->getDate() as $date) {
+                $final = count($event->getDate()) > 1 ? false : true;
+                $date->setFinal($final);
+                $date->setEvent($event);
+            }
+
+            $em->persist($event);
+            $em->persist($userEvent);
             $em->flush();
 
             $this->get('session')->getFlashBag()->add('success',"Votre évènement a bien été créé !");
-            return $this->redirect($this->generateUrl('wizem_event_event_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('wizem_event_event_show', array('id' => $event->getId())));
         }
 
         return $this->render('wizemEventBundle:Event:new.html.twig', array(
-            'entity' => $entity,
+            'event' => $event,
             'form'   => $form->createView(),
         ));
     }
@@ -72,17 +103,23 @@ class EventController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('wizemEventBundle:Event')->find($id);
+        $event = $em->getRepository('wizemEventBundle:Event')->find($id);
 
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Event entity.');
+        if (!$event) {
+            throw $this->createNotFoundException('Unable to find Event event.');
         }
+
+        $finalPlace = $em->getRepository('wizemEventBundle:Place')->findOneBy(array("event" => $event->getId(), "final" => 1));
+        $finalLat = $finalPlace ? $event->getPlace()[0]->getLat() : null;
+        $finalLng = $finalPlace ? $event->getPlace()[0]->getLng() : null;
 
         $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('wizemEventBundle:Event:show.html.twig', array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
+            'event'         => $event,
+            'delete_form'   => $deleteForm->createView(),
+            'finalLat'      => $finalLat,
+            'finalLng'      => $finalLng,
         ));
     }
 

@@ -5,6 +5,8 @@
         <title>{% block title %}Wizem{% endblock %}</title>
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />      
 
+        <script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+
         {% if app.environment == 'prod' %}
             <!-- prod:front.css -->
 <link rel="stylesheet" href="assets/compiled/front.css/front_800d6a843d548fd120d85bfa9e828770.css" />

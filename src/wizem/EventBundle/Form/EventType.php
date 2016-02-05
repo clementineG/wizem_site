@@ -35,12 +35,14 @@ class EventType extends AbstractType
                 'label'=> ' ', 
                 'attr' => array('class' => '' ),
                 'allow_add' => true,
+                'required' => true, 
             ))
             ->add('place','collection',array(
                 'type'=> new PlaceType(),
                 'label'=> ' ', 
                 'attr' => array('class' => '' ),
                 'allow_add' => true,
+                'required' => true, 
             ));
     }
     

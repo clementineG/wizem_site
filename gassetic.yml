@@ -47,8 +47,6 @@ mimetypes:
                 - src/wizem/FrontBundle/Resources/public/js/materialize.min.js
                 #- src/wizem/FrontBundle/Resources/public/js/bootstrap.min.js
                 - src/wizem/FrontBundle/Resources/public/js/scripts.js
-            newEvent.js:
-                - src/wizem/FrontBundle/Resources/public/js/newEvent.js
     fonts:
         dev:
             outputFolder: web/assets

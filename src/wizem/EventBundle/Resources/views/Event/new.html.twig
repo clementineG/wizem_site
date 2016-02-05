@@ -1,8 +1,6 @@
 {% extends '::base.html.twig' %}
         
 {% block javascripts %}
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
-    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?libraries=places"></script>
     {% if app.environment == 'prod' %}
         <!-- prod:newEvent.js --><!-- endbuild -->
     {% else %}
@@ -14,11 +12,9 @@
 
 {% block body -%}
 
-
     <h1>Event creation</h1>
 
 	{{ form_start(form) }}
-
 
     <div class="input-field col s12">
         <p>
@@ -37,24 +33,21 @@
         {{ form_errors(form.description) }}
     </div>
 
-
     <div class="input-field col s12">
         {{ form_label(form.date, null, {'label_attr': {'class': ''}}) }}
         {{ form_widget(form.date, {'attr': {'class': ''}}) }}
         {{ form_errors(form.date) }}
     </div>
 
-    <div>
-        <div class="input-field col s12">
-            {{ form_label(form.place, null, {'label_attr': {'': ''}}) }}
-            {{ form_widget(form.place, {'attr': {'class': ''}}) }}
-            {{ form_errors(form.place) }}
-        </div>
+    <div class="input-field col s12">
+        {{ form_label(form.place, null, {'label_attr': {'': ''}}) }}
+        {{ form_widget(form.place, {'attr': {'class': ''}}) }}
+        {{ form_errors(form.place) }}
     </div>
 
+    <input type="submit" value="Valider" class="btn waves-effect waves-light" />
     {{ form_end(form) }}
 
-    <input type="submit" value="Valider" class="btn waves-effect waves-light" />
 	
 
     <a href="{{ path('wizem_event_event') }}">
