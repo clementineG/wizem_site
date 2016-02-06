@@ -310,28 +310,31 @@ class EventController extends FOSRestController
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Delete an Event for a given id",
-     *   output = "EventBundle\Entity\Event",
      *   statusCodes = {
      *     200 = "Returned when successful",
      *     404 = "Returned when the event is not found"
      *   }
      * )
      *
-     * @param int     $id      the event id
+     * @param int     $id       the event id
+     * @param int     $userId   the host user id
      *
      * @return array
      *
      * @throws Symfony\Component\HttpKernel\Exception\HttpException
      */
-    public function deleteEventAction($id)
+    public function deleteEventUserAction($id, $userId)
     {
         $apiLogger = $this->container->get('api_logger');
         $apiLogger->info(" ===== Deleting event from API begin ===== ");
 
         $event = $this->getEventOr404($id);
+        $user = $this->getUserOr404($userId);
         
-        $response = $this->container->get('wizem_api.event.handler')->delete($event->getId());
+        $response = $this->container->get('wizem_api.event.handler')->delete(
+            $event,
+            $user
+        );
 
         $apiLogger->info(" ===== Deleting event from API ending ===== ");
         return $response;

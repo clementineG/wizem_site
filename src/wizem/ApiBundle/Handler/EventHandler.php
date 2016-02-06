@@ -571,18 +571,21 @@ class EventHandler
     /**
      * Delete an Event.
      *
-     * @param mixed $id
+     * @param integer $event
+     * @param integer $user
      *
      * @return mixed $id
      */
-    public function delete($id)
+    public function delete($event, $user)
     {
-        $event = $this->repository->find($id);
+        $this->checkIfUserLinkToEvent($event, $user, true);
 
-        $this->logger->info("Deleting event #{$id} OK");
+        $id = $event->getId();
 
         $this->om->remove($event);
         $this->om->flush();
+
+        $this->logger->info("Deleting event #{$id} OK");
 
         return $id;
     }

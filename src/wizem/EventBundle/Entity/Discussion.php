@@ -41,8 +41,7 @@ class Discussion
     /**
      * @var \Event
      *
-     * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Event", mappedBy="discussion")
-     * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
+     * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Event", inversedBy="discussion")
      */
     private $event;
 

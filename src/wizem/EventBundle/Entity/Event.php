@@ -71,7 +71,7 @@ class Event
     private $userEvent;
 
     /**
-     * @ORM\OneToMany(targetEntity="Media", mappedBy="event", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Media", mappedBy="event", cascade={"persist", "remove"})
      */
     private $media;
 
@@ -86,7 +86,7 @@ class Event
     private $vote;
 
     /**
-     * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Discussion", inversedBy="event", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="wizem\EventBundle\Entity\Discussion", mappedBy="event", cascade={"persist","remove"})
      */
     private $discussion;
 
