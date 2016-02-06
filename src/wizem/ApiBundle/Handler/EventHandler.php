@@ -367,8 +367,6 @@ class EventHandler
             $discussion = $this->container->get('wizem_api.discussion.handler')->create(
                 $event
             );
-            $event->setDiscussion($discussion);
-
 
             $this->om->persist($discussion);
             $this->om->persist($event);
