@@ -4,6 +4,9 @@ parameters:
     log_file_max_number : 10
 
 services:
+    # Symfony 3 hack for new version after composer update
+    fos_user.doctrine_registry:
+        alias: doctrine
     api_logger:
             class: Symfony\Bridge\Monolog\Logger
             arguments: [api]
