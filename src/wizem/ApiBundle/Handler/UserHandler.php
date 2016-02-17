@@ -374,6 +374,65 @@ class UserHandler
     }
 
     /**
+     * Search a friend for this user
+     *
+     * @param mixed $id
+     *
+     * @return mixed $id
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     * 
+     */
+    public function searchFriend($user, $request)
+    {
+        $username = $request['username'];
+
+        $this->logger->info("User trying to search '{$username}'");
+
+        if($username != ""){
+            
+            $um = $this->container->get('fos_user.user_manager');
+            $friend = $um->findUserByUsername($username);
+            if(!$friend){
+                $this->logger->error("Friend not found");
+                $this->logger->info(" ===== Searching friend from API ending ===== ");
+                throw new HttpException(Codes::HTTP_NOT_FOUND, "Friend not found");
+            }
+
+            if($user->getUsername() == $username){
+                $this->logger->error("User search himself");
+                $this->logger->info(" ===== Searching friend from API ending ===== ");
+                throw new HttpException(Codes::HTTP_FORBIDDEN, "User search himself");
+            }
+
+            $areFriends = false;
+            
+            // Test if user and friend are already friends
+            $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $user->getId(), "friend" => $friend->getId()));
+            if($testFriendship){
+                $areFriends = true;
+            }
+            $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId()));
+            if($testFriendship){
+                $areFriends = true;
+            }
+
+            $areFriendsText = ($areFriends == true) ? 'true' : 'false';
+
+            $this->logger->info("Friend found #{$friend->getId()}, areFriend : {$areFriendsText}");
+
+            return array(
+                'friendUsername' => $friend->getUsername(),
+                'areFriends' => $areFriends
+            );
+        }
+        
+        $this->logger->error("Invalid username");
+        $this->logger->info(" ===== Searching friend from API ending ===== ");
+        throw new HttpException(Codes::HTTP_FORBIDDEN, "Invalid username");
+    }
+
+    /**
      * Add a friend for this user
      *
      * @param mixed $id

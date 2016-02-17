@@ -268,6 +268,47 @@ class UserController extends FOSRestController
     }
 
     /**
+     * Find a user for friendship
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   parameters={
+     *      {"name"="username", "dataType"="text", "required"=true, "description"="username of the research friend"},
+     *   },
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors",
+     *     404 = "Returned when the friend no exists"
+     *   }
+     * )
+     *
+     * @param int       $id         id of the user
+     * @param Request   $request    the request object
+     *
+     * @return $friend
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\HttpException
+     *
+     */
+    public function postUserFriendsFindAction($id, Request $request)
+    {
+        /* Log */
+        $apiLogger = $this->container->get('api_logger');
+        $apiLogger->info(" ===== Searching friend from API begin ===== ");
+
+        $user = $this->getUserOr404($id);
+        $apiLogger->info("User #{$user->getId()}");
+
+        $friend = $this->container->get('wizem_api.user.handler')->searchFriend(
+            $user,
+            $request->request->all()
+        );
+
+        $apiLogger->info(" ===== Searching friend from API ending ===== ");
+        return $friend;
+    }
+
+    /**
      * Get all friends for an user (confirmed or not)
      *
      * @ApiDoc(
