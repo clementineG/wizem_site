@@ -18,9 +18,6 @@
             {% for event in events %}
                 <tr>
                     <td><a href="{{ path('wizem_event_event_show', { 'id': event.id }) }}">{{ event.id }}</a></td>
-                    <td>{{ event.description }}</td>
-                    <td>{% if event.dateCreated %}{{ event.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
-                    <td>{% if event.dateUpdated %}{{ event.dateUpdated|date('Y-m-d H:i:s') }}{% endif %}</td>
                     <td>
                     <ul>
                         <li>

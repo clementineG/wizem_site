@@ -1,40 +1,52 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Event</h1>
+    <h1>Evenement {{ event.typeevent.name}}</h1>
 
-    <table class="record_properties">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ entity.description }}</td>
-            </tr>
-            <tr>
-                <th>Datecreated</th>
-                <td>{{ entity.dateCreated|date('Y-m-d H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Dateupdated</th>
-                <td>{{ entity.dateUpdated|date('Y-m-d H:i:s') }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="row">
+        <div class="col l6 m12">
+            <div class="card">
+                <div class="card-image">
+                    <div id="map" {% if finalLat and finalLng %}data-lat="{{finalLat}}" data-lng="{{finalLng}}"{% endif %}></div>
+                </div>
+                <div class="card-content">
+                    <span class="card-title activator grey-text text-darken-4">Card Title<i class="material-icons right">more_vert</i></span>
+                    <p><a href="#">This is a link</a></p>
+                </div>
+                <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+                    <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                </div>
+            </div>
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('wizem_event_event') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('wizem_event_event_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+            <div>
+                <i class="medium material-icons">today</i>
+                {% for date in event.date %}
+                    {{ date.date | date('d/m/Y') }}
+                {% endfor %}
+            </div>
+            <div>
+                <i class="medium material-icons">today</i>
+                {% for place in event.place %}
+                    <div class="address" id="{{place.id}}" data-address="{{place.address}}" data-lat="{{place.lat}}" data-lng="{{place.lng}}">
+                        {{ place.address }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col l6 m12">
+            Description : {{ event.description }}
+        </div>
+    </div>
+
+    <a href="{{ path('wizem_event_event') }}">
+        Back to the list
+    </a>
+    <a href="{{ path('wizem_event_event_edit', { 'id': event.id }) }}">
+        Edit
+    </a>
+
+   {{ form(delete_form) }}
+   
 {% endblock %}

@@ -15,8 +15,8 @@ class PlaceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('adress', 'text', array(
-                // 'class' => 'wizemEventBundle:Typeevent',
+            ->add('address', 'text', array(
+                'attr' => array( 'placeholder' => ' '),
                 // 'label' => 'Type', 
                 // 'required' => true, 
                 // 'multiple' => false, 

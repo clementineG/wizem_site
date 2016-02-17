@@ -20,11 +20,6 @@ class DateType extends AbstractType
                 'input' => 'datetime',
                 'widget' => 'single_text',
                 'format' => 'dd/MM/yyyy'
-                // 'class' => 'wizemEventBundle:Typeevent',
-                // 'label' => 'Type', 
-                // 'required' => true, 
-                // 'multiple' => false, 
-                // 'expanded' => true, 
             ))
         ;
     }
