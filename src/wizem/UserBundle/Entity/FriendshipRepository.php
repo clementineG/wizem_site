@@ -20,9 +20,8 @@ class FriendshipRepository extends \Doctrine\ORM\EntityRepository
         $q = $this->_em->createQueryBuilder()
             ->select('f')
             ->from('wizemUserBundle:Friendship','f')
-            ->where('f.user = :userId')
-            ->orWhere('f.friend = :userId')
-            ->andWhere('f.state != :stateFalse');
+            ->where('f.user = :userId OR f.friend = :userId')
+            ->andWhere('f.state = :stateTrue OR f.state IS NULL');
             
             if($confirmed == true){
                 $q->andWhere('f.state = :state')
@@ -30,7 +29,7 @@ class FriendshipRepository extends \Doctrine\ORM\EntityRepository
             }
             
             $q->setParameter('userId', $userId)
-            ->setParameter('stateFalse', false);
+            ->setParameter('stateTrue', true);
 
         return $q->getQuery()->getResult();
     }
