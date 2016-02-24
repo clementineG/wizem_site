@@ -15,26 +15,26 @@
     
     <br>
 
-    {% if friends %}
-        {% for friend in friends %}
-            <div class="col s12 m8 offset-m2 l6 offset-l3">
-                <div class="card-panel grey lighten-5 z-depth-1">
-                    <div class="row valign-wrapper">
-                        <div class="col s2">
-                            <img src="#" alt="" class="circle responsive-img"> 
-                        </div>
-                        <div class="col s10">
-                            <span class="black-text">
-                                <h5><strong>{{ friends.user.username }}</strong></h5>
-                            </span>
-                        </div>
+    <div class="row">
+    {% for friend in friends %}
+        <div class="col s6 m4">
+            <div class="card-panel grey lighten-5 z-depth-1">
+                <div class="row valign-wrapper">
+                    <div class="col s2">
+                        <img src="#" alt="" class="circle responsive-img"> 
+                    </div>
+                    <div class="col s10">
+                        <span class="black-text">
+                            <h5><strong>{{ friend.friend.username }}</strong></h5>
+                        </span>
                     </div>
                 </div>
             </div>
-        {% endfor %}
+        </div>
     {% else %}
         Vous n'avez pas encore d'ami, <a class="" href="{{ path('friendship_new') }}">ajoutez-en</a> !
-    {% endif %}
+    {% endfor %}
+    </div>
     
 
     {% endblock %}
