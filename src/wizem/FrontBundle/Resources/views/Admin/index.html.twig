@@ -1,0 +1,15 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+
+    <h1>Administration. {{app.user.username}}</h1>
+    
+    
+    <a class="waves-effect waves-light btn" href="{{ path('wizem_front_admin_logPage') }}">
+        Logs
+    </a>
+    <a class="waves-effect waves-light btn" href="{{ path('wizem_event_type') }}">
+        Types d'événement
+    </a>
+
+{% endblock %}

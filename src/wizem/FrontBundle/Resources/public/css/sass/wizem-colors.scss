@@ -1,0 +1,25 @@
+/** 
+* ============================
+* 		Color definition
+* ============================
+*/
+$main-blue: #046AA3;
+
+$main-yellow: #E0E00E;
+
+$main-grey: #EBEEF0;
+
+
+// ============================
+// 			Toasts
+$toats: (
+	"danger" : #f44336,
+	"success" : #4caf50,
+	"info" : #03a9f4
+);
+@each $color_type, $color in $toats {
+	.toast-#{$color_type} {
+		background:$color;
+	}
+}
+// ============================

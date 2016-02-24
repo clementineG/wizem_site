@@ -1,3 +1,7 @@
+wizem_event_type:
+    resource: "@wizemEventBundle/Resources/config/routing/typeevent.yml"
+    prefix:   /event/type
+
 wizem_event_event:
     resource: "@wizemEventBundle/Resources/config/routing/event.yml"
     prefix:   /event

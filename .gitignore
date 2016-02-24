@@ -21,10 +21,15 @@
 !bin/console
 !bin/symfony_requirements
 /vendor/
+/web/*
 
 # Assets and user uploads
 /web/bundles/
 /web/uploads/
+
+# Bower and Node files
+/node_modules/
+/bower_components/
 
 # Assets managed by Bower
 /web/assets/vendor/

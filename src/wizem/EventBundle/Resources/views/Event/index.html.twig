@@ -1,45 +1,52 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Event list</h1>
+    <h1 class="center-align">Mes évenements</h1>
+        
 
-    <table class="records_list">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Description</th>
-                <th>Datecreated</th>
-                <th>Dateupdated</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('event_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.description }}</td>
-                <td>{% if entity.dateCreated %}{{ entity.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{% if entity.dateUpdated %}{{ entity.dateUpdated|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('event_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('event_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
+    <div class="center-align">
+        <a class="waves-effect waves-light btn" href="{{ path('wizem_event_event_new') }}">
+            Créer un nouvel évènement
+        </a>
+    </div>
+    
+    <br>
+
+    {% if events %}
+        {% for event in events %}
+            <div class="col s12 m8 offset-m2 l6 offset-l3">
+                <div class="card-panel grey lighten-5 z-depth-1">
+                    <div class="row valign-wrapper">
+                        <div class="col s2">
+                            <img src="#" alt="" class="circle responsive-img"> 
+                        </div>
+                        <div class="col s9">
+                            <span class="black-text">
+                                <h5><strong>{{ event.event.typeEvent }}</strong></h5>
+                                {% for place in event.event.place %}
+                                    {% if place.final == true %}
+                                        {{ place.address }}
+                                    {% endif %}
+                                {% endfor %}<br>
+                                {% for date in event.event.date %}
+                                    {% if date.final == true %}
+                                        {{ date.date | date("d/m/Y") }}
+                                    {% endif %}
+                                {% endfor %}<br>
+                                {{ event.event.description }}<br>
+                            </span>
+                        </div>
+                        <div class="col s1">
+
+                          <a href="{{ path('wizem_event_event_show', { 'id': event.id }) }}"><i class="material-icons">fast_forward</i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
-        </tbody>
-    </table>
+    {% else %}
+        Vous n'avez aucun évènement,
+    {% endif %}
+    
 
-        <ul>
-        <li>
-            <a href="{{ path('event_new') }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
-    {% endblock %}
+{% endblock %}

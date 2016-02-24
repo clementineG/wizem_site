@@ -1,3 +1,7 @@
+wizem_user_friendship:
+    resource: "@wizemUserBundle/Resources/config/routing/friendship.yml"
+    prefix:   /friendship
+
 wizem_user_user:
     resource: "@wizemUserBundle/Resources/config/routing/user.yml"
     prefix:   /user
@@ -5,3 +9,7 @@ wizem_user_user:
 # wizem_user_homepage:
 #     path:     /hello/{name}
 #     defaults: { _controller: wizemUserBundle:Default:index }
+
+# wizem_front_home_login:
+#     pattern: /login
+#     defaults: { _controller: wizemUserBundle:User:login }

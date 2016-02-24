@@ -1,0 +1,16 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Ajouter un ami</h1>
+
+	{{ form_start(form) }}
+
+    <div class="input-field col s12">
+        {{ form_label(form.friend, null, {'label_attr': {'class': ''}}) }}
+        {{ form_widget(form.friend, {'attr': {'class': ''}}) }}
+        {{ form_errors(form.friend) }}
+    </div>
+    <input type="submit" value="Valider" class="btn waves-effect waves-light"/>
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+
+    <div class="well">
+        <h1>
+            403 - Vous n'êtes pas autorisé à accéder à cette page...
+        </h1>
+        <a class="btn btn-default"href="{{ path('wizem_front_home_index') }}" title="Retour à l'accueil">
+            <i class="fa fa-arrow-left"></i> Retour à l'accueil
+        </a> 
+    </div>
+
+{% endblock %}

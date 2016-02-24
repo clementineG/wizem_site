@@ -15,3 +15,16 @@ services:
     api_handler:
             class: Monolog\Handler\RotatingFileHandler
             arguments: [%kernel.logs_dir%/%kernel.environment%.api.log, %log_file_max_number%]
+    user_logger:
+            class: Symfony\Bridge\Monolog\Logger
+            arguments: [user]
+            calls:
+                - [pushHandler, [@user_handler]]
+    user_handler:
+            class: Monolog\Handler\RotatingFileHandler
+            arguments: [%kernel.logs_dir%/%kernel.environment%.user.log, %log_file_max_number%]
+
+    user.form.registration:
+        class: wizem\UserBundle\Form\RegistrationFormType
+        tags:
+            - { name: form.type, alias: wizem_user_registration }

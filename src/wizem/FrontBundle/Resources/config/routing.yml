@@ -1,0 +1,7 @@
+wizem_front_home_index:
+    path:     /
+    defaults: { _controller: wizemFrontBundle:Home:index }
+
+wizem_front_admin:
+    resource: "@wizemFrontBundle/Resources/config/routing/admin.yml"
+    prefix:   /admin

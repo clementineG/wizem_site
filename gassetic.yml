@@ -1,0 +1,85 @@
+requires:
+    sass: gulp-sass
+    minify: gulp-cssnano
+    concat: gulp-concat
+    uglify: gulp-uglify
+    freeze: gulp-freeze
+mimetypes:
+    css:
+        dev:
+            outputFolder: web/assets
+            webPath:      /assets
+            tasks: 
+                - { name: sass }
+        prod:
+            outputFolder: web/assets/compiled
+            webPath:      assets/compiled
+            tasks:
+                # This task compile scss files
+                - { name: sass, filter: ['*.scss'] }
+                # This task concats all the files into one
+                - { name: concat, args: '%filename%' }
+                # This task minifies the scripts
+                - { name: minify }
+                # This is a cache busting gulp plugin that appends an md5 of the contents to the filename
+                - { name: freeze }
+        files:
+            front.css:
+                - src/wizem/FrontBundle/Resources/public/css/sass/front.scss
+    js:
+        dev:
+            outputFolder: web/assets
+            webPath:      /assets
+            tasks: []
+        prod:
+            outputFolder: web/assets/compiled
+            webPath:      /assets/compiled
+            tasks:
+                # This task concats all the files into one
+                - { name: concat, args: '%filename%' }
+                # This task minifies the scripts
+                - { name: uglify, args: { mangle: false } }
+                # This is a cache busting gulp plugin that appends an md5 of the contents to the filename
+                - { name: freeze }
+        files:
+            front.js:
+                - src/wizem/FrontBundle/Resources/public/js/jquery.min.js
+                - src/wizem/FrontBundle/Resources/public/js/materialize.min.js
+                #- src/wizem/FrontBundle/Resources/public/js/bootstrap.min.js
+                - src/wizem/FrontBundle/Resources/public/js/scripts.js
+    fonts:
+        dev:
+            outputFolder: web/assets
+            tasks: []
+            autoRenaming: false
+        prod:
+            outputFolder: web/assets/compiled
+            tasks: []
+            autoRenaming: false
+        files:
+            fonts:
+              - src/wizem/FrontBundle/Resources/public/fonts/**/*
+    images:
+        dev:
+            outputFolder: web/assets
+            tasks: []
+            autoRenaming: false
+        prod:
+            outputFolder: web/assets/compiled
+            tasks: []
+            autoRenaming: false
+        files:
+            images:
+                - src/wizem/FrontBundle/Resources/public/images/**/*
+        watch:
+                - src/wizem/FrontBundle/Resources/public/images/**/*
+
+replacementPaths:
+    - app/**/*.html.twig
+    - src/**/*.html.twig
+
+default:
+    - fonts
+    - js
+    - css
+    - images

@@ -1,0 +1,30 @@
+friendship:
+    path:     /
+    defaults: { _controller: "wizemUserBundle:Friendship:index" }
+
+friendship_show:
+    path:     /{id}/show
+    defaults: { _controller: "wizemUserBundle:Friendship:show" }
+
+friendship_new:
+    path:     /new
+    defaults: { _controller: "wizemUserBundle:Friendship:new" }
+
+friendship_create:
+    path:     /create
+    defaults: { _controller: "wizemUserBundle:Friendship:create" }
+    methods:  POST
+
+friendship_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "wizemUserBundle:Friendship:edit" }
+
+friendship_update:
+    path:     /{id}/update
+    defaults: { _controller: "wizemUserBundle:Friendship:update" }
+    methods:  [POST, PUT]
+
+friendship_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "wizemUserBundle:Friendship:delete" }
+    methods:  [POST, DELETE]

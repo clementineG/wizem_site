@@ -1,0 +1,11 @@
+wizem_front_admin_index:
+    path:     /
+    defaults: { _controller: wizemFrontBundle:Admin:index }
+
+wizem_front_admin_logPage:
+    pattern:  /log
+    defaults: { _controller: "wizemFrontBundle:Admin:log" }
+
+wizem_front_admin_downloadLog:
+    pattern:  /downloadLog/{filename}
+    defaults: { _controller: "wizemFrontBundle:Admin:downloadLogFile" }

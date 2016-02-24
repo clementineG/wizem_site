@@ -1,0 +1,56 @@
+$main-blue: #046AA3;
+
+// Materialize components
+@import "materialize";
+
+// Colors of website
+@import "wizem-colors";
+
+// Import fonts of website
+@import "wizem-fonts";
+
+
+
+
+
+/** 
+* ============================
+* 		 Global styles
+* ============================
+*/
+body{
+    background-color:$main-grey; 
+} 
+h1{
+	font-family: "comunica";
+}
+
+
+/** 
+* ============================
+* 			HOME
+* ============================
+*/
+#body-home{
+	h1{
+		color: $main-blue;
+	    font-size: 190px;
+	    font-weight: 700;
+	    margin-bottom: 10px;
+	}
+	h2{
+		color: $main-yellow;
+		font-family: "roboto";
+	    font-size: 55px;
+	}
+} 
+
+/** 
+* ============================
+* 			HOME
+* ============================
+*/
+#map{
+	width: 100%;
+	height: 300px;
+} 

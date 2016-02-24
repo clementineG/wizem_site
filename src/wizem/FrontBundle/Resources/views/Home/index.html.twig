@@ -1,0 +1,97 @@
+{% extends '::base.html.twig' %}
+
+{% block body_id %}body-home{% endblock %}
+
+{% block content -%}
+
+    {% for key, messages in app.session.getFlashBag().all() %}
+        {% for flash in messages %}
+            <div class="alert alert-{{ key }}">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {%autoescape false%}
+                    {{ flash|trans }}
+                {%endautoescape%}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="parallax-container">
+        <div class="center-align">
+            <h1>WIZEM</h1>
+            <h2>Redécouvrez les sorties entre amis !</h2>
+            
+            <a href="{{ path('fos_user_security_login') }}" class="btn-large waves-effect waves-light">Connexion</a>
+            <a href="{{ path('fos_user_registration_register') }}" class="btn-large waves-effect waves-light">Inscription</a>
+        </div>
+        <div class="parallax"><img src="{{ asset('assets/images/home/image1.jpg') }}"></div>
+    </div>
+
+    <div class="container body-container">
+        <div class="row">
+
+            <h3 class="center-align">Redécouvrez les sorties entre amis !</h3>
+
+            <div class="col s12 m4">
+                <div class="card-panel teal">
+                    <span class="white-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                    </span>
+                </div>
+            </div>
+            <div class="col s12 m4">
+                <div class="card-panel teal">
+                    <span class="white-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                    </span>
+                </div>
+            </div>
+            <div class="col s12 m4">
+                <div class="card-panel teal">
+                    <span class="white-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="parallax-container">
+        <div class="parallax"><img src="{{ asset('assets/images/home/image2.jpg') }}"></div>
+    </div>
+
+    <div class="container body-container">
+        <div class="row">
+
+            <h3 class="center-align">Redécouvrez les sorties entre amis !</h3>
+
+            <div class="col s12 m4">
+                <div class="card-panel teal">
+                    <span class="white-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                    </span>
+                </div>
+            </div>
+            <div class="col s12 m4">
+                <div class="card-panel teal">
+                    <span class="white-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                    </span>
+                </div>
+            </div>
+            <div class="col s12 m4">
+                <div class="card-panel teal">
+                    <span class="white-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

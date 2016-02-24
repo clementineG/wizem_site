@@ -3,11 +3,20 @@
 {% block body -%}
     <h1>Event edit</h1>
 
-    {{ form(edit_form) }}
+
+		{{ form_start(edit_form) }}
+		    {{ form_widget(edit_form) }}
+		    {{ form_errors(edit_form) }}
+
+		    <input type="submit" value="Valider" class="btn waves-effect waves-light" />
+		{{ form_end(edit_form) }}
+
+
+
 
         <ul class="record_actions">
     <li>
-        <a href="{{ path('event') }}">
+        <a href="{{ path('wizem_event_event') }}">
             Back to the list
         </a>
     </li>

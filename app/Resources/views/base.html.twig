@@ -2,12 +2,122 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <title>{% block title %}Wizem{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />      
+
+        <script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+
+        {% if app.environment == 'prod' %}
+            <!-- prod:front.css -->
+<link rel="stylesheet" href="assets/compiled/front.css/front_800d6a843d548fd120d85bfa9e828770.css" />
+<!-- endbuild -->
+        {% else %}
+            <!-- dev:front.css -->
+<link rel="stylesheet" href="/assets/front.css/front_0.css" />
+<!-- endbuild -->
+        {% endif %}
+
+        {% block css %}{% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+
+    <body id="{% block body_id %}{% endblock %}">
+        
+        {% block header %}
+            <header>
+                <nav>
+                    {# Desktop view : header in top #}
+                    <ul class="hide-on-med-and-down">
+                        <div class="left">
+                            <li><a href="{{ path('wizem_front_home_index') }}">WIZEM</a></li>
+                        </div>
+                        <div class="right">
+                        {% if app.user %}
+                            <li><a href="{{ path('wizem_event_event') }}">Evénements</a></li>
+                            <li><a href="{{ path('friendship') }}">Amis</a></li>
+                            <li><a href="{{ path('fos_user_security_logout') }}">Profil</a></li>
+                            <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
+                        {% else %}
+                            <li><a href="{{ path('fos_user_security_login') }}">Connexion</a></li>
+                            <li><a href="{{ path('fos_user_registration_register') }}">Inscription</a></li>
+                        {% endif %}
+                        </div>
+                    </ul>
+
+                    {# Mobile view : header in left menu #}
+                    <ul id="slide-out" class="side-nav">
+                        <li><a href="{{ path('wizem_front_home_index') }}">WIZEM</a></li>
+                        {% if app.user %}
+                            <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
+                        {% else %}
+                            <li><a href="{{ path('fos_user_security_login') }}">Connexion</a></li>
+                            <li><a href="{{ path('fos_user_registration_register') }}">Inscription</a></li>
+                        {% endif %}
+                    </ul>
+
+                    <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+                </nav>
+            </header>
+        {% endblock %}
+
+
+        <div class="body-container">
+            {% block content %}
+                <div class="container">
+                    {% block body %}
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        </div>
+        
+        {% block footer %}
+            <footer class="page-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col l6 s12">
+                            <h5 class="white-text">Footer Content</h5>
+                            <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+                        </div>
+                        <div class="col l4 offset-l2 s12">
+                            <h5 class="white-text">Links</h5>
+                            <ul>
+                                <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+                                <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+                                <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+                                <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-copyright">
+                    <div class="container">
+                        © 2016 Copyright Wizem
+                        <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+                    </div>
+                </div>
+            </footer>
+        {% endblock %}
+
+
+        {% if app.environment == 'prod' %}
+            <!-- prod:front.js -->
+<script src="/assets/compiled/front.js/front_1e1b642c7b354dc347efb60afa681ce8.js"></script>
+<!-- endbuild -->
+        {% else %}
+            <!-- dev:front.js -->
+<script src="/assets/front.js/jquery.min_0.js"></script>
+<script src="/assets/front.js/materialize.min_1.js"></script>
+<script src="/assets/front.js/scripts_2.js"></script>
+<!-- endbuild -->
+        {% endif %}
+
+        {% for key, messages in app.session.getFlashBag().all() %}
+            {% for flash in messages %}
+                <script>
+                    Materialize.toast('{%autoescape false%}{{ flash|trans }}{%endautoescape%}', 5000, 'toast-{{ key }}');
+                </script>
+            {% endfor %}
+        {% endfor %}
+
         {% block javascripts %}{% endblock %}
     </body>
 </html>
