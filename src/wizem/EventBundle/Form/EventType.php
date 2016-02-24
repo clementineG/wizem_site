@@ -24,7 +24,7 @@ class EventType extends AbstractType
         $builder
             ->add('typeevent', 'entity', array(
                 'class' => 'wizemEventBundle:Typeevent',
-                'label' => 'Type', 
+                'label' => "Type d'événement", 
                 'required' => true, 
                 'multiple' => false, 
                 'expanded' => true, 

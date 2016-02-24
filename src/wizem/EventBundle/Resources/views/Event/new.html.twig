@@ -12,33 +12,28 @@
 
 {% block body -%}
 
-    <h1>Event creation</h1>
+    <h1>Nouvel événement</h1>
 
 	{{ form_start(form) }}
 
     <div class="input-field col s12">
-        <p>
-            {{ form_label(form.typeevent, null, {'label_attr': {'class': ''}}) }}
-        </p>
-        <p>
+        {{ form_label(form.typeevent, null, {'label_attr': {'class': ''}}) }}<br>
         {{ form_widget(form.typeevent, {'attr': {'class': ''}}) }}
         {{ form_errors(form.typeevent) }}
-        </p>
     </div>
-    
+    <br>
     <div class="input-field col s12">
-        <i class="material-icons prefix">mode_edit</i>
         {{ form_widget(form.description, {'attr': {'class': 'materialize-textarea'}}) }}
         {{ form_label(form.description, null, {'label_attr': {'class': ''}}) }}
         {{ form_errors(form.description) }}
     </div>
-
+    <br>
     <div class="input-field col s12">
         {{ form_label(form.date, null, {'label_attr': {'class': ''}}) }}
         {{ form_widget(form.date, {'attr': {'class': ''}}) }}
         {{ form_errors(form.date) }}
     </div>
-
+    <br>
     <div class="input-field col s12">
         {{ form_label(form.place, null, {'label_attr': {'': ''}}) }}
         {{ form_widget(form.place, {'attr': {'class': ''}}) }}

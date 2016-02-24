@@ -1,45 +1,52 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Mes évenements</h1>
+    <h1 class="center-align">Mes évenements</h1>
         
 
-    {% if events %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Description</th>
-                    <th>Datecreated</th>
-                    <th>Dateupdated</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for event in events %}
-                <tr>
-                    <td><a href="{{ path('wizem_event_event_show', { 'id': event.id }) }}">{{ event.id }}</a></td>
-                    <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('wizem_event_event_show', { 'id': event.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('wizem_event_event_edit', { 'id': event.id }) }}">edit</a>
-                        </li>
-                    </ul>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        Vous n'avez aucun évènement,
-    {% endif %}
-    
-    <div>
+    <div class="center-align">
         <a class="waves-effect waves-light btn" href="{{ path('wizem_event_event_new') }}">
             Créer un nouvel évènement
         </a>
     </div>
+    
+    <br>
+
+    {% if events %}
+        {% for event in events %}
+            <div class="col s12 m8 offset-m2 l6 offset-l3">
+                <div class="card-panel grey lighten-5 z-depth-1">
+                    <div class="row valign-wrapper">
+                        <div class="col s2">
+                            <img src="#" alt="" class="circle responsive-img"> 
+                        </div>
+                        <div class="col s9">
+                            <span class="black-text">
+                                <h5><strong>{{ event.event.typeEvent }}</strong></h5>
+                                {% for place in event.event.place %}
+                                    {% if place.final == true %}
+                                        {{ place.address }}
+                                    {% endif %}
+                                {% endfor %}<br>
+                                {% for date in event.event.date %}
+                                    {% if date.final == true %}
+                                        {{ date.date | date("d/m/Y") }}
+                                    {% endif %}
+                                {% endfor %}<br>
+                                {{ event.event.description }}<br>
+                            </span>
+                        </div>
+                        <div class="col s1">
+
+                          <a href="{{ path('wizem_event_event_show', { 'id': event.id }) }}"><i class="material-icons">fast_forward</i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        Vous n'avez aucun évènement,
+    {% endif %}
+    
 
 {% endblock %}
