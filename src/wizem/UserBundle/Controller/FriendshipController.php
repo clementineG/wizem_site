@@ -38,6 +38,8 @@ class FriendshipController extends Controller
             }
         }
 
+        var_dump($friends);exit();
+
         return $this->render('wizemUserBundle:Friendship:index.html.twig', array(
             'friends' => $friends,
         ));
@@ -50,75 +52,65 @@ class FriendshipController extends Controller
     {
         $entity = new Friendship();
         $form = $this->createCreateForm($entity);
-        
-        var_dump($request->getData());exit();
-        $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+        $username = $request->request->get('wizem_userbundle_friendship')['friend'];
+        $em = $this->getDoctrine()->getManager();
+       
+       $user = $this->getUser();
 
-            var_dump($form->getFriend());exit();
 
-            $userLogger = $this->get("user_logger");
-            $userLogger->info("User trying to add '{$username}'");
+        $userLogger = $this->get("user_logger");
+        $userLogger->info(" ===== Adding friend from site ending ===== ");
+        $userLogger->info("User trying to add '{$username}'");
 
-            if($username != ""){
-                
-                $um = $this->container->get('fos_user.user_manager');
-                $friend = $um->findUserByUsername($username);
-                if(!$friend){
-                    $userLogger->error("Friend not found");
-                    $userLogger->info(" ===== Adding friend from API ending ===== ");
-                    throw new HttpException(Codes::HTTP_NOT_FOUND, "Friend not found");
-                }
-                
-                // Test if user and friend are already friends
-                $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $user->getId(), "friend" => $friend->getId()));
-                if($testFriendship){
-                    $userLogger->error("Users are already friends");
-                    $userLogger->info(" ===== Adding friend from API ending ===== ");
-                    throw new HttpException(Codes::HTTP_FORBIDDEN, "You are already friends");
-                }
-                $testFriendship = $this->om->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId()));
-                if($testFriendship){
-                    $userLogger->error("Users are already friends");
-                    $userLogger->info(" ===== Adding friend from API ending ===== ");
-                    throw new HttpException(Codes::HTTP_FORBIDDEN, "You are already friends");
-                }
-
-                $friendship = new Friendship(); 
-                $friendship->setUser($user);
-                $friendship->setFriend($friend);
-
-                $this->om->persist($friendship);
-                $this->om->flush();
-                    
-                $userLogger->info("Friend added");
-
-                return $friend;
+        if($username != ""){
+            
+            $um = $this->container->get('fos_user.user_manager');
+            $friend = $um->findUserByUsername($username);
+            if(!$friend){
+                $userLogger->error("Friend not found");
+                $userLogger->info(" ===== Adding friend from site ending ===== ");
+                $this->get('session')->getFlashBag()->add('danger',"Aucun utilisateur trouvé...");
+                return $this->render('wizemUserBundle:Friendship:new.html.twig', array(
+                    'entity' => $entity,
+                    'form'   => $form->createView(),
+                ));
             }
-        
-        $userLogger->error("Invalid username");
-        $userLogger->info(" ===== Adding friend from API ending ===== ");
-        throw new HttpException(Codes::HTTP_FORBIDDEN, "Invalid username");
-
-
-
-
-
-
-
-
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('friendship_show', array('id' => $entity->getId())));
+            
+            // Test if user and friend are already friends
+            $testFriendship = $em->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $user->getId(), "friend" => $friend->getId()));
+            if($testFriendship){
+                $userLogger->error("Users are already friends");
+                $userLogger->info(" ===== Adding friend from site ending ===== ");
+                $this->get('session')->getFlashBag()->add('danger',"Vous êtes déjà amis...");
+                return $this->render('wizemUserBundle:Friendship:new.html.twig', array(
+                    'entity' => $entity,
+                    'form'   => $form->createView(),
+                ));
+            }
+            $testFriendship = $em->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId()));
+            if($testFriendship){
+                $userLogger->error("Users are already friends");
+                $userLogger->info(" ===== Adding friend from site ending ===== ");
+                $this->get('session')->getFlashBag()->add('danger',"Vous êtes déjà amis...");
+                return $this->render('wizemUserBundle:Friendship:new.html.twig', array(
+                    'entity' => $entity,
+                    'form'   => $form->createView(),
+                ));
+            }
         }
 
-        return $this->render('wizemUserBundle:Friendship:new.html.twig', array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        ));
+        $entity->setUser($user);
+        $entity->setFriend($friend);
+
+        $em->persist($entity);
+        $em->flush();
+            
+        $userLogger->info("Friend added");
+        $userLogger->info(" ===== Adding friend from site ending ===== ");
+        $this->get('session')->getFlashBag()->add('success',"Votre ami a bien été ajouté");
+
+        return $this->redirect($this->generateUrl('friendship'));
     }
 
     /**
