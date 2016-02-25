@@ -9,7 +9,7 @@ class FriendshipRepository extends \Doctrine\ORM\EntityRepository
 {
 
     /**
-     * 	Research of all friends of an user
+     *  Research of all friends of an user
      *
      * @param   integer     $userId     id of user 
      * @param   Boolean     $confirmed  Friends only if state is confirmed

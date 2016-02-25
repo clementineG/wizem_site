@@ -25,8 +25,7 @@ class FriendshipController extends Controller
 
         $user = $this->getUser();
 
-        $confirmed = true;
-        $friendship = $em->getRepository("wizemUserBundle:Friendship")->getFriends($user->getId(), $confirmed);
+        $friendship = $em->getRepository("wizemUserBundle:Friendship")->getFriends($user->getId());
 
         $friends = array();
         foreach ($friendship as $friend) {
@@ -37,8 +36,6 @@ class FriendshipController extends Controller
                 $friends[] = $friend;
             }
         }
-
-        var_dump($friends);exit();
 
         return $this->render('wizemUserBundle:Friendship:index.html.twig', array(
             'friends' => $friends,

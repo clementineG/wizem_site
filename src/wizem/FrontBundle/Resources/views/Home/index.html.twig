@@ -4,26 +4,15 @@
 
 {% block content -%}
 
-    {% for key, messages in app.session.getFlashBag().all() %}
-        {% for flash in messages %}
-            <div class="alert alert-{{ key }}">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                {%autoescape false%}
-                    {{ flash|trans }}
-                {%endautoescape%}
-            </div>
-        {% endfor %}
-    {% endfor %}
-
     <div class="parallax-container">
         <div class="center-align">
             <h1>WIZEM</h1>
             <h2>Redécouvrez les sorties entre amis !</h2>
-            
+            <br> 
             <a href="{{ path('fos_user_security_login') }}" class="btn-large waves-effect waves-light">Connexion</a>
             <a href="{{ path('fos_user_registration_register') }}" class="btn-large waves-effect waves-light">Inscription</a>
         </div>
-        <div class="parallax"><img src="{{ asset('assets/images/home/image1.jpg') }}"></div>
+        <div class="parallax"><img class="par par1"src="{{ asset('assets/images/home/image3.jpg') }}"></div>
     </div>
 
     <div class="container body-container">
@@ -31,27 +20,37 @@
 
             <h3 class="center-align">Redécouvrez les sorties entre amis !</h3>
 
+            <p class="center-align intro">
+                Wizem est un site où tu peux facilement créer des événements avec tes amis. En quelques étapes tu peux inviter, ou te faire inviter à toutes sortes d'événements : soirée, anniversaire, repas, etc. Alors n'hésite pas, et inscrit toi !
+            </p>
+            <h4 class="center-align">Comment ça fonctionne ?</h4>
             <div class="col s12 m4">
                 <div class="card-panel teal">
                     <span class="white-text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                        <h3 class="center-align">1</h3>
+                        <p class="center-align">
+                        Créé facilement ton événement, en choississant le type (soirée, dîner, sport, etc.), une date et un lieu, et c'est tout ! <br><br>
+                        </p>
                     </span>
                 </div>
             </div>
             <div class="col s12 m4">
                 <div class="card-panel teal">
                     <span class="white-text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                        <h3 class="center-align">2</h3>
+                        <p class="center-align">
+                        Invite uniquement tes amis les plus proches. Ton événement est privé, et ne sera accessible qu'à ceux qui on été invités !<br><br>
+                        </p>
                     </span>
                 </div>
             </div>
             <div class="col s12 m4">
                 <div class="card-panel teal">
                     <span class="white-text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                        <h3 class="center-align">3</h3>
+                        <p class="center-align">
+                        Durant l'événement, tout le monde peut prendre des photos et décider de les partager ou pas. Une fois l'événement passé, regardez les photos et marrez vous !
+                        </p>
                     </span>
                 </div>
             </div>
@@ -65,29 +64,35 @@
     <div class="container body-container">
         <div class="row">
 
-            <h3 class="center-align">Redécouvrez les sorties entre amis !</h3>
+            <h3 class="center-align">Qui sommes nous ?</h3>
 
+            <p class="center-align intro">
+                Le projet Wizem a été immaginé et conçu par trois étudiants en master 2. L'idée leur est venue après avoir participé à de nombreuses soirées à l'organisation douteuse. Une question leur a trotté dans la tête : comment peut-on faciliter l'organisation d'un événement pour l'organisateur, et pour les participants ? Et Wizem est né !<br><br>
+            </p>
             <div class="col s12 m4">
                 <div class="card-panel teal">
-                    <span class="white-text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                    <span class="white-text center-align">
+                        <h5>Clément</h5>
+                        <p><img src="{{ asset('assets/images/home/clement.png') }}"></p>
+                        <p>Passionné par le développement mobile, Clément est au courant de tout ce qu'il se passe dans ton téléphone. Attention à ne pas l'énerver en touchant à sa barbe !</p>
                     </span>
                 </div>
             </div>
             <div class="col s12 m4">
                 <div class="card-panel teal">
-                    <span class="white-text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                    <span class="white-text center-align">
+                        <h5>Clémentine</h5>
+                        <p><img src="{{ asset('assets/images/home/clementine.png') }}"></p>
+                        <p>Chef de projet et designer en herbe, ça n'est pas facile d'être la seule fille dans ce groupe, soyez indulgents !</p><br><br>
                     </span>
                 </div>
             </div>
             <div class="col s12 m4">
                 <div class="card-panel teal">
-                    <span class="white-text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam suscipit voluptates voluptatem ipsa ea expedita qui inventore, earum culpa est, alias consequatur illo laboriosam quo saepe error neque possimus, vitae!
+                    <span class="white-text center-align">
+                        <h5>Mathieu</h5>
+                        <p><img src="{{ asset('assets/images/home/mathieu.png') }}"></p>
+                        <p>Développeur Web depuis sa naissance, il n'a que pour objectif de réaliser le code que personne ne voit !</p><br>
                     </span>
                 </div>
             </div>

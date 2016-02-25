@@ -102,6 +102,29 @@ class Event
         $this->shoppingItem = new \Doctrine\Common\Collections\ArrayCollection();
         $this->vote = new \Doctrine\Common\Collections\ArrayCollection();
     }
+
+    public function getImage(){
+        switch ($this->getTypeevent()->getId()) {
+            case 1:
+                return "apero";
+                break;
+            case 2:
+                return "party";
+                break;
+            case 3:
+                return "birthday";
+                break;
+            case 4:
+                return "diner";
+                break;
+            case 5:
+                return "work";
+                break;
+            default:
+                return "apero";
+                break;
+        }
+    }
     
     /**
      * Set id
