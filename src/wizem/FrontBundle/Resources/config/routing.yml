@@ -5,3 +5,7 @@ wizem_front_home_index:
 wizem_front_admin:
     resource: "@wizemFrontBundle/Resources/config/routing/admin.yml"
     prefix:   /admin
+
+wizem_front_mentions:
+    path:     /mentions
+    defaults: { _controller: "wizemFrontBundle:Home:mentions" }

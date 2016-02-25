@@ -6,9 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class HomeController extends Controller
 {
-	/**
-	*	Redirect user if connected or not
-	*/
+    /**
+    *   Redirect user if connected or not
+    */
     public function indexAction()
     {
         if(!$this->container->get('security.context')->isGranted('ROLE_USER')){
@@ -21,10 +21,22 @@ class HomeController extends Controller
 
         $user = $this->getUser();
         $userWelcome = $user->getFirstname() ? ucfirst($user->getFirstname()) : $user->getUsername(); 
+        $em = $this->getDoctrine()->getManager();
 
         $this->get('session')->getFlashBag()->add('info',"Bienvenue, $userWelcome !");
 
-	  	return $this->render('wizemFrontBundle:Dashboard:index.html.twig');
+        $events = $em->getRepository('wizemUserBundle:UserEvent')->findByUser($this->getUser()->getId());
+
+        return $this->render('wizemFrontBundle:Dashboard:index.html.twig', array(
+            'events' => $events,
+        ));
+    }
+	/**
+	*	
+	*/
+    public function mentionsAction()
+    {
+	  	return $this->render('wizemFrontBundle:Home:mentions.html.twig');
     }
 
 }
