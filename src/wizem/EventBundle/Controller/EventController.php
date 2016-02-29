@@ -17,6 +17,7 @@ use wizem\UserBundle\Entity\UserEvent;
 
 /**
  * Event controller.
+ * @Security("has_role('ROLE_USER')")
  *
  */
 class EventController extends Controller
@@ -113,13 +114,26 @@ class EventController extends Controller
         $finalLat = $finalPlace ? $event->getPlace()[0]->getLat() : null;
         $finalLng = $finalPlace ? $event->getPlace()[0]->getLng() : null;
 
-        $deleteForm = $this->createDeleteForm($id);
+        $user = $this->getUser();
+        $friendship = $em->getRepository("wizemUserBundle:Friendship")->getSiteFriends($user->getId());
+
+        $friends = array();
+        foreach ($friendship as $friend) {
+            if($friend->getState() == 1){
+                if($friend->getFriend()->getId() != $user->getId()){
+                    $friends[] = $friend;
+                }
+                if($friend->getUser()->getId() != $user->getId()){
+                    $friends[] = $friend;
+                }
+            }
+        }
 
         return $this->render('wizemEventBundle:Event:show.html.twig', array(
             'event'         => $event,
-            'delete_form'   => $deleteForm->createView(),
             'finalLat'      => $finalLat,
             'finalLng'      => $finalLng,
+            'friends'       => $friends,
         ));
     }
 

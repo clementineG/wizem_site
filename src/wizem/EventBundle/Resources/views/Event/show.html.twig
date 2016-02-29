@@ -10,43 +10,90 @@
                     <div id="map" {% if finalLat and finalLng %}data-lat="{{finalLat}}" data-lng="{{finalLng}}"{% endif %}></div>
                 </div>
                 <div class="card-content">
-                    <span class="card-title activator grey-text text-darken-4">Card Title<i class="material-icons right">more_vert</i></span>
-                    <p><a href="#">This is a link</a></p>
+                    <span class="card-title activator grey-text text-darken-4">{{ event.typeevent.name}}<i class="material-icons right">more_vert</i></span>
+                    {% for place in event.place %}
+                        <div class="address" id="{{place.id}}" data-address="{{place.address}}" data-lat="{{place.lat}}" data-lng="{{place.lng}}">
+                            {{ place.address }}
+                        </div>
+                    {% endfor %}
+                <br>
+                    <i class="small material-icons">today</i>
+                    {% for date in event.date %}
+                        {{ date.date | date('d/m/Y') }}
+                    {% endfor %}
                 </div>
                 <div class="card-reveal">
-                    <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-                    <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                    <span class="card-title grey-text text-darken-4">Comment venir ?<i class="material-icons right">close</i></span>
+                    <p>Itinéraire :</p>
                 </div>
-            </div>
-
-            <div>
-                <i class="medium material-icons">today</i>
-                {% for date in event.date %}
-                    {{ date.date | date('d/m/Y') }}
-                {% endfor %}
-            </div>
-            <div>
-                <i class="medium material-icons">today</i>
-                {% for place in event.place %}
-                    <div class="address" id="{{place.id}}" data-address="{{place.address}}" data-lat="{{place.lat}}" data-lng="{{place.lng}}">
-                        {{ place.address }}
-                    </div>
-                {% endfor %}
             </div>
         </div>
 
         <div class="col l6 m12">
-            Description : {{ event.description }}
+            <h5>Description :</h5>
+            {{ event.description }}
+            
+            <h5>Amis :</h5>
+            <div class="row">
+                <div class="col s12">
+                    <ul class="tabs">
+                        <li class="tab col s3"><a href="#oui">Acceptés</a></li>
+                        <li class="tab col s3"><a href="#attente">En attente</a></li>
+                        <li class="tab col s3"><a href="#non">Refusés</a></li>
+                    </ul>
+                </div>
+                <div id="oui" class="col s12">
+                    <ul>
+                        <li>John doe</li>
+                        <li>Clémentine Gourp</li>
+                        <li>Clément Magre</li>
+                    </ul>
+                </div>
+                <div id="attente" class="col s12">
+                    <ul>
+                        <li>John doe</li>
+                    </ul>
+                </div>
+                <div id="non" class="col s12">
+                    Aucun refus
+                </div>
+            </div>
         </div>
     </div>
+    <div class="row">
+        <h4>Inviter des amis</h4>
 
-    <a href="{{ path('wizem_event_event') }}">
-        Back to the list
-    </a>
-    <a href="{{ path('wizem_event_event_edit', { 'id': event.id }) }}">
-        Edit
-    </a>
+        {% for friend in friends %}
+            <div class="col s6 m4">
+                <div class="card-panel green lighten-2 z-depth-1">
+                    <div class="row valign-wrapper">
+                        <div class="col s2">
+                            <i class="small material-icons">perm_identity</i>
+                        </div>
+                        <div class="col s10">
+                            <span class="black-text">
+                                <h5><strong>
+                                    {% if friend.friend.firstname %}
+                                        {{ friend.friend.firstname }}
+                                        {% if friend.friend.lastname %}
+                                            {{ friend.friend.lastname }}
+                                        {% endif %}
+                                    {% else %}
+                                        {{ friend.friend.username }}
+                                    {% endif %}
+                                </strong></h5>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            Vous n'avez pas encore d'ami, <a class="" href="{{ path('friendship_new') }}">ajoutez-en</a> !
+        {% endfor %}
+    </div>
 
-   {{ form(delete_form) }}
+    <a class="btn waves-effect waves-light" href="{{ path('wizem_event_event') }}">
+        Retour
+    </a>
    
 {% endblock %}

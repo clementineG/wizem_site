@@ -27,8 +27,22 @@ class HomeController extends Controller
 
         $events = $em->getRepository('wizemUserBundle:UserEvent')->findByUser($this->getUser()->getId());
 
+
+        $friendship = $em->getRepository("wizemUserBundle:Friendship")->getSiteFriends($user->getId());
+
+        $friends = array();
+        foreach ($friendship as $friend) {
+            if($friend->getFriend()->getId() != $user->getId()){
+                $friends[] = $friend;
+            }
+            if($friend->getUser()->getId() != $user->getId()){
+                $friends[] = $friend;
+            }
+        }
+
         return $this->render('wizemFrontBundle:Dashboard:index.html.twig', array(
             'events' => $events,
+            'friends' => $friends,
         ));
     }
 	/**

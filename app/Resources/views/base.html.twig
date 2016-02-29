@@ -34,7 +34,6 @@
                         {% if app.user %}
                             <li><a href="{{ path('wizem_event_event') }}">Evénements</a></li>
                             <li><a href="{{ path('friendship') }}">Amis</a></li>
-                            <li><a href="{{ path('fos_user_security_logout') }}">Profil</a></li>
                             <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                         {% else %}
                             <li><a href="{{ path('fos_user_security_login') }}">Connexion</a></li>
@@ -47,6 +46,8 @@
                     <ul id="slide-out" class="side-nav">
                         <li><a href="{{ path('wizem_front_home_index') }}">WIZEM</a></li>
                         {% if app.user %}
+                            <li><a href="{{ path('wizem_event_event') }}">Evénements</a></li>
+                            <li><a href="{{ path('friendship') }}">Amis</a></li>
                             <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                         {% else %}
                             <li><a href="{{ path('fos_user_security_login') }}">Connexion</a></li>

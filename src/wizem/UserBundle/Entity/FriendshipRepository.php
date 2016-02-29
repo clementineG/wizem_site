@@ -34,4 +34,25 @@ class FriendshipRepository extends \Doctrine\ORM\EntityRepository
         return $q->getQuery()->getResult();
     }
 
+    /**
+     *  Research of all friends of an user
+     *
+     * @param   integer     $userId     id of user 
+     * @param   Boolean     $confirmed  Friends only if state is confirmed
+     *
+     */
+    public function getSiteFriends($userId)
+    {
+        $q = $this->_em->createQueryBuilder()
+            ->select('f')
+            ->from('wizemUserBundle:Friendship','f')
+            ->where('f.user = :userId OR f.friend = :userId')
+            ->andWhere('f.state = :stateTrue OR f.state IS NULL');
+            
+            $q->setParameter('userId', $userId)
+            ->setParameter('stateTrue', true);
+
+        return $q->getQuery()->getResult();
+    }
+
 }

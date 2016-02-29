@@ -3,8 +3,12 @@
 {% block body -%}
     <h1 class="center-align">Mes amis</h1>
 
-
-
+    {% set count = 0 %}
+    {% for friend in friends %}
+        {% if friend.state != 1 %}
+            {% set count = count + 1 %}
+        {% endif %}
+    {% endfor %}
         
 
     <div class="center-align">
@@ -16,24 +20,93 @@
     <br>
 
     <div class="row">
-    {% for friend in friends %}
-        <div class="col s6 m4">
-            <div class="card-panel grey lighten-5 z-depth-1">
-                <div class="row valign-wrapper">
-                    <div class="col s2">
-                        <img src="#" alt="" class="circle responsive-img"> 
-                    </div>
-                    <div class="col s10">
-                        <span class="black-text">
-                            <h5><strong>{{ friend.friend.username }}</strong></h5>
-                        </span>
-                    </div>
-                </div>
+
+        <div class="row">
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s3"><a href="#oui">Tous</a></li>
+                    <li class="tab col s3"><a href="#attente">En attente ({{ count }})</a></li>
+                </ul>
+            </div>
+            <div id="oui" class="col s12">
+                {% for friend in friends %}
+                    {% if friend.state == 1 %}
+                        <div class="col s6 m4">
+                            <div class="card-panel green lighten-2 z-depth-1">
+                                <div class="row valign-wrapper">
+                                    <div class="col s2">
+                                            <i class="small material-icons">perm_identity</i>
+                                        {% if friend.state == 1 %}
+                                        {% else %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="col s10">
+                                        <span class="black-text">
+                                            <h5><strong>
+                                                {% if friend.friend.firstname %}
+                                                    {{ friend.friend.firstname }}
+                                                    {% if friend.friend.lastname %}
+                                                        {{ friend.friend.lastname }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ friend.friend.username }}
+                                                {% endif %}
+                                            </strong></h5>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    Vous n'avez pas encore d'ami, <a class="" href="{{ path('friendship_new') }}">ajoutez-en</a> !
+                {% endfor %}
+            </div>
+            <div id="attente" class="col s12">
+                {% for friend in friends %}
+                    {% if friend.state != 1 %}
+                        <div class="col s6 m4">
+                            <div class="card-panel orange lighten-2 z-depth-1">
+                                <div class="row valign-wrapper">
+                                    <div class="col s2">
+                                            <i class="small material-icons">perm_identity</i>
+                                        {% if friend.state == 1 %}
+                                        {% else %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="col s10">
+                                        <span class="black-text">
+                                            <h5><strong>
+                                                {% if friend.friend.firstname %}
+                                                    {{ friend.friend.firstname }}
+                                                    {% if friend.friend.lastname %}
+                                                        {{ friend.friend.lastname }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ friend.friend.username }}
+                                                {% endif %}
+                                            </strong></h5>
+                                        </span>
+                                    </div>
+                                </div>
+                                {% if friend.state != 1 %}
+                                    <div class="right">
+                                        <a class="green-text text-lighten-1" 
+                                        href="{{path('friendship_accept', {'id' : friend.friend.id})}}" title="Accepter"><i class="material-icons">done</i></a>
+                                        <a class="red-text text-darken-2" href="{{path('friendship_decline', {'id' : friend.friend.id})}}" title="Refuser"><i class="material-icons">close</i></a>
+                                    </div>  
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    Vous n'avez pas encore d'ami, <a class="" href="{{ path('friendship_new') }}">ajoutez-en</a> !
+                {% endfor %}
             </div>
         </div>
-    {% else %}
-        Vous n'avez pas encore d'ami, <a class="" href="{{ path('friendship_new') }}">ajoutez-en</a> !
-    {% endfor %}
+
+
+
     </div>
     
 
