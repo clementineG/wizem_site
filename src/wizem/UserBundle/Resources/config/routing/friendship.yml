@@ -10,6 +10,14 @@ friendship_new:
     path:     /new
     defaults: { _controller: "wizemUserBundle:Friendship:new" }
 
+friendship_accept:
+    path:     /accept/{id}
+    defaults: { _controller: "wizemUserBundle:Friendship:accept" }
+
+friendship_decline:
+    path:     /decline/{id}
+    defaults: { _controller: "wizemUserBundle:Friendship:decline" }
+
 friendship_create:
     path:     /create
     defaults: { _controller: "wizemUserBundle:Friendship:create" }

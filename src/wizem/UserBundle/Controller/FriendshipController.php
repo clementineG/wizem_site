@@ -4,12 +4,14 @@ namespace wizem\UserBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use wizem\UserBundle\Entity\Friendship;
 use wizem\UserBundle\Form\FriendshipType;
 
 /**
  * Friendship controller.
+ * @Security("has_role('ROLE_USER')")
  *
  */
 class FriendshipController extends Controller
@@ -25,7 +27,7 @@ class FriendshipController extends Controller
 
         $user = $this->getUser();
 
-        $friendship = $em->getRepository("wizemUserBundle:Friendship")->getFriends($user->getId());
+        $friendship = $em->getRepository("wizemUserBundle:Friendship")->getSiteFriends($user->getId());
 
         $friends = array();
         foreach ($friendship as $friend) {
@@ -125,6 +127,79 @@ class FriendshipController extends Controller
         ));
 
         return $form;
+    }
+
+    /**
+     * Displays a form to create a new Friendship entity.
+     *
+     */
+    public function acceptAction($id)
+    {
+        $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $friend = $em->getRepository("wizemUserBundle:User")->find($id);
+        
+        $userLogger = $this->get("user_logger");
+        $userLogger->info(" ===== Confirmation friendship from user from site begin ===== ");
+
+        if(!$friend){
+            return $this->redirect($this->generateUrl('friendship'));
+        }
+
+        // Test if user and friend have friendship relation
+        $friendship = $em->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $user->getId(), "friend" => $friend->getId(), "state" => null));
+        if(!$friendship){
+            $friendship = $em->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId(), "state" => null));
+            if(!$friendship){
+                $userLogger->info("User #{$user->getId()} has not friendship relation with friend #{$friend->getId()}");
+                $userLogger->info(" ===== Confirmation friendship from user from site ending ===== ");
+                $this->get('session')->getFlashBag()->add('danger',"Vous n'êtes pas amis");
+            }
+        }
+
+        // Updating friendship table : set state to 1
+        $friendship->setState(1);
+
+        $em->persist($friendship);
+        $em->flush();
+                
+        $this->get('session')->getFlashBag()->add('success',"Vous êtes maintenant amis !");
+        return $this->redirect($this->generateUrl('friendship'));
+    }
+
+    /**
+     * Displays a form to create a new Friendship entity.
+     *
+     */
+    public function declineAction($id)
+    {
+        $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $friend = $em->getRepository("wizemUserBundle:User")->find($id);
+        
+        $userLogger = $this->get("user_logger");
+        $userLogger->info(" ===== Confirmation friendship from user from site begin ===== ");
+
+        if(!$friend){
+            return $this->redirect($this->generateUrl('friendship'));
+        }
+
+        // Test if user and friend have friendship relation
+        $friendship = $em->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $user->getId(), "friend" => $friend->getId(), "state" => null));
+        if(!$friendship){
+            $friendship = $em->getRepository("wizemUserBundle:Friendship")->findOneBy(array("user" => $friend->getId(), "friend" => $user->getId(), "state" => null));
+            if(!$friendship){
+                $userLogger->info("User #{$user->getId()} has not friendship relation with friend #{$friend->getId()}");
+                $userLogger->info(" ===== Confirmation friendship from user from site ending ===== ");
+                $this->get('session')->getFlashBag()->add('danger',"Vous n'êtes pas amis");
+            }
+        }
+
+        $em->remove($friendship);
+        $em->flush();
+                
+        $this->get('session')->getFlashBag()->add('success',"Vous avez bien refusé la demande");
+        return $this->redirect($this->generateUrl('friendship'));
     }
 
     /**

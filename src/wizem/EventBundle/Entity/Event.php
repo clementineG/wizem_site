@@ -109,13 +109,16 @@ class Event
                 return "apero";
                 break;
             case 2:
-                return "party";
+                return "diner";
                 break;
             case 3:
                 return "birthday";
                 break;
             case 4:
-                return "diner";
+                return "party";
+                break;
+            case 5:
+                return "theater";
                 break;
             case 5:
                 return "work";
