@@ -20,7 +20,7 @@ mimetypes:
                 # This task concats all the files into one
                 - { name: concat, args: '%filename%' }
                 # This task minifies the scripts
-                - { name: minify }
+                #- { name: minify }
                 # This is a cache busting gulp plugin that appends an md5 of the contents to the filename
                 - { name: freeze }
         files:
